@@ -4,6 +4,7 @@
 #define INSTRUCTION_BYTE_SIZE 4
 
 int pc = 0;
+int** registers = NULL;
 
 char * fetchInstruction(unsigned char littleEndianBuffer[]) {
   char* instruction = (char*) malloc(INSTRUCTION_BYTE_SIZE * sizeof(char));
@@ -34,8 +35,35 @@ void dataprocessing(int * inst) {
 
 }
 
-void multiply(int * inst) {
+int convBinToDec(int bin[], int size) {
+  static int result = 0;
+  for (int i = 0; i < size; i++) {
+    result = result * 2 + bin[i];
+  }
+  return result;
+}
 
+
+void multiply(int * inst) {
+  //Rd = Rm x Rs
+  //Rd = Rm x Rs + Rn if A = 1
+  int rdarr[4], rmarr[4], rsarr[4], rnarr[4];
+  for (int i = 0; i < 4; i++) {
+    rdarr[i] = inst[19 - i];
+    rmarr[i] = inst[3 - i];
+    rsarr[i] = inst[11 - i];
+    rnarr[i] = inst[15 - i];
+  } 
+  int rd = convBinToDec(rdarr, 4);
+  int rm = convBinToDec(rmarr, 4);
+  int rs = convBinToDec(rsarr, 4);
+  
+  if(inst[21] == 1) {
+  int rn = convBinToDec(rnarr, 4);
+    //Add Rn
+  }
+  
+  //Make sure you set the flags here depending on S
 }
 
 void datatransfer(int * inst) {
@@ -47,6 +75,27 @@ void branch(int * inst) {
 }
 
 void decode(int * inst) {
+  // set flags
+  int cond = 0,  goahead = 0 ;
+  for (int i = 31; i >= 28; i--) {
+    cond = cond * 2 + inst[i];
+  }
+  switch(cond) {
+    case 0:  goahead = (registers[16][30] == 1); break; 
+    case 1:  goahead = (registers[16][30] == 0); break;
+    case 10: goahead = (registers[16][31] == registers[16][28]); break;
+    case 11: goahead = (registers[16][31] != registers[16][28]); break;
+    case 12: goahead = (registers[16][30] == 0) && 
+                       (registers[16][31] == registers[16][28]); break;
+    case 13: goahead = (registers[16][30] == 1) || 
+                       (registers[16][31] != registers[16][28]); break;
+    case 14: goahead = 1; break;
+    default: perror("Invalid flags\n"); return;
+  }
+
+  if(!goahead) {return;}
+
+  // subfunction distributor
   int bit1 = *(inst + 27), bit2 = *(inst + 26);  
   if (bit1 == 1 && bit2 == 0) {
     branch(inst);
@@ -71,6 +120,26 @@ void decode(int * inst) {
   }
 }
 
+int ** regInit(){
+  int** registers = (int **) malloc(17 * sizeof(int*));
+  
+  for(int i=0; i < 17; i++){
+    registers[i] = (int *) malloc(32 * sizeof(int));
+    for(int j = 0; j < 32; j++){
+      registers[i][j] = 0;
+    }
+  }
+  return registers; 
+  //free memory
+}  
+
+void freeRegs(int **registers){
+  for(int i = 0; i < 17; i++){
+    free(registers[i]);
+  }
+  free(registers);
+}
+
 int main(int argc, char **argv) {
 
   if (argc != 2) {
@@ -78,6 +147,7 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
+  int **registers = regInit();
 
   FILE *fptr = fopen(argv[1], "rb");
 
@@ -104,5 +174,6 @@ int main(int argc, char **argv) {
   free(str);
   decode(ints);
   fclose(fptr);
+  freeRegs(registers);
   return EXIT_SUCCESS;
 }
