@@ -16,6 +16,18 @@ char * fetchInstruction(unsigned char littleEndianBuffer[]) {
   // Need to 'free' memory occupied by instruction
 }
 
+void printBits(char instruction[]) {
+  unsigned char mask = 1 << 7;
+  for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++) {
+    char byte = instruction[i];
+    for (int j = 0; j < 8; j++) {
+      printf(((mask & byte) == 0) ? "0" : "1");
+      byte <<= 1;
+    }
+    printf("\n");  
+  } 
+}
+
 int main(int argc, char **argv) {
 
   if (argc != 2) {
@@ -41,6 +53,7 @@ int main(int argc, char **argv) {
     // printf omits leading zeroes by default. 02 in %02x fixes this.
     printf("%02x\n", (unsigned char) *(str + i));
   } */ 
+  printBits(str);
   
   fclose(fptr);
   return EXIT_SUCCESS;
