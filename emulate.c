@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
+
   FILE *fptr = fopen(argv[1], "rb");
 
   if (!fptr) {
@@ -41,7 +42,6 @@ int main(int argc, char **argv) {
   } */
   
   fclose(fptr);
-
   return EXIT_SUCCESS;
 
 }
