@@ -29,19 +29,48 @@ int * printBits(char instruction[]) {
   }
   return bininstruction; 
 }
-/*
-void branch(char instruction[]) {
+
+void dataprocessing(int * inst) {
+
+}
+
+void multiply(int * inst) {
+
+}
+
+void datatransfer(int * inst) {
+
+}
+
+void branch(int * inst) {
   
 }
 
-void datatransfer(char instruction[]) {
-
+void decode(int * inst) {
+  int bit1 = *(inst + 27), bit2 = *(inst + 26);  
+  if (bit1 == 1 && bit2 == 0) {
+    branch(inst);
+  } else if (bit1 == 0 && bit2 == 1) {
+    datatransfer(inst);
+  } else if (bit1 == 0 && bit2 == 0) {
+    if (*(inst + 25) == 1) {
+      dataprocessing(inst);
+      return;
+    } 
+    if (*(inst + 4) == 0) {
+      dataprocessing(inst);
+      return;
+    }
+    if (*(inst + 7) == 0) {
+      dataprocessing(inst);
+    } else {
+      multiply(inst);
+    }
+  } else {
+    perror("Invalid instruction.\n");
+  }
 }
 
-void decode(char instruction[]) {
-  
-}
-*/
 int main(int argc, char **argv) {
 
   if (argc != 2) {
@@ -67,11 +96,13 @@ int main(int argc, char **argv) {
     // printf omits leading zeroes by default. 02 in %02x fixes this.
     printf("%02x\n", (unsigned char) *(str + i));
   } */ 
-  int *ints = printBits(str);
-  for(int i = 31; i >= 0; i--) {
+/*  for(int i = 31; i >= 0; i--) {
     printf("%d",*(ints+i));
   }
-  printf("\n");
+  printf("\n");*/
+  int *ints = printBits(str);
+  free(str);
+  decode(ints);
   fclose(fptr);
   return EXIT_SUCCESS;
 }
