@@ -5,9 +5,9 @@
 
 int pc = 0;
 
-char* fetchInstruction(char littleEndianBuffer[]) {
-  char* instruction;
-  instruction = (char*) malloc(INSTRUCTION_BYTE_SIZE * sizeof(char));
+char * fetchInstruction(unsigned char littleEndianBuffer[]) {
+  char* instruction = (char*) malloc(INSTRUCTION_BYTE_SIZE * sizeof(char));
+  //static char* instruction;
   for (int i = pc; i < pc + INSTRUCTION_BYTE_SIZE; i++) {
     instruction[INSTRUCTION_BYTE_SIZE - (i - pc + 1)] = littleEndianBuffer[i];
   }  
@@ -36,10 +36,11 @@ int main(int argc, char **argv) {
   rewind(fptr);           // rewind resets the file pointer to the start pos
   unsigned char littleEndianBuffer[file_size];
   fread(littleEndianBuffer, sizeof(littleEndianBuffer), 1, fptr);
-/*  for (int i = 0; i < sizeof(littleEndianBuffer); i++) {
+  char* str = fetchInstruction(littleEndianBuffer);
+/*  for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++) {
     // printf omits leading zeroes by default. 02 in %02x fixes this.
-    printf("%02x", littleEndianBuffer[i]);
-  } */
+    printf("%02x\n", (unsigned char) *(str + i));
+  } */ 
   
   fclose(fptr);
   return EXIT_SUCCESS;
