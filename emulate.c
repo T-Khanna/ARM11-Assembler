@@ -4,16 +4,18 @@
 #include "ARMgen.h"
 #define INSTRUCTION_BYTE_SIZE 4
 
-int32_t pc = 0;
-int32_t** registers = NULL;
+//int32_t currState->PC = 0;
+//int32_t** registers = NULL;
+
+CurrentState *currState;
 
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 int8_t* instruction = (int8_t*) malloc(INSTRUCTION_BYTE_SIZE * sizeof(int8_t));
   //static int32_t8_t* instruction;
-  for (int32_t i = pc; i < pc + INSTRUCTION_BYTE_SIZE; i++) {
-    instruction[INSTRUCTION_BYTE_SIZE - (i - pc + 1)] = littleEndianBuffer[i];
+  for (int i = currState->PC; i < currState->PC + INSTRUCTION_BYTE_SIZE; i++) {
+    instruction[INSTRUCTION_BYTE_SIZE - (i - currState->PC + 1)] = littleEndianBuffer[i];
   }  
-  pc += 4;
+  currState->PC += 4;
   return instruction;
   // Need to 'free' memory occupied by instruction
 }
@@ -67,13 +69,13 @@ void multiply(int32_t * inst) {
     rsarr[i] = inst[11 - i];
     rnarr[i] = inst[15 - i];
   } 
-  int32_t rd = convBinToDec(registers[convBinToDec(rdarr, 4)],32);  //calculate value of rd
-  int32_t rm = convBinToDec(registers[convBinToDec(rmarr, 4)],32);  //calculate value of rm
-  int32_t rs = convBinToDec(registers[convBinToDec(rsarr, 4)],32);  //calculate value of rs
+  int32_t rd = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);  //calculate value of rd
+  int32_t rm = convBinToDec(*(currState->registers+convBinToDec(rmarr, 4)),32);  //calculate value of rm
+  int32_t rs = convBinToDec(*(currState->registers+convBinToDec(rsarr, 4)),32);  //calculate value of rs
   
   // Checking and adding Rn
   if(inst[21] == 1) {
-    int32_t rn = convBinToDec(registers[convBinToDec(rnarr, 4)],32);  //calculate value of rn
+    int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);  //calculate value of rn
     rd = rm * rs + rn;
     //Add Rn
   } else {
@@ -82,27 +84,48 @@ void multiply(int32_t * inst) {
   }
 
   // saving result in register 
-  registers[convBinToDec(rdarr, 4)] = convDecToBin(rd,32);
+  *(currState->registers+convBinToDec(rdarr, 4)) = convDecToBin(rd,32);
   
   // updatng CPRS register
   if(inst[20] == 1){
     if(rd < 0){
-      registers[16][31] = 1;
-      registers[16][30] = 0;
-      registers[16][29] = 0;
-      registers[16][28] = 0;
+      currState->CPRS[31] = 1;
+      currState->CPRS[30] = 0;
+      currState->CPRS[29] = 0;
+      currState->CPRS[28] = 0;
     } else if(rd ==0){
-      registers[16][31] = 0;
-      registers[16][30] = 1;
-      registers[16][29] = 0;
-      registers[16][28] = 0;
+      currState->CPRS[31] = 0;
+      currState->CPRS[30] = 1;
+      currState->CPRS[29] = 0;
+      currState->CPRS[28] = 0;
     }
   }
 }
 
 void datatransfer(int32_t * inst) {
+  int32_t i = *(inst + 25);
+  int32_t P = *(inst + 24);
+  int32_t u = *(inst + 23);
+  int32_t l = *(inst + 20);
+  int32_t rdarr[4], rnarr[4], offset[12];
+  
+ 
+  for (int i = 0; i < 4; i++) {
+    rdarr[i] = inst[15 - i];
+    rnarr[i] = inst[19 - i];
+  } 
+  
+  for (int i = 0; i < 12; i++) {
+    offset[i] = inst[11 - i];
+  }
+   
+  
 
 }
+
+int32_t immediate_reg(int32_t *array){}
+
+int32_t shifted_reg(int32_t *array){}
 
 void branch(int32_t * inst) {
   
@@ -115,19 +138,21 @@ void decode(int32_t * inst) {
     cond = cond * 2 + inst[i];
   }
   switch(cond) {
-    case 0:  goahead = (registers[16][30] == 1); break; 
-    case 1:  goahead = (registers[16][30] == 0); break;
-    case 10: goahead = (registers[16][31] == registers[16][28]); break;
-    case 11: goahead = (registers[16][31] != registers[16][28]); break;
-    case 12: goahead = (registers[16][30] == 0) && 
-                       (registers[16][31] == registers[16][28]); break;
-    case 13: goahead = (registers[16][30] == 1) || 
-                       (registers[16][31] != registers[16][28]); break;
+    case 0:  goahead = (currState->CPRS[30] == 1); break; 
+    case 1:  goahead = (currState->CPRS[30] == 0); break;
+    case 10: goahead = (currState->CPRS[31] == currState->CPRS[28]); break;
+    case 11: goahead = (currState->CPRS[31] != currState->CPRS[28]); break;
+    case 12: goahead = (currState->CPRS[30] == 0) && 
+                       (currState->CPRS[31] == currState->CPRS[28]); break;
+    case 13: goahead = (currState->CPRS[30] == 1) || 
+                       (currState->CPRS[31] != currState->CPRS[28]); break;
     case 14: goahead = 1; break;
     default: perror("Invalid flags\n"); return;
   }
 
   if(!goahead) {return;}
+
+  currState->pipeline->decoded = inst;
 
   // subfunction distributor
   int32_t bit1 = *(inst + 27), bit2 = *(inst + 26);  
@@ -154,24 +179,27 @@ void decode(int32_t * inst) {
   }
 }
 
-int32_t ** regInit(){
-  int32_t** registers = (int32_t **) malloc(17 * sizeof(int32_t*));
-  
-  for(int i=0; i < 17; i++){
-    registers[i] = (int32_t *) malloc(32 * sizeof(int32_t));
+//initialize all registers
+void regInit(){
+  for(int i=0; i < GEN_PURPOSE_REG; i++){
+    *(currState->registers + i) = (int32_t *) malloc(32 * sizeof(int32_t));
     for(int j = 0; j < 32; j++){
-      registers[i][j] = 0;
+      *(currState->registers + i)[j] = 0;
     }
   }
-  return registers; 
-  //free memory
+  currState->PC = 0;
+  currState->CPRS = (int32_t *) malloc(32 * sizeof(int32_t));
+  for(int i = 0; i < 32; i++){
+    *(currState->CPRS + i) = 0;
+  }
 }  
 
-void freeRegs(int32_t **registers){
-  for(int32_t i = 0; i < 17; i++){
-    free(registers[i]);
+//free memory
+void freeRegs(){
+  for(int i = 0; i < 13; i++){
+    free(*(currState->registers + i));
   }
-  free(registers);
+  free(currState->CPRS);
 }
 
 int32_t main(int32_t argc, char **argv) {
@@ -183,7 +211,7 @@ int32_t main(int32_t argc, char **argv) {
   }
  
   // initialize registers
-  registers = regInit();
+  regInit();
 
   // open file
   FILE *fptr = fopen(argv[1], "rb");
@@ -203,8 +231,8 @@ int32_t main(int32_t argc, char **argv) {
 
   // --- loop begin ----
 
-  // fetch the instruction and store in str
-  int8_t* str = fetchInstruction(littleEndianBuffer);
+  // fetch the instruction and store in byte
+  int8_t* byte = fetchInstruction(littleEndianBuffer);
 
 
 /*  for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++) {
@@ -217,13 +245,13 @@ int32_t main(int32_t argc, char **argv) {
   printf("\n");*/
 
 
-  int32_t *ints = instrToBits(str);    
-  free(str);                     // free instruction memory
-  decode(ints);    
+  currState->pipeline->fetched = instrToBits(byte);    
+  free(byte);                     // free instruction memory
+  decode(currState->pipeline->fetched);    
 
 
   // ---- loop end ----
   fclose(fptr);                  // close file
-  freeRegs(registers);           // free memory
+  freeRegs();                    // free memory
   return EXIT_SUCCESS;
 }
