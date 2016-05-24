@@ -89,11 +89,12 @@ void multiply(int32_t * inst) {
 
 int32_t * getImmVal(int32_t * inst) {
   static int32_t *value;
-  int32_t *rot_num;
-
+  static int32_t *rot_num_arry;
+  int rot_num = 0;
 
   for(int i = 0; i < 32; i++) {
     *(value + i) = 0;
+    *(rot_num_arry + i) = 0;
   } 
 
   for(int i = 0; i < 8; i++) {
@@ -101,9 +102,12 @@ int32_t * getImmVal(int32_t * inst) {
   } 
 
   for(int i = 8; i < 12; i++) {
-
-    *(value + i) = *(inst + i);
+    *(rot_num_arry + (i - 8)) = *(inst + i);
   } 
+
+  rot_num = convBinToDec(rot_num_arry, 4);
+
+  rotate_right(value, sizeof(value), rot_num);
 
   return value;
 }
