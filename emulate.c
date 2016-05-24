@@ -104,8 +104,34 @@ void multiply(int32_t * inst) {
   }
 }
 
+
+void * rotate_right(int32_t * array, int size) {
+  int temp;
+  temp = *(array + size - 1);
+  for (int i = size - 1; i > 0; i--) {
+    *(array + i) = *(array + i - 1);
+  }
+  *(array + 0) = temp;
+  return 0;
+}
+
 int32_t * getImmVal(int32_t * inst) {
-  
+  static int32_t *value;
+
+
+  for(int i = 0; i < 32; i++) {
+    *(value + i) = 0;
+  } 
+
+  for(int i = 0; i < 8; i++) {
+    *(value + i) = *(inst + i);
+  } 
+
+  for(int i = 0; i < 8; i++) {
+    *(value + i) = *(inst + i);
+  } 
+
+  return value;
 }
 
 int32_t * getRegVal(int32_t * inst) {
