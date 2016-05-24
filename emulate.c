@@ -104,7 +104,7 @@ void multiply(int32_t * inst) {
 
 void datatransfer(int32_t * inst) {
   int32_t i = *(inst + 25);
-  int32_t P = *(inst + 24);
+  int32_t p = *(inst + 24);
   int32_t u = *(inst + 23);
   int32_t l = *(inst + 20);
   int32_t rdarr[4], rnarr[4], offset[12];
@@ -119,13 +119,13 @@ void datatransfer(int32_t * inst) {
     offset[i] = inst[11 - i];
   }
    
-  
+  i = p + u + l;
 
 }
 
-int32_t immediate_reg(int32_t *array){}
+//int32_t immediate_reg(int32_t *array){}
 
-int32_t shifted_reg(int32_t *array){}
+//int32_t shifted_reg(int32_t *array){}
 
 void branch(int32_t * inst) {
   
