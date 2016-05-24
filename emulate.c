@@ -87,16 +87,6 @@ void multiply(int32_t * inst) {
 }
 
 
-void * rotate_right(int32_t * array, int size) {
-  int temp;
-  temp = *(array + size - 1);
-  for (int i = size - 1; i > 0; i--) {
-    *(array + i) = *(array + i - 1);
-  }
-  *(array + 0) = temp;
-  return 0;
-}
-
 int32_t * getImmVal(int32_t * inst) {
   static int32_t *value;
 

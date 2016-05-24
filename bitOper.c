@@ -19,3 +19,13 @@ int32_t* convDecToBin(int32_t num, int32_t size){
   return result;
 }
 
+void * rotate_right(int32_t * array, int size) {
+  int temp;
+  temp = *(array + size - 1);
+  for (int i = size - 1; i > 0; i--) {
+    *(array + i) = *(array + i - 1);
+  }
+  *(array + 0) = temp;
+  return 0;
+}
+
