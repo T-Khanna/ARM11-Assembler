@@ -89,6 +89,7 @@ void multiply(int32_t * inst) {
 
 int32_t * getImmVal(int32_t * inst) {
   static int32_t *value;
+  int32_t *rot_num;
 
 
   for(int i = 0; i < 32; i++) {
@@ -99,7 +100,8 @@ int32_t * getImmVal(int32_t * inst) {
     *(value + i) = *(inst + i);
   } 
 
-  for(int i = 0; i < 8; i++) {
+  for(int i = 8; i < 12; i++) {
+
     *(value + i) = *(inst + i);
   } 
 
