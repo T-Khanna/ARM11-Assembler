@@ -4,13 +4,20 @@
 #include "ARMgen.h"
 #define INSTRUCTION_BYTE_SIZE 4
 
-//int32_t currState->PC = 0;
-//int32_t** registers = NULL;
 
 CurrentState *currState;
 
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
-int8_t* instruction = (int8_t*) malloc(INSTRUCTION_BYTE_SIZE * sizeof(int8_t));
+
+   int8_t* instruction = (int8_t*) calloc(INSTRUCTION_BYTE_SIZE, sizeof(int8_t));
+
+   //checking for instruction memory
+   if (instruction == NULL) {
+      perror("coudn't initialize instructions");
+      exit(EXIT_FAILURE);
+   }
+
+
   //static int32_t8_t* instruction;
   for (int i = currState->PC; i < currState->PC + INSTRUCTION_BYTE_SIZE; i++) {
     instruction[INSTRUCTION_BYTE_SIZE - (i - currState->PC + 1)] = littleEndianBuffer[i];
@@ -22,7 +29,7 @@ int8_t* instruction = (int8_t*) malloc(INSTRUCTION_BYTE_SIZE * sizeof(int8_t));
 
 int32_t* instrToBits(int8_t instruction[]) {
 // retrun int32_t array in binary form from instruction int32_t8_t array
-  int8_t mask = 1 << 7;
+  uint8_t mask = 1 << 7;
   static int32_t bininstruction[INSTRUCTION_BYTE_SIZE * 8];
   for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++) {
     int8_t byte = instruction[i];
@@ -91,7 +98,7 @@ void multiply(int32_t * inst) {
     if(rd < 0){
       currState->CPRS[31] = 1;
       currState->CPRS[30] = 0;
-      currState->CPRS[29] = 0;
+      currState->CPRS[29] = 0;          // recheck the CPRS for this........
       currState->CPRS[28] = 0;
     } else if(rd ==0){
       currState->CPRS[31] = 0;
@@ -101,7 +108,9 @@ void multiply(int32_t * inst) {
     }
   }
 }
+void datatransfer(int32_t * inst) {}
 
+/*
 void datatransfer(int32_t * inst) {
   int32_t i = *(inst + 25);
   int32_t p = *(inst + 24);
@@ -118,17 +127,19 @@ void datatransfer(int32_t * inst) {
   for (int i = 0; i < 12; i++) {
     offset[i] = inst[11 - i];
   }
-   
-  i = p + u + l;
 
 }
 
-//int32_t immediate_reg(int32_t *array){}
 
-//int32_t shifted_reg(int32_t *array){}
+
+int32_t immediate_reg(int32_t *array){}
+
+int32_t shifted_reg(int32_t *array){}
+
+*/
+
 
 void branch(int32_t * inst) {
-  
 }
 
 void decode(int32_t * inst) {
@@ -182,15 +193,21 @@ void decode(int32_t * inst) {
 //initialize all registers
 void regInit(){
   for(int i=0; i < GEN_PURPOSE_REG; i++){
-    *(currState->registers + i) = (int32_t *) malloc(32 * sizeof(int32_t));
-    for(int j = 0; j < 32; j++){
-      *(currState->registers + i)[j] = 0;
-    }
+    *(currState->registers + i) = (int32_t *) calloc(32, sizeof(int32_t));
   }
+   
+  if (currState->registers == NULL) {
+    perror("coudn't initialize registers");
+    exit(EXIT_FAILURE);
+  } 
+
+
   currState->PC = 0;
-  currState->CPRS = (int32_t *) malloc(32 * sizeof(int32_t));
-  for(int i = 0; i < 32; i++){
-    *(currState->CPRS + i) = 0;
+  currState->CPRS = (int32_t *) calloc(32, sizeof(int32_t));
+
+  if (currState->registers == NULL) {
+    perror("coudn't initialize registers");	 
+    exit(EXIT_FAILURE);
   }
 }  
 
@@ -246,7 +263,8 @@ int32_t main(int32_t argc, char **argv) {
 
 
   currState->pipeline->fetched = instrToBits(byte);    
-  free(byte);                     // free instruction memory
+  if (byte != NULL){
+  free(byte);}                     // free instruction memory
   decode(currState->pipeline->fetched);    
 
 
