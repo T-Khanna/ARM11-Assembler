@@ -131,16 +131,11 @@ int32_t * get_operand2(int32_t * inst) {
 
 
 void single_data_transfer(int32_t * inst) {
-
-}
-
-/*
-void single_data_transfer(int32_t * inst) {
-  int32_t i = *(inst + 25);
-  int32_t p = *(inst + 24);
+  int32_t i = *(inst + 25); // Determines of offset is a reg / constant
+  int32_t p = *(inst + 24); // 
   int32_t u = *(inst + 23);
   int32_t l = *(inst + 20);
-  int32_t rdarr[4], rnarr[4], offset[12];
+  int32_t rdarr[4], rnarr[4];
   
  
   for (int i = 0; i < 4; i++) {
@@ -148,14 +143,40 @@ void single_data_transfer(int32_t * inst) {
     rnarr[i] = inst[19 - i];
   } 
   
-  for (int i = 0; i < 12; i++) {
-    offset[i] = inst[11 - i];
+  //if Rm != Rd
+
+  int32_t *offset;
+  if(*(inst + 25) == 0) {
+    offset = getImmVal(inst);
+  } else {
+    offset = getRegVal(inst);
   }
-
+  int32_t offsetVal = convBinToDec(offset, 32);
+  
+  int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);
+  
+  if(l == 1) {
+    if(p == 1) {
+      *(currState->registers+convBinToDec(rdarr, 4)) 
+        = convDecToBin(*(currState->memory + rn), 8);
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+    } else {
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+      *(currState->registers+convBinToDec(rdarr, 4)) 
+        = convDecToBin(*(currState->memory + rn), 8);
+    }
+  } else {
+    if(p == 1) {
+      *(currState->memory + rn) 
+        = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+    } else {
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+      *(currState->memory + rn) 
+        = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);
+    }
+  }
 }
-
-*/
-
 
 void branch(int32_t * inst) {
   static int32_t * offset;
