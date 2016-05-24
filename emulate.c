@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMgen.h"
-#define INSTRUCTION_BYTE_SIZE 4
 
 
 CurrentState *currState;
@@ -98,13 +97,9 @@ void multiply(int32_t * inst) {
     if(rd < 0){
       currState->CPRS[31] = 1;
       currState->CPRS[30] = 0;
-      currState->CPRS[29] = 0;          // recheck the CPRS for this........
-      currState->CPRS[28] = 0;
-    } else if(rd ==0){
+    } else if(rd == 0){
       currState->CPRS[31] = 0;
       currState->CPRS[30] = 1;
-      currState->CPRS[29] = 0;
-      currState->CPRS[28] = 0;
     }
   }
 }

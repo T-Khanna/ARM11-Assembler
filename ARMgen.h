@@ -8,6 +8,7 @@
 #define MEMORY_CAPACITY 65536
 #define TOTAL_REGISTERS 17
 #define GEN_PURPOSE_REG 13
+#define INSTRUCTION_BYTE_SIZE 4
 
 // ------ PIPELINE --------------------------                                   
 
