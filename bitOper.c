@@ -51,3 +51,14 @@ int32_t * shift_right(int32_t * array, int size, int rot_num) {
   return array;
 }
 
+int32_t * arith_shift_right(int32_t * array, int size, int rot_num) {
+  for (int n = 0; n < rot_num; n++) {
+    for (int i = size - 3; i >= 0; i--) {
+      *(array + i) = *(array + i + 1);
+    }
+    *(array + size - 2) = 0;
+  }
+  return array;
+}
+
+
