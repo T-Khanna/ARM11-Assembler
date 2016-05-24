@@ -5,7 +5,7 @@
 #include "bitOper.h"
 
 
-CurrentState *currState;
+CurrentState *currState = NULL;
 
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 
@@ -153,8 +153,8 @@ void single_data_transfer(int32_t * inst) {
   }
 
 }
-
 */
+
 
 
 void branch(int32_t * inst) {
@@ -210,22 +210,28 @@ void decode(int32_t * inst) {
 
 //initialize all registers
 void regInit(){
-  for(int i=0; i < GEN_PURPOSE_REG; i++){
-    *(currState->registers + i) = (int32_t *) calloc(32, sizeof(int32_t));
+
+  currState = calloc(1,sizeof(CurrentState));
+  currState->pipeline = calloc(1,sizeof(Pipeline));
   
-   if (*(currState->registers+i) == NULL) {
-    perror("coudn't initialize registers");
-    exit(EXIT_FAILURE);
+
+  for(int i=0; i < 1; i++){  
+    *(currState->registers + i) = (int32_t *)calloc(32 , sizeof(int32_t));
+
+    if (*(currState->registers+i) == NULL) {
+      perror("coudn't initialize registers");
+      exit(EXIT_FAILURE);
+    } 
   } 
-}
 
   currState->PC = 0;
-  currState->CPRS = (int32_t *) calloc(32, sizeof(int32_t));
+  currState->CPRS = (int32_t *) malloc(32 * sizeof(int32_t));
 
   if (currState->CPRS == NULL) {
     perror("coudn't initialize registers");	 
     exit(EXIT_FAILURE);
   }
+
 }  
 
 //free memory
@@ -234,6 +240,8 @@ void freeRegs(){
     free(*(currState->registers + i));
   }
   free(currState->CPRS);
+  free(currState->pipeline);
+  free(currState);
 }
 
 int32_t main(int32_t argc, char **argv) {
@@ -268,17 +276,6 @@ int32_t main(int32_t argc, char **argv) {
   // fetch the instruction and store in byte
   int8_t* byte = fetchInstruction(littleEndianBuffer);
 
-
-/*  for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++) {
-    // printf omits leading zeroes by default. 02 in %02x fixes this.
-    printf("%02x\n", (unsigned int8_t) *(str + i));
-  } */ 
-/*  for(inti = 31; i >= 0; i--) {
-    printf("%d",*(ints+i));
-  }
-  printf("\n");*/
-
-
   currState->pipeline->fetched = instrToBits(byte);    
   if (byte != NULL){
   free(byte);}                     // free instruction memory
@@ -287,6 +284,8 @@ int32_t main(int32_t argc, char **argv) {
 
   // ---- loop end ----
   fclose(fptr);                  // close file
+
   freeRegs();                    // free memory
+
   return EXIT_SUCCESS;
 }
