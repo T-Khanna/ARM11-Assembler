@@ -89,11 +89,12 @@ void multiply(int32_t * inst) {
 
 int32_t * getImmVal(int32_t * inst) {
   static int32_t *value;
-  int32_t *rot_num_arry;
-  int rot_num;
+  static int32_t *rot_num_arry;
+  int rot_num = 0;
 
   for(int i = 0; i < 32; i++) {
     *(value + i) = 0;
+    *(rot_num_arry + i) = 0;
   } 
 
   for(int i = 0; i < 8; i++) {
@@ -157,6 +158,13 @@ void single_data_transfer(int32_t * inst) {
 
 
 void branch(int32_t * inst) {
+  int32_t offset;
+  
+  //Shift left by 2
+  //Signed extended to 32 bits
+  //Add offset to PC 
+  //(Keep the pipeline in mind though - PC is 8 bytes ahead of instr)
+
 }
 
 void decode(int32_t * inst) {
