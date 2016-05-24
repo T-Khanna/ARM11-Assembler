@@ -17,13 +17,14 @@ char * fetchInstruction(unsigned char littleEndianBuffer[]) {
   // Need to 'free' memory occupied by instruction
 }
 
-int * printBits(char instruction[]) {
+int* instrToBits(char instruction[]) {
+// retrun int array in binary form from instruction char array
   unsigned char mask = 1 << 7;
   static int bininstruction[INSTRUCTION_BYTE_SIZE * 8];
   for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++) {
     char byte = instruction[i];
     for (int j = 0; j < 8; j++) {
-//      printf(((mask & byte) == 0) ? "0" : "1");
+// printf(((mask & byte) == 0) ? "0" : "1");
       bininstruction[31 - (i * 8 + j)] = ((mask & byte) == 0) ? 0 : 1;
       byte <<= 1;
     }
@@ -36,9 +37,20 @@ void dataprocessing(int * inst) {
 }
 
 int convBinToDec(int bin[], int size) {
+// converts binary array to int
   static int result = 0;
   for (int i = 0; i < size; i++) {
     result = result * 2 + bin[i];
+  }
+  return result;
+}
+
+int* convDecToBin(int num, int size){ 
+// convert int to binary array
+  static int* result = NULL;
+  for (int i =0; i < size; i++){
+    result[size - i] = (num % 2);
+    num = num / 2; 
   }
   return result;
 }
@@ -54,16 +66,37 @@ void multiply(int * inst) {
     rsarr[i] = inst[11 - i];
     rnarr[i] = inst[15 - i];
   } 
-  int rd = convBinToDec(rdarr, 4);
-  int rm = convBinToDec(rmarr, 4);
-  int rs = convBinToDec(rsarr, 4);
+  int rd = convBinToDec(registers[convBinToDec(rdarr, 4)],32);  //calculate value of rd
+  int rm = convBinToDec(registers[convBinToDec(rmarr, 4)],32);  //calculate value of rm
+  int rs = convBinToDec(registers[convBinToDec(rsarr, 4)],32);  //calculate value of rs
   
+  // Checking and adding Rn
   if(inst[21] == 1) {
-  int rn = convBinToDec(rnarr, 4);
+    int rn = convBinToDec(registers[convBinToDec(rnarr, 4)],32);  //calculate value of rn
+    rd = rm * rs + rn;
     //Add Rn
+  } else {
+    rd = rm * rs;
+    // Not adding Rn
   }
+
+  // saving result in register 
+  registers[convBinToDec(rdarr, 4)] = convDecToBin(rd,32);
   
-  //Make sure you set the flags here depending on S
+  // updatng CPRS register
+  if(inst[20] == 1){
+    if(rd < 0){
+      registers[16][31] = 1;
+      registers[16][30] = 0;
+      registers[16][29] = 0;
+      registers[16][28] = 0;
+    } else if(rd ==0){
+      registers[16][31] = 0;
+      registers[16][30] = 1;
+      registers[16][29] = 0;
+      registers[16][28] = 0;
+    }
+  }
 }
 
 void datatransfer(int * inst) {
@@ -142,15 +175,19 @@ void freeRegs(int **registers){
 
 int main(int argc, char **argv) {
 
+  // checking arguments
   if (argc != 2) {
     printf("Expecting one argument\n");
     return EXIT_FAILURE;
   }
+ 
+  // initialize registers
+  registers = regInit();
 
-  int **registers = regInit();
-
+  // open file
   FILE *fptr = fopen(argv[1], "rb");
-
+ 
+  // pass error if unvalid file
   if (!fptr) {
     printf("Unable to open file\n");
     return EXIT_FAILURE;
@@ -159,9 +196,16 @@ int main(int argc, char **argv) {
   fseek(fptr, 0, SEEK_END);     // setting file pointer to last place
   int file_size = ftell(fptr);  // ftell returns the pos of the file pointer
   rewind(fptr);           // rewind resets the file pointer to the start pos
-  unsigned char littleEndianBuffer[file_size];
-  fread(littleEndianBuffer, sizeof(littleEndianBuffer), 1, fptr);
+
+  unsigned char littleEndianBuffer[file_size]; // store instruction
+  fread(littleEndianBuffer, sizeof(littleEndianBuffer), 1, fptr);  
+
+  // --- loop begin ----
+
+  // fetch the instruction and store in str
   char* str = fetchInstruction(littleEndianBuffer);
+
+
 /*  for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++) {
     // printf omits leading zeroes by default. 02 in %02x fixes this.
     printf("%02x\n", (unsigned char) *(str + i));
@@ -170,10 +214,15 @@ int main(int argc, char **argv) {
     printf("%d",*(ints+i));
   }
   printf("\n");*/
-  int *ints = printBits(str);
-  free(str);
-  decode(ints);
-  fclose(fptr);
-  freeRegs(registers);
+
+
+  int *ints = instrToBits(str);    
+  free(str);                     // free instruction memory
+  decode(ints);    
+
+
+  // ---- loop end ----
+  fclose(fptr);                  // close file
+  freeRegs(registers);           // free memory
   return EXIT_SUCCESS;
 }
