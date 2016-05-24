@@ -108,6 +108,7 @@ int32_t * getImmVal(int32_t * inst) {
 
 int32_t * getRegVal(int32_t * inst) {
   
+  return NULL;
 }
 
 int32_t * get_operand2(int32_t * inst) {
