@@ -19,7 +19,7 @@ int32_t* convDecToBin(int32_t num, int32_t size){
   return result;
 }
 
-void * rotate_right(int32_t * array, int size, int rot_num) {
+int32_t * rotate_right(int32_t * array, int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
     int temp;
     temp = *(array + size - 1);
@@ -28,6 +28,26 @@ void * rotate_right(int32_t * array, int size, int rot_num) {
     }
     *(array + 0) = temp;
   }
-  return 0;
+  return array;
+}
+
+int32_t * shift_left(int32_t * array, int size, int rot_num) {
+  for (int n = 0; n < rot_num; n++) {
+    for (int i = size - 2; i > 0; i--) {
+      *(array + i) = *(array + i + 1);
+    }
+    *(array) = 0;
+  }
+  return array; 
+}
+
+int32_t * shift_right(int32_t * array, int size, int rot_num) {
+  for (int n = 0; n < rot_num; n++) {
+    for (int i = size - 2; i >= 0; i--) {
+      *(array + i) = *(array + i + 1);
+    }
+    *(array + size - 1) = 0;
+  }
+  return array;
 }
 
