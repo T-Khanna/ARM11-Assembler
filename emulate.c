@@ -158,6 +158,13 @@ void single_data_transfer(int32_t * inst) {
 
 
 void branch(int32_t * inst) {
+  int32_t offset;
+  
+  //Shift left by 2
+  //Signed extended to 32 bits
+  //Add offset to PC 
+  //(Keep the pipeline in mind though - PC is 8 bytes ahead of instr)
+
 }
 
 void decode(int32_t * inst) {
