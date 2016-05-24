@@ -181,6 +181,8 @@ void branch(int32_t * inst) {
 
   //Add offset to PC 
   currState->PC += convBinToDec(offset, 32) - 8;
+  currState->pipeline->fetched = NULL;
+  currState->pipeline->decoded = NULL;
   //Keeping the pipeline in mind, PC is 8 bytes ahead of instr)
 }
 
