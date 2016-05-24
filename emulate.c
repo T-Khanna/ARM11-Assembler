@@ -158,13 +158,30 @@ void single_data_transfer(int32_t * inst) {
 
 
 void branch(int32_t * inst) {
-  int32_t offset;
-  
-  //Shift left by 2
-  //Signed extended to 32 bits
-  //Add offset to PC 
-  //(Keep the pipeline in mind though - PC is 8 bytes ahead of instr)
+  static int32_t * offset;
+  int offset_temp[24];
 
+  for(int i = 0; i < 24; i++) {
+    *(offset_temp + i) = *(inst + i);
+  }
+
+  //Shift left by 2
+  shift_left(offset_temp, sizeof(offset_temp), 2);
+
+  //Signed extended to 32 bits
+  int sign = offset_temp[23];
+
+  for(int i = 0; i < 32; i++) {
+    if(i < 23) {
+      *(offset + i) = offset_temp[i];
+    } else {
+      *(offset + i) = sign;
+    }
+  }
+
+  //Add offset to PC 
+  currState->PC += convBinToDec(offset, 32) - 8;
+  //Keeping the pipeline in mind, PC is 8 bytes ahead of instr)
 }
 
 void decode(int32_t * inst) {
