@@ -189,18 +189,17 @@ void decode(int32_t * inst) {
 void regInit(){
   for(int i=0; i < GEN_PURPOSE_REG; i++){
     *(currState->registers + i) = (int32_t *) calloc(32, sizeof(int32_t));
-  }
-   
-  if (currState->registers == NULL) {
+  
+   if (*(currState->registers+i) == NULL) {
     perror("coudn't initialize registers");
     exit(EXIT_FAILURE);
   } 
-
+}
 
   currState->PC = 0;
   currState->CPRS = (int32_t *) calloc(32, sizeof(int32_t));
 
-  if (currState->registers == NULL) {
+  if (currState->CPRS == NULL) {
     perror("coudn't initialize registers");	 
     exit(EXIT_FAILURE);
   }
