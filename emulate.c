@@ -83,7 +83,6 @@ int32_t * selectShift(int32_t * reg, int sbit1, int sbit2, int sft_num) {
   } else if (sbit1 == 1 && sbit2 == 1) {
     value = rotate_right(reg, 32, sft_num);
   }
-
   return value;
 }
 
@@ -92,10 +91,12 @@ int32_t * getRegVal(int32_t * inst) {
   int32_t sbit1 = *(inst + 6), sbit2 = *(inst + 5);
   
   // Value at Rm
-  static int32_t *value;
+  int32_t *value;
+  int32_t reg[4];
   for (int i = 3; i >= 0; i--) {
-    *(value + (3 - i)) = *(inst + i);
+    reg[3-i] = *(inst + i);
   }
+  value = *(currState->registers + convBinToDec(reg,4));
   
   // Using 5-bit integer
   if (*(inst + 4) == 0) {
@@ -163,10 +164,6 @@ void dataprocessing(int32_t * inst) {
  rd = *(currState->registers+convBinToDec(rdarr, 4));
  opcode =convBinToDec(opcodearr, 4);  
  
-// for(int i = 0; i < 4; i++){
-//   printf("%i",opcodearr[i]);
-// }
-// printf("\n%i\n",opcode);
  // Checking what the operation is, then executing it, and setting flags
  switch(opcode) {
   // Bitwise AND 
@@ -421,7 +418,7 @@ void decode(int32_t * inst) {
 
   if(!goahead) {return;}
 
-  currState->pipeline->decoded = inst;
+  currState->pipeline->decoded = inst;   
 
   // subfunction distributor
   int32_t bit1 = *(inst + 27), bit2 = *(inst + 26);  
