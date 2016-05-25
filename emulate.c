@@ -387,7 +387,7 @@ void branch(int32_t * inst) {
   }
 
   //Add offset to PC 
-  currState->PC += convBinToDec(offset, 32) - 8;
+  currState->PC += convBinToDec(offset, 32) - 4;
   currState->pipeline->fetched = NULL;
   currState->pipeline->decoded = NULL;
   //Keeping the pipeline in mind, PC is 8 bytes ahead of instr)
@@ -535,6 +535,7 @@ int32_t main(int32_t argc, char **argv) {
     currState->pipeline->fetched = instrToBits(byte);
     if (allZeroes(currState->pipeline->fetched) == 1) {
       free(byte);
+      currState->PC += 4;
       break;
     }
     if (byte != NULL) {
@@ -559,10 +560,10 @@ int32_t main(int32_t argc, char **argv) {
   printf("Non-zero memory:\n");
 
   for (int i = 0; i < MEMORY_CAPACITY; i+=4) {
-    int8_t* membyte = currState->memory + i;
+    int8_t *membyte = currState->memory + i;
     if (!(*membyte == 0)){
-      printf("0x%08x: ",i);
-      printf("0x%02x%02x%02x%02x\n",(*membyte),(*(membyte+1)),(*(membyte+2)),(*membyte+3));
+      printf("0x%08x: ", i);
+      printf("0x%02hhx%02hhx%02hhx%02hhx\n",(*membyte),(*(membyte+1)),(*(membyte+2)),*(membyte+3));
     } 
   }
   
