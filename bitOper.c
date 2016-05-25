@@ -62,3 +62,23 @@ int32_t * arith_shift_right(int32_t * array, int size, int rot_num) {
 }
 
 
+int32_t * binary_sub(int32_t * arr1, int32_ arr2, int size) {
+  int carry = 0;
+  static int32_t resArray;
+    for (int i = 0; i < size; i++) {
+      *(resArray + i) = *(arr1 + i) - *(arr2 + i) - carry;
+      if (*(resArray + i) < 0) {
+        *(resArray) += 2;
+        carry = 1;
+      } else{
+        carry = 2;
+      }
+    }
+  // set c
+  return resArray;
+}
+
+
+
+
+
