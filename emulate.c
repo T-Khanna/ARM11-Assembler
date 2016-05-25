@@ -249,7 +249,6 @@ void dataprocessing(int32_t * inst) {
             *(rd+i) = *(op2+i);
             rdVal[i] = *(op2+i);
           }
-          //printf("%d\n",convBinToDec(*(currState->registers + 1),32));
           break;
   default: perror("Invalid OpCode\n"); return;
 
@@ -272,9 +271,8 @@ void dataprocessing(int32_t * inst) {
  } else {
    currState->CPRS[30] = 0;
  }
-
  // Setting n:
- currState->CPRS[31] = *(rd + 31);
+ currState->CPRS[31] = *(rd + 0);
 
 }
 
