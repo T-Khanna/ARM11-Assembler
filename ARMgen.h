@@ -26,6 +26,7 @@ typedef struct CurrentState
     int32_t* registers[GEN_PURPOSE_REG];
     int PC;
     int32_t* CPRS;
+    int8_t memory[MEMORY_CAPACITY];
 } CurrentState;
 
 #endif

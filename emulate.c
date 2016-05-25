@@ -112,8 +112,58 @@ int32_t * getImmVal(int32_t * inst) {
   return value;
 }
 
+int32_t * selectShift(int32_t * reg, int sbit1, int sbit2, int sft_num) {
+  static int32_t *value = NULL;
+
+  if (sbit1 == 0 && sbit2 == 0) {
+    value = shift_left(reg, 32, sft_num);
+  } else if (sbit1 == 0 && sbit2 == 1) {
+    value = shift_right(reg, 32, sft_num);
+  } else if (sbit1 == 1 && sbit2 == 0) {
+    value = arith_shift_right(reg, 32, sft_num);
+  } else if (sbit1 == 1 && sbit2 == 1) {
+    value = rotate_right(reg, 32, sft_num);
+  }
+
+  return value;
+}
+
 int32_t * getRegVal(int32_t * inst) {
+  // Bits to select shifter type
+  int32_t sbit1 = *(inst + 6), sbit2 = *(inst + 5);
   
+  // Value at Rm
+  static int32_t *value;
+  for (int i = 3; i >= 0; i--) {
+    *(value + (3 - i)) = *(inst + i);
+  }
+  
+  // Using 5-bit integer
+  if (*(inst + 4) == 0) {
+    int32_t amount[5];
+    for (int i = 11; i >= 7; i--) {
+      amount[11 - i] = inst[i];
+    }   
+    return selectShift(value, sbit1, sbit2, convBinToDec(amount, 5));
+  }  
+  // Using register Rs
+  if (*(inst + 4) == 1) {
+    int32_t reg[4];
+    for (int i = 11; i >= 8; i--) {
+      reg[11 - i] = inst[i];
+    }
+    
+    // Pointer to content in Register Rs
+    int* regContent = *(currState->registers + convBinToDec(reg, 4));
+    
+    // Last byte of Rs register's content
+    int32_t amount[8];
+    for (int i = 7; i >= 0; i--) {
+      amount[7 - i] = *(regContent + i);
+    }
+    return selectShift(value, sbit1, sbit2, convBinToDec(amount, 8));
+  }
+
   return NULL;
 }
 
@@ -131,16 +181,11 @@ int32_t * get_operand2(int32_t * inst) {
 
 
 void single_data_transfer(int32_t * inst) {
-
-}
-
-/*
-void single_data_transfer(int32_t * inst) {
-  int32_t i = *(inst + 25);
-  int32_t p = *(inst + 24);
+//  int32_t i = *(inst + 25);
+  int32_t p = *(inst + 24); // 
   int32_t u = *(inst + 23);
   int32_t l = *(inst + 20);
-  int32_t rdarr[4], rnarr[4], offset[12];
+  int32_t rdarr[4], rnarr[4];
   
  
   for (int i = 0; i < 4; i++) {
@@ -148,23 +193,68 @@ void single_data_transfer(int32_t * inst) {
     rnarr[i] = inst[19 - i];
   } 
   
-  for (int i = 0; i < 12; i++) {
-    offset[i] = inst[11 - i];
+  //if Rm != Rd
+
+  int32_t *offset;
+  if(*(inst + 25) == 0) {
+    offset = getImmVal(inst);
+  } else {
+    offset = getRegVal(inst);
   }
-
+  int32_t offsetVal = convBinToDec(offset, 32);
+  
+  int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);
+  
+  if(l == 1) {
+    if(p == 1) {
+      *(currState->registers+convBinToDec(rdarr, 4)) 
+        = convDecToBin(*(currState->memory + rn), 8);
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+    } else {
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+      *(currState->registers+convBinToDec(rdarr, 4)) 
+        = convDecToBin(*(currState->memory + rn), 8);
+    }
+  } else {
+    if(p == 1) {
+      *(currState->memory + rn) 
+        = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+    } else {
+      (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
+      *(currState->memory + rn) 
+        = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);
+    }
+  }
 }
-*/
-
-
 
 void branch(int32_t * inst) {
-  int32_t offset;
-  
-  //Shift left by 2
-  //Signed extended to 32 bits
-  //Add offset to PC 
-  //(Keep the pipeline in mind though - PC is 8 bytes ahead of instr)
+  static int32_t * offset;
+  int offset_temp[24];
 
+  for(int i = 0; i < 24; i++) {
+    *(offset_temp + i) = *(inst + i);
+  }
+
+  //Shift left by 2
+  shift_left(offset_temp, sizeof(offset_temp), 2);
+
+  //Signed extended to 32 bits
+  int sign = offset_temp[23];
+
+  for(int i = 0; i < 32; i++) {
+    if(i < 23) {
+      *(offset + i) = offset_temp[i];
+    } else {
+      *(offset + i) = sign;
+    }
+  }
+
+  //Add offset to PC 
+  currState->PC += convBinToDec(offset, 32) - 8;
+  currState->pipeline->fetched = NULL;
+  currState->pipeline->decoded = NULL;
+  //Keeping the pipeline in mind, PC is 8 bytes ahead of instr)
 }
 
 void decode(int32_t * inst) {
