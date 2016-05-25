@@ -139,6 +139,7 @@ void dataprocessing(int32_t * inst) {
  int32_t * rn, * rd,  * op2;
  int32_t opcode;
  static int * rdVal;
+ int cflag;
 
  // Getting all nescessary components:
  //Getting operand2
@@ -183,19 +184,23 @@ void dataprocessing(int32_t * inst) {
           }
           break;
   // SUB
-  case  2: *(rdVal) = convBinToDec(rn, 32) - convBinToDec(op2, 32);
-          for (int i = 0; i < 32; i++) {
+  case  2: *(rdVal) = convDecToBin(convBinToDec(rn, 32) - convBinToDec(op2, 32), 32);
+           // C flag
+           //if (*(rdVal+32 = 1) ) {
+           //
+           //}
+           for (int i = 0; i < 32; i++) {
               *(rd + i) = *(rdVal +i);
           }
           break;
   // RSB        
-  case  3: *(rdVal) = convBinToDec(op2, 32) -  convBinToDec(rn, 32);
+  case  3: *(rdVal) = convDecToBin(convBinToDec(op2, 32) -  convBinToDec(rn, 32), 32);
           for (int i = 0; i < 32; i++) {
               *(rd + i) = *(rdVal +i);
           }
           break;
   // ADD
-  case  4:*(rdVal) = convBinToDec(op2, 32) +  convBinToDec(rn, 32);
+  case  4:*(rdVal) = ocnvDecToBin(convBinToDec(op2, 32) +  convBinToDec(rn, 32), 32);
           for (int i = 0; i < 32; i++) {
               *(rd + i) = *(rdVal +i);
           }
@@ -245,6 +250,25 @@ void dataprocessing(int32_t * inst) {
  }
 
  //set flags based on rdVal
+ 
+ // V does not need to be set.
+ // Setting c:
+  
+ 
+
+ // Setting z:
+ int firstnum = 0;
+ while ((firstnum < 32) && (*(rdVal + firstnum) == 0)) {
+   firstnum ++;
+ }
+ if (firstnum == 32) {
+   currState->CPRS[30] = 1;
+ } else {
+   currState->CPRS[30] = 0;
+ }
+
+ // Setting n:
+ currState->CPRS[31] = *(rd + 31);
 
 }
 
