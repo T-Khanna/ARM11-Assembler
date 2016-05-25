@@ -367,18 +367,18 @@ int32_t main(int32_t argc, char **argv) {
   int8_t littleEndianBuffer[file_size]; // store instruction
   fread(littleEndianBuffer, sizeof(littleEndianBuffer), 1, fptr);  
 
-  // --- loop begin ----
 
   // fetch the instruction and store in byte
   int8_t* byte = fetchInstruction(littleEndianBuffer);
 
-  currState->pipeline->fetched = instrToBits(byte);    
-  if (byte != NULL){
-  free(byte);}                     // free instruction memory
-  decode(currState->pipeline->fetched);    
+  while (/* byte is not all-0 */) {
+    currState->pipeline->fetched = instrToBits(byte);    
+    if (byte != NULL){
+    free(byte);}                     // free instruction memory
+    decode(currState->pipeline->fetched);
+    byte = fetchInstruction(littleEndianBuffer);
+  }    
 
-
-  // ---- loop end ----
   fclose(fptr);                  // close file
 
   freeRegs();                    // free memory
