@@ -535,16 +535,23 @@ int32_t main(int32_t argc, char **argv) {
 
   //Outputting the state of Registers and non-zero memory
   printf("Registers: \n");
+
   for(int i = 0; i <= 12; i++) {
-    printf("$%d : ", i);
+    int reg_value = convBinToDec(*(currState->registers + i), 32);
+    printf("$%-3d: %10d (0x%08x)\n", i,reg_value,reg_value);
   }
-  printf("PC: %d", currState->PC);
-  printf("CPSR: %d", convBinToDec(currState->CPRS, 32));
-  printf("Non-zero memory:");
+
+  printf("PC  : %10d (0x%08x)\n", currState->PC, currState->PC);
+  printf("CPSR: %10d (0x%08x)\n", convBinToDec(currState->CPRS, 32),convBinToDec(currState->CPRS, 32));
+
+
+  printf("Non-zero memory:\n");
+
   for (int i = 0; i < MEMORY_CAPACITY; i+=4) {
     int8_t* membyte = currState->memory + i;
     if (!(*membyte == 0)){
-      printf("%02x%02x%02x%02x",(*membyte),(*(membyte+1)),(*(membyte+2)),(*membyte+3));
+      printf("0x%08x:  ",i);
+      printf("0x%02x%02x%02x%02x\n",(*membyte),(*(membyte+1)),(*(membyte+2)),(*membyte+3));
     } 
   }
 
