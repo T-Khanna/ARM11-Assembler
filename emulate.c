@@ -42,51 +42,6 @@ int32_t* instrToBits(int8_t instruction[]) {
   return bininstruction; 
 }
 
-void dataprocessing(int32_t * inst) {
-
-}
-
-
-void multiply(int32_t * inst) {
-  //Rd = Rm x Rs
-  //Rd = Rm x Rs + Rn if A = 1
-  int32_t rdarr[4], rmarr[4], rsarr[4], rnarr[4];
-  for (int i = 0; i < 4; i++) {
-    rdarr[i] = inst[19 - i];
-    rmarr[i] = inst[3 - i];
-    rsarr[i] = inst[11 - i];
-    rnarr[i] = inst[15 - i];
-  } 
-  int32_t rd = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);  //calculate value of rd
-  int32_t rm = convBinToDec(*(currState->registers+convBinToDec(rmarr, 4)),32);  //calculate value of rm
-  int32_t rs = convBinToDec(*(currState->registers+convBinToDec(rsarr, 4)),32);  //calculate value of rs
-  
-  // Checking and adding Rn
-  if(inst[21] == 1) {
-    int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);  //calculate value of rn
-    rd = rm * rs + rn;
-    //Add Rn
-  } else {
-    rd = rm * rs;
-    // Not adding Rn
-  }
-
-  // saving result in register 
-  *(currState->registers+convBinToDec(rdarr, 4)) = convDecToBin(rd,32);
-  
-  // updatng CPRS register
-  if(inst[20] == 1){
-    if(rd < 0){
-      currState->CPRS[31] = 1;
-      currState->CPRS[30] = 0;
-    } else if(rd == 0){
-      currState->CPRS[31] = 0;
-      currState->CPRS[30] = 1;
-    }
-  }
-}
-
-
 int32_t * getImmVal(int32_t * inst) {
   static int32_t *value;
   static int32_t *rot_num_arry;
@@ -178,6 +133,161 @@ int32_t * get_operand2(int32_t * inst) {
 
   return operand2;
 }
+
+void dataprocessing(int32_t * inst) {
+ int32_t rnarr[4], rdarr[4], opcodearr[4];
+ int32_t * rn, * rd,  * op2;
+ int32_t opcode;
+ static int * rdVal;
+
+ // Getting all nescessary components:
+ //Getting operand2
+ op2 = get_operand2(inst);
+
+ // Getting registers Rn and Rd and opcode
+ for (int i = 0; i < 4; i++) {
+     rnarr[i] = inst[19 - i];
+     rdarr[i] = inst[15 - i];
+     opcodearr[i] = inst[24-i];
+   } 
+ 
+ rn = *(currState->registers+convBinToDec(rnarr, 4));
+ rd = *(currState->registers+convBinToDec(rdarr, 4));
+ opcode =convBinToDec(opcodearr, 4);  
+ 
+ // Checking what the operation is, then executing it, and setting flags
+ switch(opcode) {
+  // Bitwise AND 
+  case  0:for (int i = 0; i < 32; i++) {
+            if ((*(rn + i) == 1) && (*(op2 + i) == 1)) {
+              *(rd + i) = 1;
+              *(rdVal + i) = 1;
+            } else {
+              *(rd + i) = 0;
+              *(rdVal + i) = 0;
+            }
+          }
+          break;
+  // Bitwise XOR
+  case  1:for (int i = 0; i < 32; i++) {
+            if ((*(rn + i) == 0) && (*(op2 + i) == 1)) {
+              *(rd + i) = 1;
+              *(rdVal + i) = 1;
+            } else  if ((*(rn + i) == 1) && (*(op2 + i) == 0)) {
+              *(rd + i) = 1; 
+              *(rdVal + i) = 1;
+            } else {
+              *(rd + i) = 0;
+              *(rdVal + i) = 0;
+            }
+          }
+          break;
+  // SUB
+  case  2: *(rdVal) = convBinToDec(rn, 32) - convBinToDec(op2, 32);
+          for (int i = 0; i < 32; i++) {
+              *(rd + i) = *(rdVal +i);
+          }
+          break;
+  // RSB        
+  case  3: *(rdVal) = convBinToDec(op2, 32) -  convBinToDec(rn, 32);
+          for (int i = 0; i < 32; i++) {
+              *(rd + i) = *(rdVal +i);
+          }
+          break;
+  // ADD
+  case  4:*(rdVal) = convBinToDec(op2, 32) +  convBinToDec(rn, 32);
+          for (int i = 0; i < 32; i++) {
+              *(rd + i) = *(rdVal +i);
+          }
+          break;
+  // TST
+  case  8:for (int i = 0; i < 32; i++) {
+            if ((*(rn + i) == 1) && (*(op2 + i) == 1)) {
+              *(rdVal + i) = 1;
+            } else {
+              *(rdVal + i) = 0;
+            }
+          }
+          break;
+  // TEQ
+  case  9:for (int i = 0; i < 32; i++) {
+            if ((*(rn + i) == 0) && (*(op2 + i) == 1)) {
+              *(rdVal + i) = 1;
+            } else  if ((*(rn + i) == 1) && (*(op2 + i) == 0)) {
+              *(rdVal + i) = 1;
+            } else {
+              *(rdVal + i) = 0;
+            }
+          }
+          break;
+  //CMP
+  case 10:*(rdVal) = convBinToDec(rn, 32) - convBinToDec(op2, 32);
+          break;
+  //ORR
+  case 12:for (int i = 0; i < 32; i++) {
+            if ((*(rn + i) == 0) && (*(op2 + i) == 0)) {
+              *(rd + i) = 0;
+              *(rdVal + i) = 0;
+            } else {
+              *(rd + i) = 1;
+              *(rdVal + i) = 1;
+            }
+          }
+          break;
+  //MOV
+  case 13:for (int i = 0; i < 32; i++) {
+            *(rd+i) = *(op2+i);
+            *(rdVal+i) = *(op2+i);
+          }
+          break;
+  default: perror("Invalid OpCode\n"); return;
+
+ }
+
+ //set flags based on rdVal
+
+}
+
+
+void multiply(int32_t * inst) {
+  //Rd = Rm x Rs
+  //Rd = Rm x Rs + Rn if A = 1
+  int32_t rdarr[4], rmarr[4], rsarr[4], rnarr[4];
+  for (int i = 0; i < 4; i++) {
+    rdarr[i] = inst[19 - i];
+    rmarr[i] = inst[3 - i];
+    rsarr[i] = inst[11 - i];
+    rnarr[i] = inst[15 - i];
+  } 
+  int32_t rd = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);  //calculate value of rd
+  int32_t rm = convBinToDec(*(currState->registers+convBinToDec(rmarr, 4)),32);  //calculate value of rm
+  int32_t rs = convBinToDec(*(currState->registers+convBinToDec(rsarr, 4)),32);  //calculate value of rs
+  
+  // Checking and adding Rn
+  if(inst[21] == 1) {
+    int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);  //calculate value of rn
+    rd = rm * rs + rn;
+    //Add Rn
+  } else {
+    rd = rm * rs;
+    // Not adding Rn
+  }
+
+  // saving result in register 
+  *(currState->registers+convBinToDec(rdarr, 4)) = convDecToBin(rd,32);
+  
+  // updatng CPRS register
+  if(inst[20] == 1){
+    if(rd < 0){
+      currState->CPRS[31] = 1;
+      currState->CPRS[30] = 0;
+    } else if(rd == 0){
+      currState->CPRS[31] = 0;
+      currState->CPRS[30] = 1;
+    }
+  }
+}
+
 
 
 void single_data_transfer(int32_t * inst) {
