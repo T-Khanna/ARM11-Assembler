@@ -310,9 +310,13 @@ void regInit(){
 
   currState = calloc(1,sizeof(CurrentState));
   currState->pipeline = calloc(1,sizeof(Pipeline));
-  
 
-  for(int i=0; i < 1; i++){  
+  if (currState == NULL || currState->pipeline == NULL) {
+      perror("coudn't initialize state");
+      exit(EXIT_FAILURE);
+    }  
+
+  for(int i=0; i < GEN_PURPOSE_REG; i++){  
     *(currState->registers + i) = (int32_t *)calloc(32 , sizeof(int32_t));
 
     if (*(currState->registers+i) == NULL) {
@@ -322,7 +326,7 @@ void regInit(){
   } 
 
   currState->PC = 0;
-  currState->CPRS = (int32_t *) malloc(32 * sizeof(int32_t));
+  currState->CPRS = (int32_t *) calloc(32 , sizeof(int32_t));
 
   if (currState->CPRS == NULL) {
     perror("coudn't initialize registers");	 
@@ -333,9 +337,10 @@ void regInit(){
 
 //free memory
 void freeRegs(){
-  for(int i = 0; i < 13; i++){
+  for(int i = 0; i < GEN_PURPOSE_REG; i++){
     free(*(currState->registers + i));
   }
+
   free(currState->CPRS);
   free(currState->pipeline);
   free(currState);
