@@ -47,14 +47,10 @@ int32_t* instrToBits(int8_t instruction[]) {
 }
 
 int32_t * getImmVal(int32_t * inst) {
-  static int32_t *value;
-  static int32_t *rot_num_arry;
+  
+  static int32_t value[8];
+  int32_t rot_num_arry[4];
   int rot_num = 0;
-
-  for(int i = 0; i < 32; i++) {
-    *(value + i) = 0;
-    *(rot_num_arry + i) = 0;
-  } 
 
   for(int i = 0; i < 8; i++) {
     *(value + i) = *(inst + i);
@@ -63,11 +59,10 @@ int32_t * getImmVal(int32_t * inst) {
   for(int i = 8; i < 12; i++) {
     *(rot_num_arry + (i - 8)) = *(inst + i);
   } 
-
+  
   rot_num = convBinToDec(rot_num_arry, 4);
 
   rotate_right(value, sizeof(value), rot_num);
-
   return value;
 }
 
@@ -132,12 +127,21 @@ int32_t * get_operand2(int32_t * inst) {
   return operand2;
 }
 
-void dataprocessing(int32_t * inst) {
- int32_t rnarr[4], rdarr[4], opcodearr[4];
- int32_t * rn, * rd,  * op2;
- int32_t opcode;
- static int32_t * rdVal;
+void copyArray(int32_t from[], int32_t to[], int size) {
+  for(int i = 0; i < size; i++) {
+    to[i] = from[i];
+  }
+  if(from != NULL) {
+   free(from);
+  }
+}
 
+void dataprocessing(int32_t * inst) {
+  
+ int32_t rnarr[4], rdarr[4], opcodearr[4];
+ int32_t *rn , *rd, *op2 = NULL;
+ int32_t opcode = 0;
+ int32_t rdVal[32];
 
  // Getting all nescessary components:
  //Getting operand2
@@ -149,21 +153,25 @@ void dataprocessing(int32_t * inst) {
      rdarr[i] = inst[15 - i];
      opcodearr[i] = inst[24-i];
    } 
- 
+
  rn = *(currState->registers+convBinToDec(rnarr, 4));
  rd = *(currState->registers+convBinToDec(rdarr, 4));
  opcode =convBinToDec(opcodearr, 4);  
  
+// for(int i = 0; i < 4; i++){
+//   printf("%i",opcodearr[i]);
+// }
+// printf("\n%i\n",opcode);
  // Checking what the operation is, then executing it, and setting flags
  switch(opcode) {
   // Bitwise AND 
   case  0:for (int i = 0; i < 32; i++) {
             if ((*(rn + i) == 1) && (*(op2 + i) == 1)) {
               *(rd + i) = 1;
-              *(rdVal + i) = 1;
+              rdVal[i] = 1;
             } else {
               *(rd + i) = 0;
-              *(rdVal + i) = 0;
+              rdVal[i] = 0;
             }
           }
           break;
@@ -171,30 +179,30 @@ void dataprocessing(int32_t * inst) {
   case  1:for (int i = 0; i < 32; i++) {
             if ((*(rn + i) == 0) && (*(op2 + i) == 1)) {
               *(rd + i) = 1;
-              *(rdVal + i) = 1;
+              rdVal[i] = 1;
             } else  if ((*(rn + i) == 1) && (*(op2 + i) == 0)) {
               *(rd + i) = 1; 
-              *(rdVal + i) = 1;
+              rdVal[i] = 1;
             } else {
               *(rd + i) = 0;
-              *(rdVal + i) = 0;
+              rdVal[i] = 0;
             }
           }
           break;
   // SUB
-  case  2:rdVal = binary_sub(rn, op2, 32); 
+  case  2:copyArray(binary_sub(rn, op2, 32), rdVal, 32); 
           for (int i = 0; i < 32; i++) {
              *(rd + i) = *(rdVal +i);
           }
           break;
   // RSB        
-  case  3:rdVal = binary_sub(op2, rn, 32);
+  case  3:copyArray(binary_sub(op2, rn, 32), rdVal,  32);
           for (int i = 0; i < 32; i++) {
               *(rd + i) = *(rdVal +i);
           }
           break;
   // ADD
-  case  4:rdVal = binary_add(rn, op2, 32);
+  case  4:copyArray(binary_add(rn, op2, 32), rdVal, 32);
           for (int i = 0; i < 32; i++) {
               *(rd + i) = *(rdVal +i);
           }
@@ -202,41 +210,41 @@ void dataprocessing(int32_t * inst) {
   // TST
   case  8:for (int i = 0; i < 32; i++) {
             if ((*(rn + i) == 1) && (*(op2 + i) == 1)) {
-              *(rdVal + i) = 1;
+              rdVal[i] = 1;
             } else {
-              *(rdVal + i) = 0;
+              rdVal[i] = 0;
             }
           }
           break;
   // TEQ
   case  9:for (int i = 0; i < 32; i++) {
             if ((*(rn + i) == 0) && (*(op2 + i) == 1)) {
-              *(rdVal + i) = 1;
+              rdVal[i] = 1;
             } else  if ((*(rn + i) == 1) && (*(op2 + i) == 0)) {
-              *(rdVal + i) = 1;
+              rdVal[i] = 1;
             } else {
-              *(rdVal + i) = 0;
+              rdVal[i] = 0;
             }
           }
           break;
   //CMP
-  case 10:rdVal = binary_sub(rn, op2, 32);
+  case 10:copyArray(binary_sub(rn, op2, 32), rdVal, 32);
           break;
   //ORR
   case 12:for (int i = 0; i < 32; i++) {
             if ((*(rn + i) == 0) && (*(op2 + i) == 0)) {
               *(rd + i) = 0;
-              *(rdVal + i) = 0;
+              rdVal[i] = 0;
             } else {
               *(rd + i) = 1;
-              *(rdVal + i) = 1;
+              rdVal[i] = 1;
             }
           }
           break;
   //MOV
   case 13:for (int i = 0; i < 32; i++) {
             *(rd+i) = *(op2+i);
-            *(rdVal+i) = *(op2+i);
+            rdVal[i] = *(op2+i);
           }
           break;
   default: perror("Invalid OpCode\n"); return;
@@ -515,8 +523,9 @@ int32_t main(int32_t argc, char **argv) {
   int32_t file_size = ftell(fptr);  // ftell returns the pos of the file point32_ter
   rewind(fptr);           // rewind resets the file point32_ter to the start pos
 
+
   //int8_t littleEndianBuffer[file_size]; // store instruction
-  fread(currState->memory, file_size, 1, fptr);  
+  fread(currState->memory, sizeof(int8_t), file_size, fptr);  
 
   // fetch the instruction and store in byte
   int8_t* byte; 
@@ -525,6 +534,7 @@ int32_t main(int32_t argc, char **argv) {
     byte = fetchInstruction(currState->memory);
     currState->pipeline->fetched = instrToBits(byte);
     if (allZeroes(currState->pipeline->fetched) == 1) {
+      free(byte);
       break;
     }
     if (byte != NULL) {
@@ -534,6 +544,7 @@ int32_t main(int32_t argc, char **argv) {
   }    
 
   //Outputting the state of Registers and non-zero memory
+  
   printf("Registers: \n");
 
   for(int i = 0; i <= 12; i++) {
@@ -554,7 +565,7 @@ int32_t main(int32_t argc, char **argv) {
       printf("0x%02x%02x%02x%02x\n",(*membyte),(*(membyte+1)),(*(membyte+2)),(*membyte+3));
     } 
   }
-
+  
   fclose(fptr);                  // close file
 
   freeRegs();                    // free memory

@@ -31,6 +31,6 @@ typedef struct CurrentState
 
 
 void updateCarry(int carry);
-int32_t * binary_sub(int32_t * arr1, int32_t * arr2, int size);
-int32_t * binary_add(int32_t * arr1, int32_t * arr2, int size); 
+int * binary_sub(int32_t * arr1, int32_t * arr2, int size);
+int * binary_add(int32_t * arr1, int32_t * arr2, int size); 
 #endif

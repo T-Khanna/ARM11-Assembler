@@ -1,12 +1,17 @@
 #include"bitOper.h"
 #include"ARMgen.h"
+#include<stdlib.h>
 
-int32_t convBinToDec(int32_t bin[], int32_t size) {
+int convBinToDec(int32_t bin[], int32_t size) {
 // converts binary array to int32_t
-  static int32_t result = 0;
+
+  int result = 0;
+  //int32_t temp = 0;
   for (int32_t i = 0; i < size; i++) {
     result = result * 2 + bin[i];
   }
+
+  //result = temp;
   return result;
 }
 
@@ -71,9 +76,9 @@ int32_t * arith_shift_right(int32_t * array, int size, int rot_num) {
 }
 
 
-int32_t * binary_sub(int32_t * arr1, int32_t * arr2, int size) {
+int * binary_sub(int32_t * arr1, int32_t * arr2, int size) {
   int carry = 0;
-  static int32_t * resArray;
+  int * resArray = malloc(size * sizeof(int32_t));
     for (int i = 0; i < size; i++) {
       *(resArray + i) = *(arr1 + i) - *(arr2 + i) - carry;
       if (*(resArray + i) < 0) {
@@ -82,14 +87,14 @@ int32_t * binary_sub(int32_t * arr1, int32_t * arr2, int size) {
       } else{
         carry = 0;
       }
-    }
+    }  
   updateCarry(carry);
   return resArray;
 }
 
-int32_t * binary_add(int32_t * arr1, int32_t * arr2, int size) {
+int * binary_add(int32_t * arr1, int32_t * arr2, int size) {
   int carry = 0;
-  static int32_t * resArray;
+  int * resArray = malloc(size * sizeof(int32_t));
     for (int i = 0; i < size; i++) {
       *(resArray + i) = *(arr1 + i) + *(arr2 + i) + carry;
       if (*(resArray + i) > 1) {
@@ -101,6 +106,7 @@ int32_t * binary_add(int32_t * arr1, int32_t * arr2, int size) {
     }
   updateCarry(carry);
   return resArray;
+  //free resArray
 }
 
 
