@@ -1,4 +1,5 @@
 #include"bitOper.h"
+#include"ARMgen.h"
 
 int32_t convBinToDec(int32_t bin[], int32_t size) {
 // converts binary array to int32_t
@@ -33,16 +34,27 @@ int32_t * rotate_right(int32_t * array, int size, int rot_num) {
 
 int32_t * shift_left(int32_t * array, int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
-    for (int i = size - 2; i > 0; i--) {
-      *(array + i) = *(array + i + 1);
+
+    if (*(array + size - 1) == 1) {
+      updateCarry();
+    }
+
+    for (int i = size - 1; i > 0; i--) {
+      *(array + i) = *(array + i - 1);
     }
     *(array) = 0;
   }
-  return array; 
+  return array;
 }
 
 int32_t * shift_right(int32_t * array, int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
+
+
+    if (*(array + 0) == 1) {
+      updateCarry();
+    }
+
     for (int i = size - 2; i >= 0; i--) {
       *(array + i) = *(array + i + 1);
     }
@@ -53,6 +65,11 @@ int32_t * shift_right(int32_t * array, int size, int rot_num) {
 
 int32_t * arith_shift_right(int32_t * array, int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
+
+    if (*(array + 0) == 1) {
+      updateCarry();
+    }
+
     for (int i = size - 3; i >= 0; i--) {
       *(array + i) = *(array + i + 1);
     }

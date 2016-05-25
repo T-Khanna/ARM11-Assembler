@@ -29,4 +29,7 @@ typedef struct CurrentState
     int8_t memory[MEMORY_CAPACITY];
 } CurrentState;
 
+
+void updateCarry();
+
 #endif
