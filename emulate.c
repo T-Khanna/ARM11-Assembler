@@ -169,13 +169,7 @@ int32_t * getRegVal(int32_t * inst) {
 
 int32_t * get_operand2(int32_t * inst) {
   static int32_t *operand2;
-
-  if(*(inst + 25) == 1) {
-    operand2 = getImmVal(inst);
-  } else {
-    operand2 = getRegVal(inst);
-  }
-
+  operand2 = (*(inst + 25) == 1) ? getImmVal(inst) : getRegVal(inst);
   return operand2;
 }
 
