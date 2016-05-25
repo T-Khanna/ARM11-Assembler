@@ -4,7 +4,6 @@
 #include "ARMgen.h"
 #include "bitOper.h"
 
-
 CurrentState *currState = NULL;
 
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
@@ -25,6 +24,10 @@ int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
   currState->PC += 4;
   return instruction;
   // Need to 'free' memory occupied by instruction
+}
+
+void updateCarry(){
+    currState->CPRS[29] = 1;
 }
 
 int32_t* instrToBits(int8_t instruction[]) {
