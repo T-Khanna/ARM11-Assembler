@@ -26,8 +26,9 @@ int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
   // Need to 'free' memory occupied by instruction
 }
 
-void updateCarry(){
-    currState->CPRS[29] = 1;
+  void updateCarry(int carry){
+    
+      currState->CPRS[29] = carry;
 }
 
 int32_t* instrToBits(int8_t instruction[]) {
@@ -135,8 +136,8 @@ void dataprocessing(int32_t * inst) {
  int32_t rnarr[4], rdarr[4], opcodearr[4];
  int32_t * rn, * rd,  * op2;
  int32_t opcode;
- static int * rdVal;
- int cflag;
+ static int32_t * rdVal;
+
 
  // Getting all nescessary components:
  //Getting operand2
@@ -181,23 +182,19 @@ void dataprocessing(int32_t * inst) {
           }
           break;
   // SUB
-  case  2: *(rdVal) = convDecToBin(convBinToDec(rn, 32) - convBinToDec(op2, 32), 32);
-           // C flag
-           //if (*(rdVal+32 = 1) ) {
-           //
-           //}
-           for (int i = 0; i < 32; i++) {
-              *(rd + i) = *(rdVal +i);
+  case  2:rdVal = binary_sub(rn, op2, 32); 
+          for (int i = 0; i < 32; i++) {
+             *(rd + i) = *(rdVal +i);
           }
           break;
   // RSB        
-  case  3: *(rdVal) = convDecToBin(convBinToDec(op2, 32) -  convBinToDec(rn, 32), 32);
+  case  3:rdVal = binary_sub(op2, rn, 32);
           for (int i = 0; i < 32; i++) {
               *(rd + i) = *(rdVal +i);
           }
           break;
   // ADD
-  case  4:*(rdVal) = ocnvDecToBin(convBinToDec(op2, 32) +  convBinToDec(rn, 32), 32);
+  case  4:rdVal = binary_add(rn, op2, 32);
           for (int i = 0; i < 32; i++) {
               *(rd + i) = *(rdVal +i);
           }
@@ -223,7 +220,7 @@ void dataprocessing(int32_t * inst) {
           }
           break;
   //CMP
-  case 10:*(rdVal) = convBinToDec(rn, 32) - convBinToDec(op2, 32);
+  case 10:rdVal = binary_sub(rn, op2, 32);
           break;
   //ORR
   case 12:for (int i = 0; i < 32; i++) {

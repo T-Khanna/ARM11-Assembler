@@ -35,9 +35,7 @@ int32_t * rotate_right(int32_t * array, int size, int rot_num) {
 int32_t * shift_left(int32_t * array, int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
 
-    if (*(array + size - 1) == 1) {
-      updateCarry();
-    }
+    updateCarry(*(array));
 
     for (int i = size - 1; i > 0; i--) {
       *(array + i) = *(array + i - 1);
@@ -50,10 +48,7 @@ int32_t * shift_left(int32_t * array, int size, int rot_num) {
 int32_t * shift_right(int32_t * array, int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
 
-
-    if (*(array + 0) == 1) {
-      updateCarry();
-    }
+    updateCarry(*(array));
 
     for (int i = size - 2; i >= 0; i--) {
       *(array + i) = *(array + i + 1);
@@ -65,10 +60,7 @@ int32_t * shift_right(int32_t * array, int size, int rot_num) {
 
 int32_t * arith_shift_right(int32_t * array, int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
-
-    if (*(array + 0) == 1) {
-      updateCarry();
-    }
+    updateCarry(*(array));
 
     for (int i = size - 3; i >= 0; i--) {
       *(array + i) = *(array + i + 1);
@@ -79,21 +71,38 @@ int32_t * arith_shift_right(int32_t * array, int size, int rot_num) {
 }
 
 
-int32_t * binary_sub(int32_t * arr1, int32_ arr2, int size) {
+int32_t * binary_sub(int32_t * arr1, int32_t * arr2, int size) {
   int carry = 0;
-  static int32_t resArray;
+  static int32_t * resArray;
     for (int i = 0; i < size; i++) {
       *(resArray + i) = *(arr1 + i) - *(arr2 + i) - carry;
       if (*(resArray + i) < 0) {
         *(resArray) += 2;
         carry = 1;
       } else{
-        carry = 2;
+        carry = 0;
       }
     }
-  // set c
+  updateCarry(carry);
   return resArray;
 }
+
+int32_t * binary_add(int32_t * arr1, int32_t * arr2, int size) {
+  int carry = 0;
+  static int32_t * resArray;
+    for (int i = 0; i < size; i++) {
+      *(resArray + i) = *(arr1 + i) + *(arr2 + i) + carry;
+      if (*(resArray + i) > 1) {
+        *(resArray) -= 2;
+        carry = 1;
+      } else{
+        carry = 0;
+      }
+    }
+  updateCarry(carry);
+  return resArray;
+}
+
 
 
 
