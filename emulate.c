@@ -48,21 +48,26 @@ int32_t* instrToBits(int8_t instruction[]) {
 
 int32_t * getImmVal(int32_t * inst) {
   
-  static int32_t value[8];
+  static int32_t value[32];
   int32_t rot_num_arry[4];
   int rot_num = 0;
 
+  for(int i = 0; i < 32; i++) {
+    value[i] = 0;
+  }
   for(int i = 0; i < 8; i++) {
-    *(value + i) = *(inst + i);
+    value[31-i] = *(inst + i);
   } 
 
   for(int i = 8; i < 12; i++) {
-    *(rot_num_arry + (i - 8)) = *(inst + i);
+    rot_num_arry[3 - (i - 8)] = *(inst + i);
   } 
   
   rot_num = convBinToDec(rot_num_arry, 4);
 
+
   rotate_right(value, sizeof(value), rot_num);
+
   return value;
 }
 
@@ -122,7 +127,7 @@ int32_t * getRegVal(int32_t * inst) {
 }
 
 int32_t * get_operand2(int32_t * inst) {
-  static int32_t *operand2;
+  int32_t *operand2 = NULL;
   operand2 = (*(inst + 25) == 1) ? getImmVal(inst) : getRegVal(inst);
   return operand2;
 }
@@ -242,10 +247,12 @@ void dataprocessing(int32_t * inst) {
           }
           break;
   //MOV
-  case 13:for (int i = 0; i < 32; i++) {
+  case 13://printf("%d\n",convBinToDec((int32_t *) (op2),32));
+          for (int i = 0; i < 32; i++) {
             *(rd+i) = *(op2+i);
             rdVal[i] = *(op2+i);
           }
+          //printf("%d\n",convBinToDec(*(currState->registers + 1),32));
           break;
   default: perror("Invalid OpCode\n"); return;
 
