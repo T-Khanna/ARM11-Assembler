@@ -474,6 +474,15 @@ void freeRegs(){
   free(currState);
 }
 
+int allZeroes(int32_t* inst) {
+  for (int i = 0; i < sizeof(inst); i++) {
+    if (*(inst + i) == 1) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 int32_t main(int32_t argc, char **argv) {
 
   // checking arguments
@@ -501,18 +510,22 @@ int32_t main(int32_t argc, char **argv) {
   int8_t littleEndianBuffer[file_size]; // store instruction
   fread(littleEndianBuffer, sizeof(littleEndianBuffer), 1, fptr);  
 
-  // --- loop begin ----
 
   // fetch the instruction and store in byte
-  int8_t* byte = fetchInstruction(littleEndianBuffer);
+  int8_t* byte; 
+ 
+  while (true) {
+    byte = fetchInstruction(littleEndianBuffer);
+    currState->pipeline->fetched = instrToBits(byte);
+    if (allZeroes(currState->pipeline->fetched) == 1) {
+      break;
+    }
+    if (byte != NULL) {
+      free(byte);
+    }                     // free instruction memory
+    decode(currState->pipeline->fetched);
+  }    
 
-  currState->pipeline->fetched = instrToBits(byte);    
-  if (byte != NULL){
-  free(byte);}                     // free instruction memory
-  decode(currState->pipeline->fetched);    
-
-
-  // ---- loop end ----
   fclose(fptr);                  // close file
 
   freeRegs();                    // free memory
