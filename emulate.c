@@ -457,10 +457,17 @@ void regInit(){
   } 
 
   currState->PC = 0;
-  currState->CPRS = (int32_t *) calloc(32 , sizeof(int32_t));
+  currState->CPRS = (int32_t *) calloc(32, sizeof(int32_t));
 
   if (currState->CPRS == NULL) {
     perror("coudn't initialize registers");	 
+    exit(EXIT_FAILURE);
+  }
+
+  currState->memory = calloc(MEMORY_CAPACITY, sizeof(int8_t));
+  
+  if (currState->memory == NULL) {
+    perror("coudn't initialize memory");	 
     exit(EXIT_FAILURE);
   }
 
@@ -474,6 +481,7 @@ void freeRegs(){
 
   free(currState->CPRS);
   free(currState->pipeline);
+  free(currState->memory);
   free(currState);
 }
 
@@ -510,15 +518,14 @@ int32_t main(int32_t argc, char **argv) {
   int32_t file_size = ftell(fptr);  // ftell returns the pos of the file point32_ter
   rewind(fptr);           // rewind resets the file point32_ter to the start pos
 
-  int8_t littleEndianBuffer[file_size]; // store instruction
-  fread(littleEndianBuffer, sizeof(littleEndianBuffer), 1, fptr);  
-
+  //int8_t littleEndianBuffer[file_size]; // store instruction
+  fread(currState->memory, file_size, 1, fptr);  
 
   // fetch the instruction and store in byte
   int8_t* byte; 
  
-  while (true) {
-    byte = fetchInstruction(littleEndianBuffer);
+  while (1) {
+    byte = fetchInstruction(currState->memory);
     currState->pipeline->fetched = instrToBits(byte);
     if (allZeroes(currState->pipeline->fetched) == 1) {
       break;
@@ -528,6 +535,21 @@ int32_t main(int32_t argc, char **argv) {
     }                     // free instruction memory
     decode(currState->pipeline->fetched);
   }    
+
+  //Outputting the state of Registers and non-zero memory
+  printf("Registers: \n");
+  for(int i = 0; i <= 12; i++) {
+    printf("$%d : ", i);
+  }
+  printf("PC: %d", currState->PC);
+  printf("CPSR: %d", convBinToDec(currState->CPRS, 32));
+  printf("Non-zero memory:");
+  for (int i = 0; i < MEMORY_CAPACITY; i+=4) {
+    int8_t* membyte = currState->memory + i;
+    if (!(*membyte == 0)){
+      printf("%02x%02x%02x%02x",(*membyte),(*(membyte+1)),(*(membyte+2)),(*membyte+3));
+    } 
+  }
 
   fclose(fptr);                  // close file
 
