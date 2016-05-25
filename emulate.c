@@ -561,7 +561,7 @@ int32_t main(int32_t argc, char **argv) {
   for (int i = 0; i < MEMORY_CAPACITY; i+=4) {
     int8_t* membyte = currState->memory + i;
     if (!(*membyte == 0)){
-      printf("0x%08x:  ",i);
+      printf("0x%08x: ",i);
       printf("0x%02x%02x%02x%02x\n",(*membyte),(*(membyte+1)),(*(membyte+2)),(*membyte+3));
     } 
   }
