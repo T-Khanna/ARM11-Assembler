@@ -17,7 +17,11 @@ int convBinToDec(int32_t bin[], int32_t size) {
 
 int32_t* convDecToBin(int32_t num, int32_t size){
 // convert int32_t to binary array
+<<<<<<< HEAD
   int32_t* result = malloc(size * sizeof(int32_t));
+=======
+  static int32_t result[32];
+>>>>>>> master
   for (int i =0; i < size; i++){
     result[size - i - 1] = (num % 2);
     num = num / 2;
