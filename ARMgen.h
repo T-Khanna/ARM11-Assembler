@@ -25,7 +25,7 @@ typedef struct CurrentState
     Pipeline *pipeline;
     int32_t* registers[GEN_PURPOSE_REG];
     int PC;
-    int32_t* CPRS;
+    int32_t* CPSR;
     int8_t* memory;
 } CurrentState;
 

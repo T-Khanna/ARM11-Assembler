@@ -28,7 +28,7 @@ int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 
   void updateCarry(int carry){
     
-      currState->CPRS[29] = carry;
+      currState->CPSR[29] = carry;
 }
 
 int32_t* instrToBits(int8_t instruction[]) {
@@ -265,12 +265,12 @@ void dataprocessing(int32_t * inst) {
    firstnum ++;
  }
  if (firstnum == 32) {
-   currState->CPRS[30] = 1;
+   currState->CPSR[30] = 1;
  } else {
-   currState->CPRS[30] = 0;
+   currState->CPSR[30] = 0;
  }
  // Setting n:
- currState->CPRS[31] = *(rd + 0);
+ currState->CPSR[31] = *(rd + 0);
 
 }
 
@@ -303,14 +303,14 @@ void multiply(int32_t * inst) {
   // saving result in register 
   *(currState->registers+convBinToDec(rdarr, 4)) = convDecToBin(rd,32);
   
-  // updatng CPRS register
+  // updatng CPSR register
   if(inst[20] == 1){
     if(rd < 0){
-      currState->CPRS[31] = 1;
-      currState->CPRS[30] = 0;
+      currState->CPSR[31] = 1;
+      currState->CPSR[30] = 0;
     } else if(rd == 0){
-      currState->CPRS[31] = 0;
-      currState->CPRS[30] = 1;
+      currState->CPSR[31] = 0;
+      currState->CPSR[30] = 1;
     }
   }
 }
@@ -416,14 +416,14 @@ void decode(int32_t * inst) {
     cond = cond * 2 + inst[i];
   }
   switch(cond) {
-    case 0:  goahead = (currState->CPRS[30] == 1); break; 
-    case 1:  goahead = (currState->CPRS[30] == 0); break;
-    case 10: goahead = (currState->CPRS[31] == currState->CPRS[28]); break;
-    case 11: goahead = (currState->CPRS[31] != currState->CPRS[28]); break;
-    case 12: goahead = (currState->CPRS[30] == 0) && 
-                       (currState->CPRS[31] == currState->CPRS[28]); break;
-    case 13: goahead = (currState->CPRS[30] == 1) || 
-                       (currState->CPRS[31] != currState->CPRS[28]); break;
+    case 0:  goahead = (currState->CPSR[30] == 1); break; 
+    case 1:  goahead = (currState->CPSR[30] == 0); break;
+    case 10: goahead = (currState->CPSR[31] == currState->CPSR[28]); break;
+    case 11: goahead = (currState->CPSR[31] != currState->CPSR[28]); break;
+    case 12: goahead = (currState->CPSR[30] == 0) && 
+                       (currState->CPSR[31] == currState->CPSR[28]); break;
+    case 13: goahead = (currState->CPSR[30] == 1) || 
+                       (currState->CPSR[31] != currState->CPSR[28]); break;
     case 14: goahead = 1; break;
     default: perror("Invalid flags\n"); return;
   }
@@ -481,9 +481,9 @@ void regInit(){
   } 
 
   currState->PC = 0;
-  currState->CPRS = (int32_t *) calloc(32, sizeof(int32_t));
+  currState->CPSR = (int32_t *) calloc(32, sizeof(int32_t));
 
-  if (currState->CPRS == NULL) {
+  if (currState->CPSR == NULL) {
     perror("coudn't initialize registers");	 
     exit(EXIT_FAILURE);
   }
@@ -503,7 +503,7 @@ void freeRegs(){
     free(*(currState->registers + i));
   }
 
-  free(currState->CPRS);
+  free(currState->CPSR);
   free(currState->pipeline);
   free(currState->memory);
   free(currState);
@@ -552,9 +552,9 @@ int32_t main(int32_t argc, char **argv) {
   while (1) {
     byte = fetchInstruction(currState->memory);
     currState->pipeline->fetched = instrToBits(byte);
-    for (int i = 31; i >= 0; i--){
-    printf("%d", *(currState->pipeline->fetched + i));}
-    printf("\n");
+//    for (int i = 31; i >= 0; i--){
+//    printf("%d", *(currState->pipeline->fetched + i));}
+//    printf("\n");
 //    printf("While loop called.\n");
     if (allZeroes(currState->pipeline->fetched) == 1) {
       free(byte);
@@ -577,7 +577,7 @@ int32_t main(int32_t argc, char **argv) {
   }
 
   printf("PC  : %10d (0x%08x)\n", currState->PC, currState->PC);
-  printf("CPSR: %10d (0x%08x)\n", convBinToDec(currState->CPRS, 32),convBinToDec(currState->CPRS, 32));
+  printf("CPSR: %10d (0x%08x)\n", convBinToDec(currState->CPSR, 32),convBinToDec(currState->CPSR, 32));
 
 
   printf("Non-zero memory:\n");
