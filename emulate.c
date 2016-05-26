@@ -26,9 +26,19 @@ int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
   // Need to 'free' memory occupied by instruction
 }
 
-  void updateCarry(int carry){
-    
-      currState->CPSR[29] = carry;
+void updateCarry(int carry){
+  currState->CPSR[29] = carry;
+}
+
+// Temporary function for testing
+void printBits(int inst) {
+  uint32_t mask = 1 << 31;
+  
+  for (int i = 31; i >= 0; i--) {
+    printf(((inst & mask) == 0) ? "0" : "1");
+    inst <<= 1;
+  }
+  printf("\n"); 
 }
 
 int32_t* instrToBits(int8_t instruction[]) {
@@ -276,16 +286,15 @@ void dataprocessing(int32_t * inst) {
 
 
 void multiply(int32_t * inst) {
-  //Rd = Rm x Rs
+  //Rd = Rm x Rs      if A = 0
   //Rd = Rm x Rs + Rn if A = 1
-//  printf("Multiply gets called!\n");
   int32_t rdarr[4], rmarr[4], rsarr[4], rnarr[4];
   for (int i = 0; i < 4; i++) {
     rdarr[i] = inst[19 - i];
     rmarr[i] = inst[3 - i];
     rsarr[i] = inst[11 - i];
     rnarr[i] = inst[15 - i];
-  } 
+  }
   int32_t rd = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);  //calculate value of rd
   int32_t rm = convBinToDec(*(currState->registers+convBinToDec(rmarr, 4)),32);  //calculate value of rm
   int32_t rs = convBinToDec(*(currState->registers+convBinToDec(rsarr, 4)),32);  //calculate value of rs
@@ -301,8 +310,7 @@ void multiply(int32_t * inst) {
   }
 
   // saving result in register 
-  *(currState->registers+convBinToDec(rdarr, 4)) = convDecToBin(rd,32);
-  
+  *(currState->registers+convBinToDec(rdarr, 4)) = convDecToBin(rd, 32);
   // updatng CPSR register
   if(inst[20] == 1){
     if(rd < 0){
@@ -396,17 +404,6 @@ void branch(int32_t * inst) {
   currState->pipeline->fetched = NULL;
   currState->pipeline->decoded = NULL;
   //Keeping the pipeline in mind, PC is 8 bytes ahead of instr)
-}
-
-// Temporary function for testing
-void printBits(int inst) {
-  uint32_t mask = 1 << 31;
-  
-  for (int i = 31; i >= 0; i--) {
-    printf(((inst & mask) == 0) ? "0" : "1");
-    inst <<= 1;
-  }
-  printf("\n"); 
 }
 
 void decode(int32_t * inst) {
