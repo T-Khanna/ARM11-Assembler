@@ -289,7 +289,6 @@ void multiply(int32_t * inst) {
   int32_t rd = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);  //calculate value of rd
   int32_t rm = convBinToDec(*(currState->registers+convBinToDec(rmarr, 4)),32);  //calculate value of rm
   int32_t rs = convBinToDec(*(currState->registers+convBinToDec(rsarr, 4)),32);  //calculate value of rs
-  
   // Checking and adding Rn
   if(inst[21] == 1) {
     int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);  //calculate value of rn
@@ -299,10 +298,13 @@ void multiply(int32_t * inst) {
     rd = rm * rs;
     // Not adding Rn
   }
+  // saving result in register
 
-  // saving result in register 
-  *(currState->registers+convBinToDec(rdarr, 4)) = convDecToBin(rd,32);
+  for (int i=0; i < 32; i++){
+  *(*(currState->registers+convBinToDec(rdarr, 4)) + i) = *(convDecToBin(rd,32) + i);
   
+  }
+
   // updatng CPSR register
   if(inst[20] == 1){
     if(rd < 0){
@@ -589,7 +591,6 @@ int32_t main(int32_t argc, char **argv) {
       printf("0x%02hhx%02hhx%02hhx%02hhx\n",(*membyte),(*(membyte+1)),(*(membyte+2)),*(membyte+3));
     } 
   }
-  
   fclose(fptr);                  // close file
 
   freeRegs();                    // free memory
