@@ -567,7 +567,7 @@ int32_t main(int32_t argc, char **argv) {
 
   //Outputting the state of Registers and non-zero memory
   
-  printf("Registers: \n");
+  printf("Registers:\n");
 
   for(int i = 0; i <= 12; i++) {
     int reg_value = convBinToDec(*(currState->registers + i), 32);
