@@ -72,18 +72,16 @@ int32_t * getImmVal(int32_t * inst) {
 }
 
 int32_t * selectShift(int32_t * reg, int sbit1, int sbit2, int sft_num) {
-  static int32_t *value = NULL;
-
   if (sbit1 == 0 && sbit2 == 0) {
-    value = shift_left(reg, 32, sft_num);
+     shift_left(reg, 32, sft_num);
   } else if (sbit1 == 0 && sbit2 == 1) {
-    value = shift_right(reg, 32, sft_num);
+     shift_right(reg, 32, sft_num);
   } else if (sbit1 == 1 && sbit2 == 0) {
-    value = arith_shift_right(reg, 32, sft_num);
+     arith_shift_right(reg, 32, sft_num);
   } else if (sbit1 == 1 && sbit2 == 1) {
-    value = rotate_right(reg, 32, sft_num);
+     rotate_right(reg, 32, sft_num);
   }
-  return value;
+  return reg;
 }
 
 int32_t * getRegVal(int32_t * inst) {
@@ -143,7 +141,7 @@ void copyArray(int32_t from[], int32_t to[], int size) {
 }
 
 void dataprocessing(int32_t * inst) {
-  
+// printf("Data processing was called!\n"); 
  int32_t rnarr[4], rdarr[4], opcodearr[4];
  int32_t *rn , *rd, *op2 = NULL;
  int32_t opcode = 0;
@@ -280,6 +278,7 @@ void dataprocessing(int32_t * inst) {
 void multiply(int32_t * inst) {
   //Rd = Rm x Rs
   //Rd = Rm x Rs + Rn if A = 1
+//  printf("Multiply gets called!\n");
   int32_t rdarr[4], rmarr[4], rsarr[4], rnarr[4];
   for (int i = 0; i < 4; i++) {
     rdarr[i] = inst[19 - i];
@@ -320,7 +319,8 @@ void multiply(int32_t * inst) {
 
 void single_data_transfer(int32_t * inst) {
 //  int32_t i = *(inst + 25);
-  int32_t p = *(inst + 24); // 
+//  printf("Data transfer gets called!\n");
+  int32_t p = *(inst + 24);  
   int32_t u = *(inst + 23);
   int32_t l = *(inst + 20);
   int32_t rdarr[4], rnarr[4];
@@ -367,32 +367,46 @@ void single_data_transfer(int32_t * inst) {
 }
 
 void branch(int32_t * inst) {
-  static int32_t * offset;
+//  printf("Branch gets called!\n");
+  int32_t offset[32];
   int offset_temp[24];
-
   for(int i = 0; i < 24; i++) {
-    *(offset_temp + i) = *(inst + i);
-  }
+    offset_temp[i] = *(inst + i);
+  } 
+  
+//  printf("%d\n", convBinToDec(inst, 32));
+//  printf("%d\n", convBinToDec(offset_temp, 24));
 
   //Shift left by 2
-  shift_left(offset_temp, sizeof(offset_temp), 2);
+  shift_left(offset_temp, sizeof(offset_temp) / INSTRUCTION_BYTE_SIZE, 2);
 
   //Signed extended to 32 bits
   int sign = offset_temp[23];
-
   for(int i = 0; i < 32; i++) {
     if(i < 23) {
-      *(offset + i) = offset_temp[i];
+      offset[i] = offset_temp[i];
     } else {
-      *(offset + i) = sign;
+      offset[i] = sign;
     }
   }
-
+//  printf("%d\n", convBinToDec(offset, 32));
+  //offset is a  SIGNED 32 bit bin number
   //Add offset to PC 
-  currState->PC += convBinToDec(offset, 32) - 4;
+  currState->PC += convBinToDec(offset, 32) + 4;
   currState->pipeline->fetched = NULL;
   currState->pipeline->decoded = NULL;
   //Keeping the pipeline in mind, PC is 8 bytes ahead of instr)
+}
+
+// Temporary function for testing
+void printBits(int inst) {
+  uint32_t mask = 1 << 31;
+  
+  for (int i = 31; i >= 0; i--) {
+    printf(((inst & mask) == 0) ? "0" : "1");
+    inst <<= 1;
+  }
+  printf("\n"); 
 }
 
 void decode(int32_t * inst) {
@@ -420,6 +434,9 @@ void decode(int32_t * inst) {
 
   // subfunction distributor
   int32_t bit1 = *(inst + 27), bit2 = *(inst + 26);  
+//  printf("Bit 27 = %d\n Bit 26 = %d\n", bit1, bit2);
+
+//  printBits(convBinToDec(inst, 32));
   if (bit1 == 1 && bit2 == 0) {
     branch(inst);
   } else if (bit1 == 0 && bit2 == 1) {
@@ -493,7 +510,7 @@ void freeRegs(){
 }
 
 int allZeroes(int32_t* inst) {
-  for (int i = 0; i < sizeof(inst); i++) {
+  for (int i = 0; i < 32; i++) {
     if (*(inst + i) == 1) {
       return 0;
     }
@@ -535,6 +552,8 @@ int32_t main(int32_t argc, char **argv) {
   while (1) {
     byte = fetchInstruction(currState->memory);
     currState->pipeline->fetched = instrToBits(byte);
+//    printf("%d\n", convBinToDec(currState->pipeline->fetched, 32));
+//    printf("While loop called.\n");
     if (allZeroes(currState->pipeline->fetched) == 1) {
       free(byte);
       currState->PC += 4;

@@ -25,54 +25,51 @@ int32_t* convDecToBin(int32_t num, int32_t size){
   return result;
 }
 
-int32_t * rotate_right(int32_t * array, int size, int rot_num) {
+void rotate_right(int32_t array[], int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
     int temp;
-    temp = *(array + size - 1);
+    temp = array[size - 1];
     for (int i = size - 1; i > 0; i--) {
-      *(array + i) = *(array + i - 1);
+      array[i] = array[i - 1];
     }
-    *(array + 0) = temp;
+    array[0] = temp;
   }
-  return array;
 }
 
-int32_t * shift_left(int32_t * array, int size, int rot_num) {
+void shift_left(int32_t array[], int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
 
-    updateCarry(*(array));
+    updateCarry(array[0]);
 
     for (int i = size - 1; i > 0; i--) {
-      *(array + i) = *(array + i - 1);
+      array[i] = array[i - 1];
     }
-    *(array) = 0;
+    array[0] = 0;
   }
-  return array;
+
 }
 
-int32_t * shift_right(int32_t * array, int size, int rot_num) {
+void shift_right(int32_t array[], int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
 
-    updateCarry(*(array));
+    updateCarry(array[0]);
 
     for (int i = size - 2; i >= 0; i--) {
-      *(array + i) = *(array + i + 1);
+      array[i] = array[i + 1];
     }
-    *(array + size - 1) = 0;
+    array[size - 1] = 0;
   }
-  return array;
 }
 
-int32_t * arith_shift_right(int32_t * array, int size, int rot_num) {
+void arith_shift_right(int32_t array[], int size, int rot_num) {
   for (int n = 0; n < rot_num; n++) {
-    updateCarry(*(array));
+    updateCarry(array[0]);
 
     for (int i = size - 3; i >= 0; i--) {
-      *(array + i) = *(array + i + 1);
+      array[i] = array[i + 1];
     }
-    *(array + size - 2) = 0;
+    array[size - 2] = 0;
   }
-  return array;
 }
 
 
