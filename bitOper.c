@@ -17,12 +17,14 @@ int convBinToDec(int32_t bin[], int32_t size) {
 
 int32_t* convDecToBin(int32_t num, int32_t size){
 // convert int32_t to binary array
-  static int32_t* result = NULL;
-  for (int i =0; i < size; i++){
-    result[size - i] = (num % 2);
+  static int32_t *result = NULL;
+  for (int i =1; i <= 32; i++){
+    *(result + size - i) = (num % 2);
+    printf("%i",*(result + size - i));
     num = num / 2;
   }
   return result;
+  // free memory
 }
 
 void rotate_right(int32_t array[], int size, int rot_num) {

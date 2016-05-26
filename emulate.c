@@ -242,8 +242,7 @@ void dataprocessing(int32_t * inst) {
           }
           break;
   //MOV
-  case 13://printf("%d\n",convBinToDec((int32_t *) (op2),32));
-          for (int i = 0; i < 32; i++) {
+  case 13:for (int i = 0; i < 32; i++) {
             *(rd+i) = *(op2+i);
             rdVal[i] = *(op2+i);
           }
@@ -253,11 +252,10 @@ void dataprocessing(int32_t * inst) {
  }
 
  //set flags based on rdVal
- 
  // V does not need to be set.
  // Setting c:
   
- 
+  
 
  // Setting z:
  int firstnum = 0;
@@ -270,8 +268,8 @@ void dataprocessing(int32_t * inst) {
    currState->CPSR[30] = 0;
  }
  // Setting n:
- currState->CPSR[31] = *(rd + 0);
-
+ currState->CPSR[31] = *(rd + 31);
+ //printf("%i,%i\n",currState->CPSR[31],currState->CPSR[30]);
 }
 
 
