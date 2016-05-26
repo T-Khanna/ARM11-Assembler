@@ -552,7 +552,9 @@ int32_t main(int32_t argc, char **argv) {
   while (1) {
     byte = fetchInstruction(currState->memory);
     currState->pipeline->fetched = instrToBits(byte);
-//    printf("%d\n", convBinToDec(currState->pipeline->fetched, 32));
+    for (int i = 31; i >= 0; i--){
+    printf("%d", *(currState->pipeline->fetched + i));}
+    printf("\n");
 //    printf("While loop called.\n");
     if (allZeroes(currState->pipeline->fetched) == 1) {
       free(byte);
@@ -582,7 +584,7 @@ int32_t main(int32_t argc, char **argv) {
 
   for (int i = 0; i < MEMORY_CAPACITY; i+=4) {
     int8_t *membyte = currState->memory + i;
-    if (!(*membyte == 0)){
+    if (!(*membyte == 0) || !(*(membyte+1) == 0) || !(*(membyte+2) == 0) || !(*(membyte+3) == 0)){
       printf("0x%08x: ", i);
       printf("0x%02hhx%02hhx%02hhx%02hhx\n",(*membyte),(*(membyte+1)),(*(membyte+2)),*(membyte+3));
     } 
