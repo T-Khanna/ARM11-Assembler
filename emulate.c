@@ -1,14 +1,26 @@
+///////////////////////////////////////////////////////////////////////////////
+// ARM Group Project - Year 1 (Group 40)
+// ____________________________________________________________________________
+//
+// File: ARMgen.h
+// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
+///////////////////////////////////////////////////////////////////////////////
+
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMgen.h"
 #include "bitOper.h"
 
-CurrentState *currState = NULL;
+
+// holds the state of registers, memory and the pipeline of the system.
+current_state *curr_state = NULL;
+
 
 int32_t main(int32_t argc, char **argv) {
 
-  // checking arguments
+  // check for invalid number of arguments
   if (argc != 2) {
     printf("Expecting one argument\n");
     return EXIT_FAILURE;
@@ -30,17 +42,17 @@ int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 
 
   //static int32_t8_t* instruction;
-  for (int i = currState->PC; i < currState->PC + INSTRUCTION_BYTE_SIZE; i++) {
-    instruction[INSTRUCTION_BYTE_SIZE - (i - currState->PC + 1)] = littleEndianBuffer[i];
+  for (int i = curr_state->PC; i < curr_state->PC + INSTRUCTION_BYTE_SIZE; i++) {
+    instruction[INSTRUCTION_BYTE_SIZE - (i - curr_state->PC + 1)] = littleEndianBuffer[i];
   }  
-  currState->PC += 4;
+  curr_state->PC += 4;
   return instruction;
   // Need to 'free' memory occupied by instruction
 }
 
   void updateCarry(int carry){
     
-      currState->CPSR[29] = carry;
+      curr_state->CPSR[29] = carry;
 }
 
 int32_t* instrToBits(int8_t instruction[]) {
@@ -106,7 +118,7 @@ int32_t * getRegVal(int32_t * inst) {
   for (int i = 3; i >= 0; i--) {
     reg[3-i] = *(inst + i);
   }
-  value = *(currState->registers + convBinToDec(reg,4));
+  value = *(curr_state->registers + convBinToDec(reg,4));
   
   // Using 5-bit integer
   if (*(inst + 4) == 0) {
@@ -124,7 +136,7 @@ int32_t * getRegVal(int32_t * inst) {
     }
     
     // Pointer to content in Register Rs
-    int* regContent = *(currState->registers + convBinToDec(reg, 4));
+    int* regContent = *(curr_state->registers + convBinToDec(reg, 4));
     
     // Last byte of Rs register's content
     int32_t amount[8];
@@ -170,8 +182,8 @@ void dataprocessing(int32_t * inst) {
      opcodearr[i] = inst[24-i];
    } 
 
- rn = *(currState->registers+convBinToDec(rnarr, 4));
- rd = *(currState->registers+convBinToDec(rdarr, 4));
+ rn = *(curr_state->registers+convBinToDec(rnarr, 4));
+ rd = *(curr_state->registers+convBinToDec(rdarr, 4));
  opcode =convBinToDec(opcodearr, 4);  
  
  // Checking what the operation is, then executing it, and setting flags
@@ -277,12 +289,12 @@ void dataprocessing(int32_t * inst) {
    firstnum ++;
  }
  if (firstnum == 32) {
-   currState->CPSR[30] = 1;
+   curr_state->CPSR[30] = 1;
  } else {
-   currState->CPSR[30] = 0;
+   curr_state->CPSR[30] = 0;
  }
  // Setting n:
- currState->CPSR[31] = *(rd + 0);
+ curr_state->CPSR[31] = *(rd + 0);
 
 }
 
@@ -298,12 +310,12 @@ void multiply(int32_t * inst) {
     rsarr[i] = inst[11 - i];
     rnarr[i] = inst[15 - i];
   } 
-  int32_t rd = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);  //calculate value of rd
-  int32_t rm = convBinToDec(*(currState->registers+convBinToDec(rmarr, 4)),32);  //calculate value of rm
-  int32_t rs = convBinToDec(*(currState->registers+convBinToDec(rsarr, 4)),32);  //calculate value of rs
+  int32_t rd = convBinToDec(*(curr_state->registers+convBinToDec(rdarr, 4)),32);  //calculate value of rd
+  int32_t rm = convBinToDec(*(curr_state->registers+convBinToDec(rmarr, 4)),32);  //calculate value of rm
+  int32_t rs = convBinToDec(*(curr_state->registers+convBinToDec(rsarr, 4)),32);  //calculate value of rs
   // Checking and adding Rn
   if(inst[21] == 1) {
-    int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);  //calculate value of rn
+    int32_t rn = convBinToDec(*(curr_state->registers+convBinToDec(rnarr, 4)),32);  //calculate value of rn
     rd = rm * rs + rn;
     //Add Rn
   } else {
@@ -313,18 +325,18 @@ void multiply(int32_t * inst) {
   // saving result in register
 
   for (int i=0; i < 32; i++){
-  *(*(currState->registers+convBinToDec(rdarr, 4)) + i) = *(convDecToBin(rd,32) + i);
+  *(*(curr_state->registers+convBinToDec(rdarr, 4)) + i) = *(convDecToBin(rd,32) + i);
   
   }
 
   // updatng CPSR register
   if(inst[20] == 1){
     if(rd < 0){
-      currState->CPSR[31] = 1;
-      currState->CPSR[30] = 0;
+      curr_state->CPSR[31] = 1;
+      curr_state->CPSR[30] = 0;
     } else if(rd == 0){
-      currState->CPSR[31] = 0;
-      currState->CPSR[30] = 1;
+      curr_state->CPSR[31] = 0;
+      curr_state->CPSR[30] = 1;
     }
   }
 }
@@ -355,27 +367,27 @@ void single_data_transfer(int32_t * inst) {
   }
   int32_t offsetVal = convBinToDec(offset, 32);
   
-  int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);
+  int32_t rn = convBinToDec(*(curr_state->registers+convBinToDec(rnarr, 4)),32);
   
   if(l == 1) {
     if(p == 1) {
-      *(currState->registers+convBinToDec(rdarr, 4)) 
-        = convDecToBin(*(currState->memory + rn), 8);
+      *(curr_state->registers+convBinToDec(rdarr, 4)) 
+        = convDecToBin(*(curr_state->memory + rn), 8);
       (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
     } else {
       (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
-      *(currState->registers+convBinToDec(rdarr, 4)) 
-        = convDecToBin(*(currState->memory + rn), 8);
+      *(curr_state->registers+convBinToDec(rdarr, 4)) 
+        = convDecToBin(*(curr_state->memory + rn), 8);
     }
   } else {
     if(p == 1) {
-      *(currState->memory + rn) 
-        = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);
+      *(curr_state->memory + rn) 
+        = convBinToDec(*(curr_state->registers+convBinToDec(rdarr, 4)),32);
       (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
     } else {
       (u == 1) ? (rn += offsetVal) : (rn -= offsetVal);
-      *(currState->memory + rn) 
-        = convBinToDec(*(currState->registers+convBinToDec(rdarr, 4)),32);
+      *(curr_state->memory + rn) 
+        = convBinToDec(*(curr_state->registers+convBinToDec(rdarr, 4)),32);
     }
   }
 }
@@ -406,9 +418,9 @@ void branch(int32_t * inst) {
 //  printf("%d\n", convBinToDec(offset, 32));
   //offset is a  SIGNED 32 bit bin number
   //Add offset to PC 
-  currState->PC += convBinToDec(offset, 32) + 4;
-  currState->pipeline->fetched = NULL;
-  currState->pipeline->decoded = NULL;
+  curr_state->PC += convBinToDec(offset, 32) + 4;
+  curr_state->pipeline->fetched = NULL;
+  curr_state->pipeline->decoded = NULL;
   //Keeping the pipeline in mind, PC is 8 bytes ahead of instr)
 }
 
@@ -430,21 +442,21 @@ void decode(int32_t * inst) {
     cond = cond * 2 + inst[i];
   }
   switch(cond) {
-    case 0:  goahead = (currState->CPSR[30] == 1); break; 
-    case 1:  goahead = (currState->CPSR[30] == 0); break;
-    case 10: goahead = (currState->CPSR[31] == currState->CPSR[28]); break;
-    case 11: goahead = (currState->CPSR[31] != currState->CPSR[28]); break;
-    case 12: goahead = (currState->CPSR[30] == 0) && 
-                       (currState->CPSR[31] == currState->CPSR[28]); break;
-    case 13: goahead = (currState->CPSR[30] == 1) || 
-                       (currState->CPSR[31] != currState->CPSR[28]); break;
+    case 0:  goahead = (curr_state->CPSR[30] == 1); break; 
+    case 1:  goahead = (curr_state->CPSR[30] == 0); break;
+    case 10: goahead = (curr_state->CPSR[31] == curr_state->CPSR[28]); break;
+    case 11: goahead = (curr_state->CPSR[31] != curr_state->CPSR[28]); break;
+    case 12: goahead = (curr_state->CPSR[30] == 0) && 
+                       (curr_state->CPSR[31] == curr_state->CPSR[28]); break;
+    case 13: goahead = (curr_state->CPSR[30] == 1) || 
+                       (curr_state->CPSR[31] != curr_state->CPSR[28]); break;
     case 14: goahead = 1; break;
     default: perror("Invalid flags\n"); return;
   }
 
   if(!goahead) {return;}
 
-  currState->pipeline->decoded = inst;   
+  curr_state->pipeline->decoded = inst;   
 
   // subfunction distributor
   int32_t bit1 = *(inst + 27), bit2 = *(inst + 26);  
@@ -477,34 +489,34 @@ void decode(int32_t * inst) {
 //initialize all registers
 void regInit(){
 
-  currState = calloc(1,sizeof(CurrentState));
-  currState->pipeline = calloc(1,sizeof(Pipeline));
+  curr_state = calloc(1,sizeof(current_state));
+  curr_state->pipeline = calloc(1,sizeof(pipeline));
 
-  if (currState == NULL || currState->pipeline == NULL) {
+  if (curr_state == NULL || curr_state->pipeline == NULL) {
       perror("coudn't initialize state");
       exit(EXIT_FAILURE);
     }  
 
   for(int i=0; i < GEN_PURPOSE_REG; i++){  
-    *(currState->registers + i) = (int32_t *)calloc(32 , sizeof(int32_t));
+    *(curr_state->registers + i) = (int32_t *)calloc(32 , sizeof(int32_t));
 
-    if (*(currState->registers+i) == NULL) {
+    if (*(curr_state->registers+i) == NULL) {
       perror("coudn't initialize registers");
       exit(EXIT_FAILURE);
     } 
   } 
 
-  currState->PC = 0;
-  currState->CPSR = (int32_t *) calloc(32, sizeof(int32_t));
+  curr_state->PC = 0;
+  curr_state->CPSR = (int32_t *) calloc(32, sizeof(int32_t));
 
-  if (currState->CPSR == NULL) {
+  if (curr_state->CPSR == NULL) {
     perror("coudn't initialize registers");	 
     exit(EXIT_FAILURE);
   }
 
-  currState->memory = calloc(MEMORY_CAPACITY, sizeof(int8_t));
+  curr_state->memory = calloc(MEMORY_CAPACITY, sizeof(int8_t));
   
-  if (currState->memory == NULL) {
+  if (curr_state->memory == NULL) {
     perror("coudn't initialize memory");	 
     exit(EXIT_FAILURE);
   }
@@ -514,13 +526,13 @@ void regInit(){
 //free memory
 void freeRegs(){
   for(int i = 0; i < GEN_PURPOSE_REG; i++){
-    free(*(currState->registers + i));
+    free(*(curr_state->registers + i));
   }
 
-  free(currState->CPSR);
-  free(currState->pipeline);
-  free(currState->memory);
-  free(currState);
+  free(curr_state->CPSR);
+  free(curr_state->pipeline);
+  free(curr_state->memory);
+  free(curr_state);
 }
 
 int allZeroes(int32_t* inst) {
@@ -558,27 +570,27 @@ int32_t main(int32_t argc, char **argv) {
 
 
   //int8_t littleEndianBuffer[file_size]; // store instruction
-  fread(currState->memory, sizeof(int8_t), file_size, fptr);  
+  fread(curr_state->memory, sizeof(int8_t), file_size, fptr);  
 
   // fetch the instruction and store in byte
   int8_t* byte; 
  
   while (1) {
-    byte = fetchInstruction(currState->memory);
-    currState->pipeline->fetched = instrToBits(byte);
+    byte = fetchInstruction(curr_state->memory);
+    curr_state->pipeline->fetched = instrToBits(byte);
 //    for (int i = 31; i >= 0; i--){
-//    printf("%d", *(currState->pipeline->fetched + i));}
+//    printf("%d", *(curr_state->pipeline->fetched + i));}
 //    printf("\n");
 //    printf("While loop called.\n");
-    if (allZeroes(currState->pipeline->fetched) == 1) {
+    if (allZeroes(curr_state->pipeline->fetched) == 1) {
       free(byte);
-      currState->PC += 4;
+      curr_state->PC += 4;
       break;
     }
     if (byte != NULL) {
       free(byte);
     }                     // free instruction memory
-    decode(currState->pipeline->fetched);
+    decode(curr_state->pipeline->fetched);
   }    
 
   //Outputting the state of Registers and non-zero memory
@@ -586,18 +598,18 @@ int32_t main(int32_t argc, char **argv) {
   printf("Registers:\n");
 
   for(int i = 0; i <= 12; i++) {
-    int reg_value = convBinToDec(*(currState->registers + i), 32);
+    int reg_value = convBinToDec(*(curr_state->registers + i), 32);
     printf("$%-3d: %10d (0x%08x)\n", i,reg_value,reg_value);
   }
 
-  printf("PC  : %10d (0x%08x)\n", currState->PC, currState->PC);
-  printf("CPSR: %10d (0x%08x)\n", convBinToDec(currState->CPSR, 32),convBinToDec(currState->CPSR, 32));
+  printf("PC  : %10d (0x%08x)\n", curr_state->PC, curr_state->PC);
+  printf("CPSR: %10d (0x%08x)\n", convBinToDec(curr_state->CPSR, 32),convBinToDec(curr_state->CPSR, 32));
 
 
   printf("Non-zero memory:\n");
 
   for (int i = 0; i < MEMORY_CAPACITY; i+=4) {
-    int8_t *membyte = currState->memory + i;
+    int8_t *membyte = curr_state->memory + i;
     if (!(*membyte == 0) || !(*(membyte+1) == 0) || !(*(membyte+2) == 0) || !(*(membyte+3) == 0)){
       printf("0x%08x: ", i);
       printf("0x%02hhx%02hhx%02hhx%02hhx\n",(*membyte),(*(membyte+1)),(*(membyte+2)),*(membyte+3));
