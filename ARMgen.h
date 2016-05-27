@@ -13,7 +13,8 @@ given Rasberry Pi system.
 
 // ------ CONSTANTS -------------------------
 
-#define MEMORY_CAPACITY 65536
+// memory = 65536 bytes/ 4 words = 
+#define MEMORY_CAPACITY (65536/4)
 #define TOTAL_REGISTERS 17
 #define GEN_PURPOSE_REG 13
 #define INSTRUCTION_BYTE_SIZE 4
@@ -30,9 +31,9 @@ typedef struct Pipeline
 
 typedef struct CurrentState
 {
-    Pipeline *pipeline;
+    Pipeline pipeline;
     int32_t registers[TOTAL_REGISTERS];
-    int8_t memory[MEMORY_CAPACITY];
+    int32_t memory[MEMORY_CAPACITY];
 } CurrentState;
 
 

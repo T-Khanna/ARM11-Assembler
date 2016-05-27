@@ -1,12 +1,39 @@
+/*
+   ARM project GROUP 40
+        emulator 
+
+*/
+
+
+// ------Including required libraries------------
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMgen.h"
 #include "bitOper.h"
 
-CurrentState *currState = NULL;
+// ------Definations used in the code------------
 
-int32_t main(int32_t argc, char **argv) {
+#define byte_size 8
+#define PC registers[15]
+#define CPSR registers[16]
+
+
+// ------Function Definations--------------------
+
+void regInit();
+void printOutput();
+int convEndian(int32_t num);
+
+// ------Global Varibales------------------------
+
+  // give the current state of the rasberry pie
+  CurrentState currState;
+
+
+// ------Main------------------------------------
+
+int32_t main(int argc, char *argv[]) {
 
   // checking arguments
   if (argc != 2) {
@@ -14,8 +41,103 @@ int32_t main(int32_t argc, char **argv) {
     return EXIT_FAILURE;
   }
 
+  // Initialize the memory, pipeline and registers
+  regInit(argv[1]);
+
+ 
+  printOutput();
   return EXIT_SUCCESS;
 }
+
+// -----Supporting Functions-------------------
+
+/*
+  Set registers and memory to 0.
+
+*/
+void regInit(char* file){
+   
+   //setting all registers to 0
+   for (int i = 0; i < TOTAL_REGISTERS; i++) {
+      currState.registers[i] = 0;
+   }
+   
+   //setting value of pipeline to 0
+   currState.pipeline.fetched = 0;
+   currState.pipeline.decoded = 0;
+
+   //setting memory to 0
+   for (int i = 0; i < MEMORY_CAPACITY; i++) {
+       currState.memory[i] = 0;
+   } 
+
+   //set up intructions in memory
+
+   
+   FILE *fptr = fopen(file,"rb");
+   // pass error if unvalid file
+   if (fptr == NULL) {
+      printf("Unable to open file\n");
+      return;
+   }
+   // setting file point32_ter to last place
+  fseek(fptr, 0, SEEK_END);         
+  // ftell returns the pos of the file point32_ter
+  int file_size = ftell(fptr);	
+  rewind(fptr); 
+  
+  for (int i = 0; i < file_size; i++) {
+     fread(&currState.memory[i], 32, 1, fptr);
+     currState.memory[i] = convEndian(currState.memory[i]);
+  }
+
+  fclose(fptr);
+}
+
+
+// converts from one Endian to another
+int convEndian(int num){
+   int result = 0;
+   for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
+         result = result | (getBits(&num, i * byte_size, byte_size)
+                    << ((INSTRUCTION_BYTE_SIZE -1 - i) * byte_size));
+   }
+   return result;
+}
+
+//--------------------------------------------
+
+/*
+  printing output
+  printing register value and all nonzero memory
+*/
+
+void printOutput() {
+
+  //printing register 
+  printf("Registers:\n");
+
+  for(int i = 0; i < GEN_PURPOSE_REG; i++) {
+    int reg_value = currState.registers[i];
+    printf("$%-3d: %10d (0x%08x)\n", i,reg_value,reg_value);
+  }
+
+  printf("PC  : %10d (0x%08x)\n", currState.PC, currState.PC);
+  printf("CPSR: %10d (0x%08x)\n", currState.CPSR,currState.CPSR);
+
+  //printing non-zero memory
+  printf("Non-zero memory:\n");
+
+  for (int i = 0; i < MEMORY_CAPACITY; i++) {
+    int32_t memWord = currState.memory[i];
+    if (!(memWord == 0)){
+      printf("0x%08x: ", 4*i);
+      printf("0x%08x\n", currState.memory[i]);
+    }       
+  }
+}
+
+//-----------------------------------------------
 
 /*
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
