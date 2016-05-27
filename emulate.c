@@ -2,7 +2,7 @@
 // ARM Group Project - Year 1 (Group 40)
 // ____________________________________________________________________________
 //
-// File: ARMgen.h
+// File: emulate.c
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ///////////////////////////////////////////////////////////////////////////////
 

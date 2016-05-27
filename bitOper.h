@@ -11,7 +11,7 @@
 #include<stdio.h>
 
 
-// -- FUNCTION DECLARATIONS ---------------------------------------------------
+//-- FUNCTION DECLARATIONS ---------------------------------------------------
 
 int getBit(int* num, int index);
 void setBit(int* num, int givenBit, int index);
