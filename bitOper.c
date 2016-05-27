@@ -18,6 +18,7 @@
 #define WORD_SIZE 32
 
 
+
 // get value of multiple bits of given size and position
 int getBits(int* num, int index, int size) {
    assert((index >= 0) && (index < WORD_SIZE) &&
