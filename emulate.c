@@ -1,11 +1,12 @@
-/*
-   ARM project GROUP 40
-        emulator 
+///////////////////////////////////////////////////////////////////////////////
+// ARM Group Project - Year 1 (Group 40)
+// ____________________________________________________________________________
+//
+// File: emulate.c
+// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
+///////////////////////////////////////////////////////////////////////////////
 
-*/
 
-
-// ------Including required libraries------------
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,14 +29,14 @@ int convEndian(int32_t num);
 // ------Global Varibales------------------------
 
   // give the current state of the rasberry pie
-  CurrentState currState;
+  current_state currState;
 
 
 // ------Main------------------------------------
 
 int32_t main(int argc, char *argv[]) {
 
-  // checking arguments
+  // check for invalid number of arguments
   if (argc != 2) {
     printf("Expecting one argument\n");
     return EXIT_FAILURE;
@@ -599,8 +600,8 @@ void decode(int32_t * inst) {
 //initialize all registers
 void regInit(){
 
-  currState = calloc(1,sizeof(CurrentState));
-  currState->pipeline = calloc(1,sizeof(Pipeline));
+  currState = calloc(1,sizeof(current_state));
+  currState->pipeline = calloc(1,sizeof(pipeline));
 
   if (currState == NULL || currState->pipeline == NULL) {
       perror("coudn't initialize state");

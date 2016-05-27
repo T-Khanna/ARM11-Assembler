@@ -1,17 +1,22 @@
+///////////////////////////////////////////////////////////////////////////////
+// ARM Group Project - Year 1 (Group 40)
+// ____________________________________________________________________________
+//
+// File: ARMgen.h
+// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+//------------------------ ARM GENERAL DEFINITIONS ----------------------------
+// Contains the definitions and structure for the Rasberry Pi system.
+
+
 #ifndef _ARM_GEN
-#define _ARM_GEN
-
-// ------ ARM GENERAL DEFINITIONS -----------
-
-/*
-
-Contains general definitions and structure for 
-given Rasberry Pi system.  
-
-*/
+  #define _ARM_GEN
 
 
-// ------ CONSTANTS -------------------------
+//-- CONSTANTS ----------------------------------------------------------------
 
 // memory = 65536 bytes/ 4 words = 
 #define MEMORY_CAPACITY (65536/4)
@@ -19,32 +24,33 @@ given Rasberry Pi system.
 #define GEN_PURPOSE_REG 13
 #define INSTRUCTION_BYTE_SIZE 4
 
-// ------ PIPELINE --------------------------                                   
 
-typedef struct Pipeline
-{
+//-- PIPELINE -----------------------------------------------------------------
+
+typedef struct pipeline {
     int32_t fetched;
     int32_t decoded;
-} Pipeline;
+} pipeline;
 
-// ------ CURRENT STATE  --------------------                                      
 
-typedef struct CurrentState
-{
-    Pipeline pipeline;
+//-- CURRENT STATE ------------------------------------------------------------
+
+typedef struct current_state {
+    pipeline pipeline;
     int32_t registers[TOTAL_REGISTERS];
-    int32_t memory[MEMORY_CAPACITY];
-} CurrentState;
+    int8_t memory[MEMORY_CAPACITY];
+} current_state;
 
 
-//------- INSTRUCTION TYPE ------------------
+//-- INSTRUCTION TYPE ---------------------------------------------------------
 
-enum Instruction_type
-{
+enum instruction_type {
     Data_processing,
     Multiply,
     Single_data_transfer,
     Branch 
 };
 
+
 #endif
+
