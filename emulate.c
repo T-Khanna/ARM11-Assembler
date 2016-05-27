@@ -198,7 +198,7 @@ void dataprocessing(int32_t * inst) {
   // RSB        
   case  3:copyArray(binary_sub(op2, rn, 32), rdVal,  32);
           for (int i = 0; i < 32; i++) {
-              *(rd + i) = *(rdVal +i);
+            *(rd + i) = *(rdVal +i);
           }
           break;
   // ADD
@@ -411,24 +411,33 @@ void printBits(int inst) {
   printf("\n"); 
 }
 
+
+//NEW
+void execute(Decoded dec) {
+
+  switch(cond) {
+    case 0:  goahead = (currState->CPSR[30] == 1); break; 
+    case 1:  goahead = (currState->CPSR[30] == 0); break;
+    case 10: goahead = (currState->CPSR[31] == currState->CPSR[28]); break;
+    case 11: goahead = (currState->CPSR[31] != currState->CPSR[28]); break;
+    case 12: goahead = (currState->CPSR[30] == 0) &&
+             (currState->CPSR[31] == currState->CPSR[28]); break;
+    case 13: goahead = (currState->CPSR[30] == 1) || 
+                       (currState->CPSR[31] != currState->CPSR[28]); break;
+    case 14: goahead = 1; break;
+    default: perror("Invalid flags\n"); return;
+                                                                           
+  }
+}
+
+
 void decode(int32_t * inst) {
   // set flags
   int32_t cond = 0,  goahead = 0 ;
   for (int i = 31; i >= 28; i--) {
     cond = cond * 2 + inst[i];
   }
-  switch(cond) {
-    case 0:  goahead = (currState->CPSR[30] == 1); break; 
-    case 1:  goahead = (currState->CPSR[30] == 0); break;
-    case 10: goahead = (currState->CPSR[31] == currState->CPSR[28]); break;
-    case 11: goahead = (currState->CPSR[31] != currState->CPSR[28]); break;
-    case 12: goahead = (currState->CPSR[30] == 0) && 
-                       (currState->CPSR[31] == currState->CPSR[28]); break;
-    case 13: goahead = (currState->CPSR[30] == 1) || 
-                       (currState->CPSR[31] != currState->CPSR[28]); break;
-    case 14: goahead = 1; break;
-    default: perror("Invalid flags\n"); return;
-  }
+ 
 
   if(!goahead) {return;}
 
@@ -467,6 +476,8 @@ void regInit(){
 
   currState = calloc(1,sizeof(CurrentState));
   currState->pipeline = calloc(1,sizeof(Pipeline));
+  //New
+  currState->pipeline->decoded = calloc(1,sizeof(Decoded));
 
   if (currState == NULL || currState->pipeline == NULL) {
       perror("coudn't initialize state");
@@ -520,37 +531,51 @@ int allZeroes(int32_t* inst) {
   return 1;
 }
 
+
 int32_t main(int32_t argc, char **argv) {
 
-  // checking arguments
-  if (argc != 2) {
-    printf("Expecting one argument\n");
-    return EXIT_FAILURE;
-  }
+ // checking arguments
+    if (argc != 2) {
+        printf("Expecting one argument\n");
+            return EXIT_FAILURE;
+    }
+               
+ // initialize registers
+ regInit();
  
-  // initialize registers
-  regInit();
-
-  // open file
-  FILE *fptr = fopen(argv[1], "rb");
+ // open file
+ FILE *fptr = fopen(argv[1], "rb");
+                     
+ // pass error if unvalid file
+ if (!fptr) {
+   printf("Unable to open file\n");
+   return EXIT_FAILURE;
+ }
  
-  // pass error if unvalid file
-  if (!fptr) {
-    printf("Unable to open file\n");
-    return EXIT_FAILURE;
-  }
-
-  fseek(fptr, 0, SEEK_END);     // setting file point32_ter to last place
-  int32_t file_size = ftell(fptr);  // ftell returns the pos of the file point32_ter
-  rewind(fptr);           // rewind resets the file point32_ter to the start pos
-
-
-  //int8_t littleEndianBuffer[file_size]; // store instruction
-  fread(currState->memory, sizeof(int8_t), file_size, fptr);  
+ fseek(fptr, 0, SEEK_END);     // setting file point32_ter to last place
+ int32_t file_size = ftell(fptr);  // ftell returns the pos of the file point32_ter
+ rewind(fptr);           // rewind resets the file point32_ter to the start pos
+ 
+ 
+ //int8_t littleEndianBuffer[file_size]; // store instruction
+ fread(currState->memory, sizeof(int8_t), file_size, fptr);  
+                            
+    
 
   // fetch the instruction and store in byte
-  int8_t* byte; 
+  int8_t* byte;
+  // NEW
+  // initializing nescessary stuff for while loop
+  Decoded dCode = NULL;
+  int done = 0;
  
+ 
+  //NEW
+  // initialise pipeline
+  currState->pipeline->fetched = NULL;
+  currState->pipeline->decoded = NULL;
+
+/*
   while (1) {
     byte = fetchInstruction(currState->memory);
     currState->pipeline->fetched = instrToBits(byte);
@@ -567,7 +592,49 @@ int32_t main(int32_t argc, char **argv) {
       free(byte);
     }                     // free instruction memory
     decode(currState->pipeline->fetched);
-  }    
+  }  
+*/
+
+
+  //NEW
+  //decode gives a struct that describes the decoded code 
+  while(done == 0) {
+    if (currState->pipeline->fetched == NULL) {
+      //first step
+      byte = fetchInstruction(currState->memory);
+      currState->pipeline->fetched = instrToBits(byte);
+
+    } else if (currState->pipeline->decoded == NULL) {
+      // second step
+      dCoded = decode(currState->pipeline->fetched); //we could use memcpy  
+      currState->pipeline->decoded = dCoded;
+      
+      byte = fetchInstruction(currState->memory);
+      currState->pipeline->fetched = instrToBits(byte);
+    } else {
+    
+      execute(currState->pipeline->decoded);
+      
+      dCoded = decode(currState->pipeline->fetched); //we could use memcpy  
+      currState->pipeline->decoded = dCoded;
+
+      byte = fetchInstruction(currState->memory);
+      currState->pipeline->fetched = instrToBits(byte);
+    }
+
+                            
+    }
+    if (byte != NULL) {
+      free(byte);           
+    }// free instruction memory
+    if (dCoded !=NULL) {
+      free(dCoded);
+    }
+  }  
+    
+
+
+
 
   //Outputting the state of Registers and non-zero memory
   
@@ -594,6 +661,6 @@ int32_t main(int32_t argc, char **argv) {
   fclose(fptr);                  // close file
 
   freeRegs();                    // free memory
-
+ 
   return EXIT_SUCCESS;
 }
