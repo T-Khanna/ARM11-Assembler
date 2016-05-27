@@ -6,6 +6,18 @@
 
 CurrentState *currState = NULL;
 
+int32_t main(int32_t argc, char **argv) {
+
+  // checking arguments
+  if (argc != 2) {
+    printf("Expecting one argument\n");
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+/*
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 
    int8_t* instruction = (int8_t*) calloc(INSTRUCTION_BYTE_SIZE, sizeof(int8_t));
@@ -597,3 +609,6 @@ int32_t main(int32_t argc, char **argv) {
 
   return EXIT_SUCCESS;
 }
+
+*/
+

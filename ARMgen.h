@@ -3,6 +3,14 @@
 
 // ------ ARM GENERAL DEFINITIONS -----------
 
+/*
+
+Contains general definitions and structure for 
+given Rasberry Pi system.  
+
+*/
+
+
 // ------ CONSTANTS -------------------------
 
 #define MEMORY_CAPACITY 65536
@@ -14,8 +22,8 @@
 
 typedef struct Pipeline
 {
-    int32_t* fetched;
-    int32_t* decoded;
+    int32_t fetched;
+    int32_t decoded;
 } Pipeline;
 
 // ------ CURRENT STATE  --------------------                                      
@@ -23,14 +31,19 @@ typedef struct Pipeline
 typedef struct CurrentState
 {
     Pipeline *pipeline;
-    int32_t* registers[GEN_PURPOSE_REG];
-    int PC;
-    int32_t* CPSR;
-    int8_t* memory;
+    int32_t registers[TOTAL_REGISTERS];
+    int8_t memory[MEMORY_CAPACITY];
 } CurrentState;
 
 
-void updateCarry(int carry);
-int * binary_sub(int32_t * arr1, int32_t * arr2, int size);
-int * binary_add(int32_t * arr1, int32_t * arr2, int size); 
+//------- INSTRUCTION TYPE ------------------
+
+enum Instruction_type
+{
+    Data_processing,
+    Multiply,
+    Single_data_transfer,
+    Branch 
+};
+
 #endif

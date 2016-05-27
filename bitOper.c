@@ -1,7 +1,81 @@
 #include"bitOper.h"
 #include"ARMgen.h"
 #include<stdlib.h>
+#include <assert.h>
 
+#define word_size 32
+
+
+// get value of multiple bits of given size and position
+
+int getBits(int* num, int index, int size) {
+   assert((index >= 0) && (index < word_size) &&
+          (size >= 0) && (size < word_size));
+   
+   int result = 0;
+   // using result variable as a mask
+   for (int i = 0; i < size; i++){
+      result = result | (1 << (index + i));
+   } 
+  
+   // saving result in result variable
+   result = result & (*num);
+   return ((unsigned int)result >> index);
+}
+
+
+
+// set the bits from a given binary number at given positions 
+// and of given size
+
+void setBits(int* target, int index_target, int* source, int index_source, int size) {
+
+   int mask = 0;
+
+   // get bits that need to be set from source
+   int source_bits = getBits(source, index_source, size);
+   source_bits = (source_bits << index_target);   
+
+   for (int i = index_target; i < index_target+size; i++) {
+      mask = mask | (1 << i);
+   }
+   // make the required bit positions 0 by using mask
+   *target = *target & (~mask);
+   
+   // updating the target bits
+   *target = (*target | source_bits);
+}
+
+
+
+// Give the bit value of a binary number
+
+int getBit(int* num, int index) {
+    assert((index >= 0) && (index < word_size));
+
+    int maskedBit = 1 << index;
+    return (int32_t)(((unsigned int)(*num & maskedBit)) >> index);
+
+}
+
+
+
+/*
+ Set the bit value at given index of a given 
+ binary number pointer using bitoperations
+*/
+
+void setBit(int* num, int givenBit, int index) {
+   assert((index >= 0) && (index < word_size) &&
+           (givenBit == 0 || givenBit == 1));
+
+   int twoComp = ~(1 << index);
+// first making target int 0, using two's complement
+// then using or to put given bit there instead
+   *num = ((*num & twoComp) | (givenBit << index));
+}
+
+/*
 int convBinToDec(int32_t bin[], int32_t size) {
 // converts binary array to int32_t
 
@@ -106,7 +180,7 @@ int * binary_add(int32_t * arr1, int32_t * arr2, int size) {
   //free resArray
 }
 
-
+*/
 
 
 
