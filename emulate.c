@@ -25,6 +25,12 @@
 void regInit();
 void printOutput();
 int convEndian(int32_t num);
+int check_condition(int32_t* intr);
+int32_t decode(int32_t* intr);
+void branch(int32_t* intr);
+void dataprocessing(int32_t* intr);
+void multiply(int32_t* intr);
+void single_data_transfer(int32_t* intr);
 
 // ------Global Varibales------------------------
 
@@ -45,7 +51,45 @@ int32_t main(int argc, char *argv[]) {
   // Initialize the memory, pipeline and registers
   regInit(argv[1]);
 
+  //Fetch execute cycle
+  do {
+     
+     // fetch instruction
+     currState.pipeline.fetched 
+          = currState.memory[currState.PC];
+     
+     // Increase the pc
+     currState.PC ++;
+
+     // checking condition for decode and execute
+     int goAhead 
+          = check_condition(&currState.pipeline.fetched);
  
+     // Decode
+     if (goAhead){
+         currState.pipeline.decoded 
+                = decode(&currState.pipeline.fetched);
+
+     // Execute
+        switch (currState.pipeline.decoded){
+
+          case Single_data_transfer:
+               single_data_transfer(&currState.pipeline.fetched);
+               break;
+          case Branch:
+               branch(&currState.pipeline.fetched);
+               break;
+          case Data_processing:
+               dataprocessing(&currState.pipeline.fetched);
+               break;
+          case Multiply:
+               multiply(&currState.pipeline.fetched);
+               break;
+        }
+     }
+  }while(currState.pipeline.fetched != 0);
+ 
+  // print output
   printOutput();
   return EXIT_SUCCESS;
 }
@@ -73,7 +117,6 @@ void regInit(char* file){
    } 
 
    //set up intructions in memory
-
    
    FILE *fptr = fopen(file,"rb");
    // pass error if unvalid file
@@ -87,11 +130,14 @@ void regInit(char* file){
   int file_size = ftell(fptr);	
   rewind(fptr); 
   
+  // Saving the file data in memory
   for (int i = 0; i < file_size; i++) {
      fread(&currState.memory[i], 32, 1, fptr);
+     //converting little endian to big endian 
      currState.memory[i] = convEndian(currState.memory[i]);
   }
 
+  // closing the file
   fclose(fptr);
 }
 
@@ -140,6 +186,102 @@ void printOutput() {
 
 //-----------------------------------------------
 
+/* 
+ 
+  Checks if we need to decode and execute the 
+  instructions 
+   
+  Nflag = 31, Zflag = 30, Cflag = 29, Vflag = 28
+*/
+
+int check_condition(int32_t* intr){
+
+   int case_num = getBits(intr, 28 , 4);
+  
+   switch(case_num){
+     // check z flag is set
+     case 0:  return getBit(&currState.CPSR,30);
+      
+     // check z flag is clear
+     case 1:  if (getBit(&currState.CPSR,30) == 0){         
+                 return 1;}
+     // check n equal to v
+     case 10: if (getBit(&currState.CPSR,31) 
+                    == getBit(&currState.CPSR,28)){
+                 return 1;
+              } 
+     // n not equal to v
+     case 11: if (getBit(&currState.CPSR,31)
+                    != getBit(&currState.CPSR,28)){
+                 return 1;
+              }
+     // check z clear and n equal to v
+     case 12: if ((getBit(&currState.CPSR,31)
+                     == getBit(&currState.CPSR,28))
+                     && getBit(&currState.CPSR,30) == 0){
+                 return 1;
+              }
+     // check z or (n not equal to v)
+     case 13: if ((getBit(&currState.CPSR,30)==1) 
+                   || (getBit(&currState.CPSR,31)
+                   != getBit(&currState.CPSR,28))){
+                 return 1;
+              }
+     // all flags
+     case 14: return 1;
+     default: return 0;
+   }
+}
+
+//-----------------------------------------------
+
+/*
+
+  Decodes the intruction and return it as a
+  Decoded integer, depending upon the given 
+  conditions for bits 26 and 27.
+*/
+
+int32_t decode(int32_t* intr){
+    int bit1 = getBit(intr,26);
+    int bit2 = getBit(intr,27);  
+    
+    // if bit 26 and 27 are 0 then it can be 
+    // Multiply or Data processing
+    if ((bit1==0) && (bit2==0)){
+        // if I = 1 then it is data processing 
+        if (getBit(intr,25)){
+             return Data_processing;
+           }
+        if (getBit(intr,4)){
+             // if bit 4 and 7 are set then its 
+             // multiply
+             if(getBit(intr,7)){
+                  return Multiply;}
+             }
+             // else it is data processing
+             return Data_processing;
+       }
+    // if bit 26 is 1 then it is definitely 
+    // single data transfer 
+    else if ((bit1==1) && (bit2==0)){
+         return Single_data_transfer;
+       }
+    // if no case passed then it is branch
+    else {
+         return Branch;
+       }
+}
+
+
+//-----------------------------------------------
+////functions to be done
+void branch(int32_t* intr){}
+void dataprocessing(int32_t* intr){}
+void multiply(int32_t* intr){}
+void single_data_transfer(int32_t* intr){}
+
+//-----------------------------------------------
 /*
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 
