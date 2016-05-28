@@ -36,8 +36,7 @@ void single_data_transfer(int32_t* intr);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
-  //curr_state holds the state of registers, memory and the pipeline at 
-  //any given time.
+  //curr_state holds the state of registers, memory and the pipeline
   current_state curr_state;
 
 
@@ -56,47 +55,49 @@ int32_t main(int argc, char *argv[]) {
 
   //fetch, decode, execute cycle
   do {
-     
-     //fetch instruction
-     curr_state.pipeline.fetched 
-          = curr_state.memory[curr_state.PC];
-     
-     //increment the PC
-     curr_state.PC ++;
+    
+    //fetch instruction
+    curr_state.pipeline.fetched 
+         = curr_state.memory[curr_state.PC];
+    
+    //increment the PC
+    curr_state.PC ++;
 
-     //checking condition (COND) for decoding and executing
-     int goAhead 
-          = check_condition(&curr_state.pipeline.fetched);
+    //checking condition (COND) for decoding and executing
+    int goAhead 
+         = check_condition(&curr_state.pipeline.fetched);
  
-     //decode
-     if (goAhead){
-       curr_state.pipeline.decoded 
-         = decode(&curr_state.pipeline.fetched);
+    //decode
+    if (goAhead){
 
-       //execute appropriate instruction
-        switch (curr_state.pipeline.decoded){
+      //decode current fetched instruction in pipeline and store as the 
+      //decoded instruction in the pipeline.
+      curr_state.pipeline.decoded = decode(&curr_state.pipeline.fetched);
 
-          case Single_data_transfer:
-               single_data_transfer(&curr_state.pipeline.fetched);
-               break;
+      //execute appropriate instruction depending on decoded instruction
+      switch (curr_state.pipeline.decoded){
 
-          case Branch:
-               branch(&curr_state.pipeline.fetched);
-               break;
+        case Single_data_transfer:
+             single_data_transfer(&curr_state.pipeline.fetched);
+             break;
 
-          case Data_processing:
-               data_processing(&curr_state.pipeline.fetched);
-               break;
+        case Branch:
+             branch(&curr_state.pipeline.fetched);
+             break;
 
-          case Multiply:
-               multiply(&curr_state.pipeline.fetched);
-               break;
+        case Data_processing:
+             data_processing(&curr_state.pipeline.fetched);
+             break;
 
-        }
+        case Multiply:
+             multiply(&curr_state.pipeline.fetched);
+             break;
 
-     }
+      }
 
-  } while(curr_state.pipeline.fetched != 0);
+    }
+
+  } while(curr_state.pipeline.fetched != 0); //fetch, decode, execute cycle
  
   //print output of state of registers and non-zero memory.
   print_output();
@@ -126,13 +127,14 @@ void reg_init(char* file){
 
   //moving intructions into memory
   FILE *fptr = fopen(file,"rb");
-  //pass error if unvalid file
+
+  //passing an error if file is invalid
   if (fptr == NULL) {
      printf("Unable to open file\n");
      return;
   }
 
-  //setting file point32_ter to last place
+  //setting file point32_ter to the end
   fseek(fptr, 0, SEEK_END);         
 
   //ftell returns the pos of the file point32_ter
@@ -141,28 +143,31 @@ void reg_init(char* file){
   
   //Saving the file data in memory
   for (int i = 0; i < file_size; i++) {
-     fread(&curr_state.memory[i], 32, 1, fptr);
-     //converting little endian to big endian 
-     curr_state.memory[i] = conv_endian(curr_state.memory[i]);
+
+    fread(&curr_state.memory[i], 32, 1, fptr);
+
+    //converting instructions from little endian to big endian 
+    curr_state.memory[i] = conv_endian(curr_state.memory[i]);
+
   }
 
-  //closing the input binary file
+  //closing the binary input file
   fclose(fptr);
 
 }
 
 
-//converts from one Endian to another
+//converts from one Endian to the other
 int conv_endian(int num){
 
-   int result = 0;
+  int result = 0;
 
-   for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
-         result = result | (getBits(&num, i * BYTE_SIZE, BYTE_SIZE)
-                    << ((INSTRUCTION_BYTE_SIZE -1 - i) * BYTE_SIZE));
-   }
+  for (int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
+        result = result | (getBits(&num, i * BYTE_SIZE, BYTE_SIZE)
+                   << ((INSTRUCTION_BYTE_SIZE -1 - i) * BYTE_SIZE));
+  }
 
-   return result;
+  return result;
 
 }
 
@@ -174,22 +179,25 @@ void print_output() {
   printf("Registers:\n");
   for(int i = 0; i < GEN_PURPOSE_REG; i++) {
     int reg_value = curr_state.registers[i];
-    printf("$%-3d: %10d (0x%08x)\n", i,reg_value,reg_value);
+    printf("$%-3d: %10d (0x%08x)\n", i, reg_value, reg_value);
   }
 
   //printing state of PC and CPSR registers
   printf("PC  : %10d (0x%08x)\n", curr_state.PC, curr_state.PC);
-  printf("CPSR: %10d (0x%08x)\n", curr_state.CPSR,curr_state.CPSR);
+  printf("CPSR: %10d (0x%08x)\n", curr_state.CPSR, curr_state.CPSR);
 
   //printing non-zero memory
   printf("Non-zero memory:\n");
 
   for (int i = 0; i < MEMORY_CAPACITY; i++) {
+
     int32_t memWord = curr_state.memory[i];
-    if (!(memWord == 0)){
+    
+    if (!(memWord == 0)){  //checking for non-zero memory
       printf("0x%08x: ", 4*i);
       printf("0x%08x\n", curr_state.memory[i]);
     }       
+
   }
 
 }
@@ -232,8 +240,8 @@ int check_condition(int32_t* intr){
 
      //check z or (n not equal to v)
      case 13: if ((getBit(&curr_state.CPSR,30)==1) 
-                   || (getBit(&curr_state.CPSR,31)
-                   != getBit(&curr_state.CPSR,28))){
+                     || (getBit(&curr_state.CPSR,31)
+                     != getBit(&curr_state.CPSR,28))){
                  return 1;
               }
 
@@ -246,38 +254,44 @@ int check_condition(int32_t* intr){
 }
 
 
-//decodes the intruction and return it as a decoded integer, depending upon 
-//the given conditions for bits 26 and 27.
+//decodes the intruction and returns it as a decoded integer, depending upon 
+//the given conditions for the appropriate bits.
 int32_t decode(int32_t* intr){
-    int bit1 = getBit(intr,26);
-    int bit2 = getBit(intr,27);  
-    
-    //if bit 26 and 27 are 0 then it can be Multiply or Data processing
-    if ((bit1==0) && (bit2==0)){
 
-        //if I = 1 then it is data processing 
-        if (getBit(intr,25)){
-             return Data_processing;
-           }
-
-        if (getBit(intr,4)){
-             //if bit 4 and 7 are set then its Multiply
-             if(getBit(intr,7)){
-                  return Multiply;}
-             }
-             //else it is data processing
-             return Data_processing;
-       }
-
-    //if bit 26 is 1 then it is definitely single data transfer 
-    else if ((bit1==1) && (bit2==0)) {
-         return Single_data_transfer;
+  //fetching bits 26 and 27
+  int bit276 = getBit(intr,26);
+  int bit27 = getBit(intr,27);  
+  
+  //if bit 26 and 27 are 0 then the instruction can be
+  //Multiply or Data Processing
+  if ((bit276==0) && (bit27==0)){
+      
+    //if I = 1 then the instruction is Data Processing 
+    if (getBit(intr,25)){
+         return Data_processing;
     }
 
-    //if no case passed then it is branch
-    else {
-         return Branch;
-    }
+    if (getBit(intr,4)){
+
+      //if bit 4 and 7 are set then the instruction is Multiply
+      if(getBit(intr,7)){
+           return Multiply;}
+      }
+
+      //else it is Data Processing
+      return Data_processing;
+
+     }
+
+  //if bit 26 is 1 then the instruction is Single Data Transfer 
+  else if ((bit276==1) && (bit27==0)) {
+    return Single_data_transfer;
+  }
+
+  //otherwise, if none of the above cases pass, the instruction is Branch
+  else {
+    return Branch;
+  }
 
 }
 
@@ -356,14 +370,14 @@ int32_t * getImmVal(int32_t * inst) {
   return value;
 }
 
-int32_t * selectShift(int32_t * reg, int sbit1, int sbit2, int sft_num) {
-  if (sbit1 == 0 && sbit2 == 0) {
+int32_t * selectShift(int32_t * reg, int sbit276, int sbit27, int sft_num) {
+  if (sbit276 == 0 && sbit27 == 0) {
      shift_left(reg, 32, sft_num);
-  } else if (sbit1 == 0 && sbit2 == 1) {
+  } else if (sbit276 == 0 && sbit27 == 1) {
      shift_right(reg, 32, sft_num);
-  } else if (sbit1 == 1 && sbit2 == 0) {
+  } else if (sbit276 == 1 && sbit27 == 0) {
      arith_shift_right(reg, 32, sft_num);
-  } else if (sbit1 == 1 && sbit2 == 1) {
+  } else if (sbit276 == 1 && sbit27 == 1) {
      rotate_right(reg, 32, sft_num);
   }
   return reg;
@@ -371,7 +385,7 @@ int32_t * selectShift(int32_t * reg, int sbit1, int sbit2, int sft_num) {
 
 int32_t * getRegVal(int32_t * inst) {
   //Bits to select shifter type
-  int32_t sbit1 = *(inst + 6), sbit2 = *(inst + 5);
+  int32_t sbit276 = *(inst + 6), sbit27 = *(inst + 5);
   
   //Value at Rm
   int32_t *value;
@@ -387,7 +401,7 @@ int32_t * getRegVal(int32_t * inst) {
     for (int i = 11; i >= 7; i--) {
       amount[11 - i] = inst[i];
     }   
-    return selectShift(value, sbit1, sbit2, convBinToDec(amount, 5));
+    return selectShift(value, sbit276, sbit27, convBinToDec(amount, 5));
   }  
   //Using register Rs
   if (*(inst + 4) == 1) {
@@ -404,7 +418,7 @@ int32_t * getRegVal(int32_t * inst) {
     for (int i = 7; i >= 0; i--) {
       amount[7 - i] = *(regContent + i);
     }
-    return selectShift(value, sbit1, sbit2, convBinToDec(amount, 8));
+    return selectShift(value, sbit276, sbit27, convBinToDec(amount, 8));
   }
 
   return NULL;
@@ -720,15 +734,15 @@ void decode(int32_t * inst) {
   curr_state->pipeline->decoded = inst;   
 
   //subfunction distributor
-  int32_t bit1 = *(inst + 27), bit2 = *(inst + 26);  
-//printf("Bit 27 = %d\n Bit 26 = %d\n", bit1, bit2);
+  int32_t bit276 = *(inst + 27), bit27 = *(inst + 26);  
+//printf("Bit 27 = %d\n Bit 26 = %d\n", bit276, bit27);
 
 //printBits(convBinToDec(inst, 32));
-  if (bit1 == 1 && bit2 == 0) {
+  if (bit276 == 1 && bit27 == 0) {
     branch(inst);
-  } else if (bit1 == 0 && bit2 == 1) {
+  } else if (bit276 == 0 && bit27 == 1) {
     single_data_transfer(inst);
-  } else if (bit1 == 0 && bit2 == 0) {
+  } else if (bit276 == 0 && bit27 == 0) {
     if (*(inst + 25) == 1) {
       data_processing(inst);
       return;
