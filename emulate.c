@@ -184,8 +184,8 @@ void print_output() {
   }
 
   //printing state of PC and CPSR registers
-  printf("PC  : %10d (0x%08x)\n", INSTRUCTION_BYTE_SIZE*curr_state.PC,
-                                  INSTRUCTION_BYTE_SIZE*curr_state.PC);
+  printf("PC  : %10d (0x%08x)\n", INSTRUCTION_BYTE_SIZE*curr_state.PC +4,
+                                  INSTRUCTION_BYTE_SIZE*curr_state.PC +4);
   printf("CPSR: %10d (0x%08x)\n", curr_state.CPSR, curr_state.CPSR);
 
   //printing non-zero memory
