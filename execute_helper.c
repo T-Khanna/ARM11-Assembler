@@ -7,6 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <stdint.h>
+#include <stdio.h>
 #include "ARMgen.h"
 #include "bitOper.h"
 #include "execute_helper.h"
@@ -16,6 +17,8 @@
 int get_operand2(int32_t* instr,current_state* curr_state, int i);
 int getImmVal(int32_t* instr);
 int getRegVal(int32_t* instr,current_state* curr_state);
+int32_t readMemory(int mem_address, current_state* curr_state);
+void writeMemory(int mem_address,int source,current_state* curr_state); 
 
 // ------------------------- Branch  ------------------------------------------
 
@@ -279,10 +282,106 @@ int getRegVal(int32_t* instr, current_state* curr_state){
 }
 // ------------------------- Single Data Transfer -----------------------------
  
-  // Insert multiply helper functions here
+  /*
+    Help to load and store from and to memory
+    Imm offset:     i = bit 25
+    pre/post index  p = bit 24
+    up bit          u = bit 23
+    load/store bit  l = bit 20
+    Base reg        rn = bit 16 to bit 19
+    source/dest reg rd = bit 12 to bit 15
+    offset             = bit 0 to bit 11
+  */
 void single_data_transfer(int32_t* instr, current_state* curr_state){
+    int i = getBit(instr, 25);
+    int p = getBit(instr, 24);
+    int u = getBit(instr, 23);
+    int l = getBit(instr, 20);
+    int rn = getBits(instr, 16, 4);
+    int rd = getBits(instr, 12, 4);
+    int offset = 0;
 
+    if(i){
+       //make temperary instruction
+       int temp = *instr;
+       // settting temperary to 0 to avoid any CPSR setting
+       setBit(&temp,20,0);
+      
+       offset = getRegVal(&temp,curr_state);
+    } else {
+       offset = getBits(instr, 0,12);
+    }
+
+    int mem_address = curr_state->registers[rn];
+
+    // if pc is rn 
+    if (rn == 15){
+    // making byte addressable and adjusting for pipeline
+    mem_address = mem_address * 4 + 4;
+    }
+
+    if (p) {
+        // value of base register not changed 
+        (u) ? (mem_address += offset) : (mem_address -= offset);
+        
+    } else {
+       // updating value of rn
+       (u) ? (curr_state->registers[rn] += offset) : 
+                (curr_state->registers[rn] -= offset); 
+    }
+
+    if (mem_address >= 65536){
+       printf("Error: Out of bounds memory access at address 0x%08x\n", mem_address);
+    }
+
+    if (l) {
+      // load
+      curr_state->registers[rd] = readMemory(mem_address,curr_state);
+    } else {
+      //store
+      for (int i = 0; i<4 ;i++){
+      writeMemory(mem_address,curr_state->registers[rd], curr_state);
+      }
+    }
+}
+
+int32_t readMemory(int mem_address, current_state* curr_state){
+
+  int index = mem_address % 4;
+  int32_t result = 0;
+   
+  setBits(&result,0,&curr_state->memory[mem_address/4]
+          ,8*index,(4-index)*8);
+
+  if (index == 0){return result;}  
+
+  if(mem_address/4 == MEMORY_CAPACITY -1){
+       return result;
+    } else {
+     setBits(&result,(4-index)*8,&curr_state->memory[mem_address/4 + 1]
+             ,0,index * 8);
+     return result;
+ }
 } 
+
+void writeMemory(int mem_address,int source,current_state* curr_state){
+
+   int index = mem_address % 4;
+   
+   setBits(&(curr_state->memory[mem_address/4]),8*index,
+           &source,0,(4-index)*8);
+   
+   if (index == 0){return;}
+
+   if(mem_address/4 == MEMORY_CAPACITY -1){
+       return;
+    } else {
+   setBits(&(curr_state->memory[mem_address/4 + 1]),0,
+           &source,(4-index),index*8); 
+   }
+}
+
+
 // ------------------------- Multiply -----------------------------------------
   
  /* 
