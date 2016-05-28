@@ -1,36 +1,59 @@
+///////////////////////////////////////////////////////////////////////////////
+// ARM Group Project - Year 1 (Group 40)
+// ____________________________________________________________________________
+//
+// File: ARMgen.h
+// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+//------------------------ ARM GENERAL DEFINITIONS ----------------------------
+// Contains the definitions and structure for the Rasberry Pi system.
+
+
 #ifndef _ARM_GEN
-#define _ARM_GEN
+  #define _ARM_GEN
 
-// ------ ARM GENERAL DEFINITIONS -----------
+#include <stdint.h>
 
-// ------ CONSTANTS -------------------------
+//-- CONSTANTS ----------------------------------------------------------------
 
-#define MEMORY_CAPACITY 65536
+// memory = 65536 bytes/ 4 words 
+#define MEMORY_CAPACITY (65536/4)
 #define TOTAL_REGISTERS 17
 #define GEN_PURPOSE_REG 13
 #define INSTRUCTION_BYTE_SIZE 4
+#define BYTE_SIZE 8 
+#define PC registers[15] 
+#define CPSR registers[16]
 
-// ------ PIPELINE --------------------------                                   
+//--  PIPELINE -----------------------------------------------------------------
 
-typedef struct Pipeline
-{
-    int32_t* fetched;
-    int32_t* decoded;
-} Pipeline;
-
-// ------ CURRENT STATE  --------------------                                      
-
-typedef struct CurrentState
-{
-    Pipeline *pipeline;
-    int32_t* registers[GEN_PURPOSE_REG];
-    int PC;
-    int32_t* CPSR;
-    int8_t* memory;
-} CurrentState;
+typedef struct pipeline {
+    int32_t fetched;
+    int32_t decoded;
+} pipeline;
 
 
-void updateCarry(int carry);
-int * binary_sub(int32_t * arr1, int32_t * arr2, int size);
-int * binary_add(int32_t * arr1, int32_t * arr2, int size); 
+//-- CURRENT STATE ------------------------------------------------------------
+
+typedef struct current_state {
+    pipeline pipeline;
+    int32_t registers[TOTAL_REGISTERS];
+    int32_t memory[MEMORY_CAPACITY];
+} current_state;
+
+
+//-- INSTRUCTION TYPE ---------------------------------------------------------
+
+enum instruction_type {
+    Data_processing,
+    Multiply,
+    Single_data_transfer,
+    Branch 
+};
+
+
 #endif
+
