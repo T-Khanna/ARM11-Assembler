@@ -7,6 +7,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
+
+//-------------------------- BITWISE OPERATIONS -------------------------------
+// Contains the helper functions that perform bitwise operations on the 
+// instruction.
+
+
 #include "bitOper.h"
 #include "ARMgen.h"
 #include <stdlib.h>
