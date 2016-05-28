@@ -57,15 +57,13 @@ int32_t main(int argc, char *argv[]) {
   do {
     
     //fetch instruction
-    curr_state.pipeline.fetched 
-         = curr_state.memory[curr_state.PC];
+    curr_state.pipeline.fetched = curr_state.memory[curr_state.PC];
     
     //increment the PC
-    curr_state.PC ++;
+    curr_state.PC++;
 
     //checking condition (COND) for decoding and executing
-    int goAhead 
-         = check_condition(&curr_state.pipeline.fetched);
+    int goAhead = check_condition(&curr_state.pipeline.fetched);
  
     //decode
     if (goAhead){
