@@ -5,11 +5,8 @@
 // File: bitOper.h
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ///////////////////////////////////////////////////////////////////////////////
-
-
-#include<stdint.h>
-#include<stdio.h>
-
+#ifndef _BIT_OPER
+  #define _BIT_OPER
 
 //-- FUNCTION DECLARATIONS ---------------------------------------------------
 
@@ -18,4 +15,4 @@ void setBit(int* num, int givenBit, int index);
 int getBits(int* num, int index, int size);
 void setBits(int* target, int index_target, int* source, int index_source, 
              int size);
-
+#endif

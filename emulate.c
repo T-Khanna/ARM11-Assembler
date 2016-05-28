@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include "ARMgen.h"
 #include "bitOper.h"
-
+#include "execute_helper.h"
 
 //-- CONSTANTS ---------------------------------------------------------------- 
 
@@ -28,10 +28,6 @@ void print_output();
 int conv_endian(int32_t num);
 int check_condition(int32_t* instr);
 int32_t decode(int32_t* instr);
-void branch(int32_t* instr);
-void data_processing(int32_t* instr);
-void multiply(int32_t* instr);
-void single_data_transfer(int32_t* instr);
 
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
@@ -76,19 +72,21 @@ int32_t main(int argc, char *argv[]) {
       switch (curr_state.pipeline.decoded){
 
         case Single_data_transfer:
-             single_data_transfer(&curr_state.pipeline.fetched);
+             single_data_transfer(&curr_state.pipeline.fetched,
+                                  &curr_state);
              break;
 
         case Branch:
-             branch(&curr_state.pipeline.fetched);
+             branch(&curr_state.pipeline.fetched,&curr_state);
              break;
 
         case Data_processing:
-             data_processing(&curr_state.pipeline.fetched);
+             data_processing(&curr_state.pipeline.fetched,
+			     &curr_state);
              break;
 
         case Multiply:
-             multiply(&curr_state.pipeline.fetched);
+             multiply(&curr_state.pipeline.fetched,&curr_state);
              break;
 
       }
@@ -301,10 +299,8 @@ int32_t decode(int32_t* instr){
 
 //-----------------------------------------------
 ////functions to be done. Can we split these up into different files please.
-void branch(int32_t* instr){}
-void data_processing(int32_t* instr){}
-void multiply(int32_t* instr){}
-void single_data_transfer(int32_t* instr){}
+
+
 
 //-----------------------------------------------
 /*
