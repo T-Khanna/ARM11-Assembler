@@ -176,7 +176,7 @@ void data_processing(int32_t* instr, current_state* curr_state){
                   getBit(&result,31),31);
 
                   setBit((&curr_state->CPSR),
-                  curr_state->registers[rd] >= op2,29);
+                  curr_state->registers[rn] >= op2,29);
                 }
                 break; 
         // orr : rd = rn | op2
