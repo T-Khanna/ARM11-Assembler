@@ -15,6 +15,7 @@
 #ifndef _ARM_GEN
   #define _ARM_GEN
 
+#include <stdint.h>
 
 //-- CONSTANTS ----------------------------------------------------------------
 

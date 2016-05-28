@@ -87,6 +87,12 @@ void setBit(int* num, int givenBit, int index) {
 
 }
 
+int rotate_right(int num, unsigned int rot_num){
+   unsigned int right = (unsigned int)num >> rot_num;   
+   unsigned int left = (unsigned int)num << (32 - rot_num);
+   return (int)(right | left);
+}
+
 /*
 int convBinToDec(int32_t bin[], int32_t size) {
 // converts binary array to int32_t
