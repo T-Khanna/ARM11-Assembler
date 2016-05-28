@@ -138,14 +138,17 @@ void reg_init(char* file){
   //ftell returns the pos of the file point32_ter
   int file_size = ftell(fptr);	
   rewind(fptr); 
-  
+
+  // coverting bytes to word   
+  file_size /= 4;
+ 
   //Saving the file data in memory
   for (int i = 0; i < file_size; i++) {
 
     fread(&curr_state.memory[i], 32, 1, fptr);
 
     //converting instructions from little endian to big endian 
-    curr_state.memory[i] = conv_endian(curr_state.memory[i]);
+  // curr_state.memory[i] = conv_endian(curr_state.memory[i]);
 
   }
 
@@ -181,7 +184,8 @@ void print_output() {
   }
 
   //printing state of PC and CPSR registers
-  printf("PC  : %10d (0x%08x)\n", curr_state.PC, curr_state.PC);
+  printf("PC  : %10d (0x%08x)\n", INSTRUCTION_BYTE_SIZE*curr_state.PC,
+                                  INSTRUCTION_BYTE_SIZE*curr_state.PC);
   printf("CPSR: %10d (0x%08x)\n", curr_state.CPSR, curr_state.CPSR);
 
   //printing non-zero memory
@@ -189,11 +193,12 @@ void print_output() {
 
   for (int i = 0; i < MEMORY_CAPACITY; i++) {
 
-    int32_t memWord = curr_state.memory[i];
+    //converting instructions from little endian to big endian 
+    int32_t memWord = conv_endian(curr_state.memory[i]);
     
     if (!(memWord == 0)){  //checking for non-zero memory
-      printf("0x%08x: ", 4*i);
-      printf("0x%08x\n", curr_state.memory[i]);
+      printf("0x%08x: ", INSTRUCTION_BYTE_SIZE*i);
+      printf("0x%08x\n",  memWord);
     }       
 
   }

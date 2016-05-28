@@ -38,7 +38,7 @@ typedef struct pipeline {
 typedef struct current_state {
     pipeline pipeline;
     int32_t registers[TOTAL_REGISTERS];
-    int8_t memory[MEMORY_CAPACITY];
+    int32_t memory[MEMORY_CAPACITY];
 } current_state;
 
 
