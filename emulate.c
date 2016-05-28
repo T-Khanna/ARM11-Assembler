@@ -204,9 +204,9 @@ void print_output() {
 //checks condition (COND) to decode and execute the instructions 
 //locations of flags: Nflag = 31, Zflag = 30, Cflag = 29, Vflag = 28
 int check_condition(int32_t* instr){
-
+   
    int case_num = getBits(instr, 28 , 4);
-  
+
    switch(case_num){
 
      //check z flag is set
@@ -215,33 +215,33 @@ int check_condition(int32_t* instr){
      //check z flag is clear
      case 1:  if (getBit(&curr_state.CPSR,30) == 0){         
                  return 1;
-              }
+              }else{return 0;}
 
      //check n equal to v
      case 10: if (getBit(&curr_state.CPSR,31) 
                     == getBit(&curr_state.CPSR,28)){
                  return 1;
-              } 
+              }else{return 0;} 
 
      //n not equal to v
      case 11: if (getBit(&curr_state.CPSR,31)
                     != getBit(&curr_state.CPSR,28)){
                  return 1;
-              }
+              }else{return 0;}
 
      //check z clear and n equal to v
      case 12: if ((getBit(&curr_state.CPSR,31)
                      == getBit(&curr_state.CPSR,28))
                      && getBit(&curr_state.CPSR,30) == 0){
                  return 1;
-              }
+              }else{return 0;}
 
      //check z or (n not equal to v)
      case 13: if ((getBit(&curr_state.CPSR,30)==1) 
                      || (getBit(&curr_state.CPSR,31)
                      != getBit(&curr_state.CPSR,28))){
                  return 1;
-              }
+              }else{return 0;}
 
      //all flags
      case 14: return 1;

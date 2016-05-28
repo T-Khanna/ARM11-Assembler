@@ -29,7 +29,7 @@ void writeMemory(int mem_address,int source,current_state* curr_state);
      and added back to PC
   */
 void branch(int32_t* instr, current_state* curr_state){
- 
+   
    // get the offset
    int offset = getBits(instr,0,23);
    
@@ -72,7 +72,6 @@ void data_processing(int32_t* instr, current_state* curr_state){
 
      // temp variable
      int result = 0;
-
      switch(opcode){
         
         // and rd = rn & op2
@@ -192,7 +191,7 @@ void data_processing(int32_t* instr, current_state* curr_state){
                 break;
         // mov : rd = op2
         case 13: curr_state->registers[rd]
-                 = op2;
+                          = op2;
                 if(s){
                   setBit((&curr_state->CPSR),
                   curr_state->registers[rd]==0,30);
