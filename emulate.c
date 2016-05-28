@@ -16,9 +16,6 @@
 
 //-- CONSTANTS ---------------------------------------------------------------- 
 
-#define BYTE_SIZE 8 
-#define PC registers[15] 
-#define CPSR registers[16] 
 
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------

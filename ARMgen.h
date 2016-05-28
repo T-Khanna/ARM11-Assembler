@@ -23,9 +23,11 @@
 #define TOTAL_REGISTERS 17
 #define GEN_PURPOSE_REG 13
 #define INSTRUCTION_BYTE_SIZE 4
+#define BYTE_SIZE 8 
+#define PC registers[15] 
+#define CPSR registers[16]
 
-
-//-- PIPELINE -----------------------------------------------------------------
+//--  PIPELINE -----------------------------------------------------------------
 
 typedef struct pipeline {
     int32_t fetched;
