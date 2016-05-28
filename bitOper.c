@@ -23,7 +23,6 @@ int32_t* convDecToBin(int32_t num, int32_t size){
     num = num / 2;
   }
   return result;
-  // free memory
 }
 
 void rotate_right(int32_t array[], int size, int rot_num) {

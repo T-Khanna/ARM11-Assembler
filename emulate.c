@@ -4,10 +4,7 @@
 #include "ARMgen.h"
 #include "bitOper.h"
 
-void execute(int32_t * inst);
-
 CurrentState *currState = NULL;
-int8_t* byte;
 
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 
@@ -245,21 +242,22 @@ void dataprocessing(int32_t * inst) {
           }
           break;
   //MOV
-  case 13:for (int i = 0; i < 32; i++) {
+  case 13://printf("%d\n",convBinToDec((int32_t *) (op2),32));
+          for (int i = 0; i < 32; i++) {
             *(rd+i) = *(op2+i);
             rdVal[i] = *(op2+i);
           }
-          printf("%d\n",convBinToDec(op2,32));
           break;
   default: perror("Invalid OpCode\n"); return;
 
  }
 
  //set flags based on rdVal
+ 
  // V does not need to be set.
  // Setting c:
   
-  
+ 
 
  // Setting z:
  int firstnum = 0;
@@ -272,8 +270,8 @@ void dataprocessing(int32_t * inst) {
    currState->CPSR[30] = 0;
  }
  // Setting n:
- currState->CPSR[31] = *(rd + 31);
- //printf("%i,%i\n",currState->CPSR[31],currState->CPSR[30]);
+ currState->CPSR[31] = *(rd + 0);
+
 }
 
 
@@ -303,7 +301,8 @@ void multiply(int32_t * inst) {
   // saving result in register
 
   for (int i=0; i < 32; i++){
-  *(*(currState->registers+convBinToDec(rdarr, 4)) + i) = *(convDecToBin(rd,32) + i); 
+  *(*(currState->registers+convBinToDec(rdarr, 4)) + i) = *(convDecToBin(rd,32) + i);
+  
   }
 
   // updatng CPSR register
@@ -345,7 +344,7 @@ void single_data_transfer(int32_t * inst) {
   int32_t offsetVal = convBinToDec(offset, 32);
   
   int32_t rn = convBinToDec(*(currState->registers+convBinToDec(rnarr, 4)),32);
- 
+  
   if(l == 1) {
     if(p == 1) {
       *(currState->registers+convBinToDec(rdarr, 4)) 
@@ -431,16 +430,10 @@ void decode(int32_t * inst) {
     default: perror("Invalid flags\n"); return;
   }
 
-  currState->pipeline->decoded = inst; 
-  
-  byte = fetchInstruction(currState->memory);
-  currState->pipeline->fetched = instrToBits(byte);
-
   if(!goahead) {return;}
-  execute(currState->pipeline->decoded);
 
-}
- void execute(int32_t * inst){
+  currState->pipeline->decoded = inst;   
+
   // subfunction distributor
   int32_t bit1 = *(inst + 27), bit2 = *(inst + 26);  
 //  printf("Bit 27 = %d\n Bit 26 = %d\n", bit1, bit2);
@@ -537,8 +530,6 @@ int32_t main(int32_t argc, char **argv) {
  
   // initialize registers
   regInit();
-  currState->pipeline->fetched = NULL;
-  currState->pipeline->decoded = NULL;
 
   // open file
   FILE *fptr = fopen(argv[1], "rb");
@@ -558,19 +549,15 @@ int32_t main(int32_t argc, char **argv) {
   fread(currState->memory, sizeof(int8_t), file_size, fptr);  
 
   // fetch the instruction and store in byte
+  int8_t* byte; 
  
   while (1) {
-
-    if(currState->pipeline->fetched == NULL){
     byte = fetchInstruction(currState->memory);
     currState->pipeline->fetched = instrToBits(byte);
-    }
-
-    for (int i = 31; i >= 0; i--){
-    printf("%d", *(currState->pipeline->fetched + i));}
-    printf("\n");
-    printf("While loop called.\n");
-
+//    for (int i = 31; i >= 0; i--){
+//    printf("%d", *(currState->pipeline->fetched + i));}
+//    printf("\n");
+//    printf("While loop called.\n");
     if (allZeroes(currState->pipeline->fetched) == 1) {
       free(byte);
       currState->PC += 4;
