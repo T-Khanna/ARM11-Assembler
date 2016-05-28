@@ -402,13 +402,13 @@ void branch(int32_t * inst) {
 
 // Temporary function for testing
 void printBits(int inst) {
-  uint32_t mask = 1 << 31;
-  
-  for (int i = 31; i >= 0; i--) {
-    printf(((inst & mask) == 0) ? "0" : "1");
-    inst <<= 1;
-  }
-  printf("\n"); 
+//  uint32_t mask = 1 << 31;
+//  
+//  for (int i = 31; i >= 0; i--) {
+//    printf(((inst & mask) == 0) ? "0" : "1");
+//    inst <<= 1;
+//  }
+//  printf("\n"); 
 }
 
 void decode(int32_t * inst) {
