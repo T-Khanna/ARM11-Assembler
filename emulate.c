@@ -26,12 +26,12 @@
 void reg_init();
 void print_output();
 int conv_endian(int32_t num);
-int check_condition(int32_t* intr);
-int32_t decode(int32_t* intr);
-void branch(int32_t* intr);
-void data_processing(int32_t* intr);
-void multiply(int32_t* intr);
-void single_data_transfer(int32_t* intr);
+int check_condition(int32_t* instr);
+int32_t decode(int32_t* instr);
+void branch(int32_t* instr);
+void data_processing(int32_t* instr);
+void multiply(int32_t* instr);
+void single_data_transfer(int32_t* instr);
 
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
@@ -125,7 +125,7 @@ void reg_init(char* file){
       curr_state.memory[i] = 0;
   } 
 
-  //moving intructions into memory
+  //moving instructions into memory
   FILE *fptr = fopen(file,"rb");
 
   //passing an error if file is invalid
@@ -205,9 +205,9 @@ void print_output() {
  
 //checks condition (COND) to decode and execute the instructions 
 //locations of flags: Nflag = 31, Zflag = 30, Cflag = 29, Vflag = 28
-int check_condition(int32_t* intr){
+int check_condition(int32_t* instr){
 
-   int case_num = getBits(intr, 28 , 4);
+   int case_num = getBits(instr, 28 , 4);
   
    switch(case_num){
 
@@ -254,27 +254,27 @@ int check_condition(int32_t* intr){
 }
 
 
-//decodes the intruction and returns it as a decoded integer, depending upon 
+//decodes the instruction and returns it as a decoded integer, depending upon 
 //the given conditions for the appropriate bits.
-int32_t decode(int32_t* intr){
+int32_t decode(int32_t* instr){
 
   //fetching bits 26 and 27
-  int bit276 = getBit(intr,26);
-  int bit27 = getBit(intr,27);  
+  int bit26 = getBit(instr,26);
+  int bit27 = getBit(instr,27);  
   
   //if bit 26 and 27 are 0 then the instruction can be
   //Multiply or Data Processing
-  if ((bit276==0) && (bit27==0)){
+  if ((bit26==0) && (bit27==0)){
       
     //if I = 1 then the instruction is Data Processing 
-    if (getBit(intr,25)){
+    if (getBit(instr,25)){
          return Data_processing;
     }
 
-    if (getBit(intr,4)){
+    if (getBit(instr,4)){
 
       //if bit 4 and 7 are set then the instruction is Multiply
-      if(getBit(intr,7)){
+      if(getBit(instr,7)){
            return Multiply;}
       }
 
@@ -284,7 +284,7 @@ int32_t decode(int32_t* intr){
      }
 
   //if bit 26 is 1 then the instruction is Single Data Transfer 
-  else if ((bit276==1) && (bit27==0)) {
+  else if ((bit26==1) && (bit27==0)) {
     return Single_data_transfer;
   }
 
@@ -298,10 +298,10 @@ int32_t decode(int32_t* intr){
 
 //-----------------------------------------------
 ////functions to be done. Can we split these up into different files please.
-void branch(int32_t* intr){}
-void data_processing(int32_t* intr){}
-void multiply(int32_t* intr){}
-void single_data_transfer(int32_t* intr){}
+void branch(int32_t* instr){}
+void data_processing(int32_t* instr){}
+void multiply(int32_t* instr){}
+void single_data_transfer(int32_t* instr){}
 
 //-----------------------------------------------
 /*
@@ -370,14 +370,14 @@ int32_t * getImmVal(int32_t * inst) {
   return value;
 }
 
-int32_t * selectShift(int32_t * reg, int sbit276, int sbit27, int sft_num) {
-  if (sbit276 == 0 && sbit27 == 0) {
+int32_t * selectShift(int32_t * reg, int sbit26, int sbit27, int sft_num) {
+  if (sbit26 == 0 && sbit27 == 0) {
      shift_left(reg, 32, sft_num);
-  } else if (sbit276 == 0 && sbit27 == 1) {
+  } else if (sbit26 == 0 && sbit27 == 1) {
      shift_right(reg, 32, sft_num);
-  } else if (sbit276 == 1 && sbit27 == 0) {
+  } else if (sbit26 == 1 && sbit27 == 0) {
      arith_shift_right(reg, 32, sft_num);
-  } else if (sbit276 == 1 && sbit27 == 1) {
+  } else if (sbit26 == 1 && sbit27 == 1) {
      rotate_right(reg, 32, sft_num);
   }
   return reg;
@@ -385,7 +385,7 @@ int32_t * selectShift(int32_t * reg, int sbit276, int sbit27, int sft_num) {
 
 int32_t * getRegVal(int32_t * inst) {
   //Bits to select shifter type
-  int32_t sbit276 = *(inst + 6), sbit27 = *(inst + 5);
+  int32_t sbit26 = *(inst + 6), sbit27 = *(inst + 5);
   
   //Value at Rm
   int32_t *value;
@@ -401,7 +401,7 @@ int32_t * getRegVal(int32_t * inst) {
     for (int i = 11; i >= 7; i--) {
       amount[11 - i] = inst[i];
     }   
-    return selectShift(value, sbit276, sbit27, convBinToDec(amount, 5));
+    return selectShift(value, sbit26, sbit27, convBinToDec(amount, 5));
   }  
   //Using register Rs
   if (*(inst + 4) == 1) {
@@ -418,7 +418,7 @@ int32_t * getRegVal(int32_t * inst) {
     for (int i = 7; i >= 0; i--) {
       amount[7 - i] = *(regContent + i);
     }
-    return selectShift(value, sbit276, sbit27, convBinToDec(amount, 8));
+    return selectShift(value, sbit26, sbit27, convBinToDec(amount, 8));
   }
 
   return NULL;
@@ -734,15 +734,15 @@ void decode(int32_t * inst) {
   curr_state->pipeline->decoded = inst;   
 
   //subfunction distributor
-  int32_t bit276 = *(inst + 27), bit27 = *(inst + 26);  
-//printf("Bit 27 = %d\n Bit 26 = %d\n", bit276, bit27);
+  int32_t bit26 = *(inst + 27), bit27 = *(inst + 26);  
+//printf("Bit 27 = %d\n Bit 26 = %d\n", bit26, bit27);
 
 //printBits(convBinToDec(inst, 32));
-  if (bit276 == 1 && bit27 == 0) {
+  if (bit26 == 1 && bit27 == 0) {
     branch(inst);
-  } else if (bit276 == 0 && bit27 == 1) {
+  } else if (bit26 == 0 && bit27 == 1) {
     single_data_transfer(inst);
-  } else if (bit276 == 0 && bit27 == 0) {
+  } else if (bit26 == 0 && bit27 == 0) {
     if (*(inst + 25) == 1) {
       data_processing(inst);
       return;
