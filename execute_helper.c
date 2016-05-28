@@ -278,14 +278,51 @@ int getRegVal(int32_t* instr, current_state* curr_state){
   return result;
 }
 // ------------------------- Single Data Transfer -----------------------------
-  
-  // Insert single data transfer helper functions here
-void multiply(int32_t* instr, current_state* curr_state){
-
-}
-// ------------------------- Multiply -----------------------------------------
-  
+ 
   // Insert multiply helper functions here
 void single_data_transfer(int32_t* instr, current_state* curr_state){
 
+} 
+// ------------------------- Multiply -----------------------------------------
+  
+ /* 
+   Multiply and store value in a register according to given 
+   given values in instruction
+   Accumulator:   a = bit 21
+   Set condition: s = bit 20
+   Destination    rd = bit 16 to 19
+   Operator reg   rn = bit 12 to 15 
+                  rs = bit 8 to 11
+                  rm = bit 0 to 3 
+ */
+void multiply(int32_t* instr, current_state* curr_state){
+   // getting variables we know
+
+   int a = getBit(instr, 21);
+   int s = getBit(instr, 20);
+   int rd = getBits(instr, 16, 4);
+   int rn = getBits(instr, 12, 4);
+   int rs = getBits(instr, 8, 4);
+   int rm = getBits(instr, 0, 4);
+
+   if (a){
+      //rd = rm * rs + rn
+      curr_state->registers[rd] = 
+         curr_state->registers[rm] * curr_state->registers[rs]
+              + curr_state->registers[rn];
+   } else {
+      //rd = rm * rs
+      curr_state->registers[rd] = 
+         curr_state->registers[rm] * curr_state->registers[rs];
+   }
+
+   // setting flags
+   if (s){
+      // setting flag n
+      setBit(&(curr_state->CPSR),
+                   getBit(&(curr_state->registers[rd]),31),31);
+      // setting flag z
+       setBit(&(curr_state->CPSR),
+                   curr_state->registers[rd]==0,30);
+   }
 }
