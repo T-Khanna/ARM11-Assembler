@@ -83,6 +83,7 @@ int32_t main(int argc, char *argv[]) {
              break;
 
         case Single_data_transfer:
+//             printf("data transfer\n");
              single_data_transfer(&curr_state.pipeline.fetched,
                                   &curr_state);
              break;
