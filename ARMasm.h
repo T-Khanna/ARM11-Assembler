@@ -9,5 +9,18 @@
 #ifndef _ARM_ASM
 #define _ARM_ASM
 
+#include <stdint.h>
+
+//-- CONSTANTS ----------------------------------------------------------------
+
+#define LINE_LIMIT 511
+
+//-- SYMBOL TABLE -------------------------------------------------------------
+
+typedef struct Symbol_table {
+  char* *label;
+  int32_t *memory_address;
+} Symbol_table;
+
 
 #endif

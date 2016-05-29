@@ -7,15 +7,21 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
+#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
-#define LINE_LIMIT 511
+#include "ARMasm.h"
 
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
-void read_ASM(char *source_code);
-void write_bin(char *file_name);
+void symbol_table_init(FILE *fptr);
+int32_t* create_bin_inst(FILE *fptr);
+void write_bin(char *file_name, int32_t *inst);
+
+//-- GLOBAL VARIABLES ---------------------------------------------------------
+
+Symbol_table symbol_table;
 
 //-- MAIN ---------------------------------------------------------------------
 
@@ -27,22 +33,8 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  // Performing the first pass over the file
-  read_ASM(argv[0]);
-
-  // Perrforming the second pass over the file
-
-  // Creating output binary file
-  write_bin(argv[1]);
-  
-
-  return EXIT_SUCCESS;
-}
-
-void read_ASM(char *source_code) {
-
   // Open source assembly file
-  FILE *fptr = fopen(source_code, "r");
+  FILE *fptr = fopen(argv[0], "r");
 
   // Check to ensure that file exists
   if (fptr == NULL) {
@@ -50,25 +42,42 @@ void read_ASM(char *source_code) {
     return EXIT_FAILURE;
   }
 
-  // Store the length of the file and reset the pointer
-  fseek(fptr, 0, SEEK_END);
-  int file_size = ftell(fptr);
-  rewind(fptr);
+  // Performing the first pass over the file
+  symbol_table_init(fptr);
 
-  // Convert bytes to words
-  file_size /= 4;
+  // Performing the second pass over the file
+  int32_t *inst = create_bin_inst(fptr);
 
-  // Store the file contents in a structure yet to be defined
+  // Creating output binary file
+  write_bin(argv[1], inst);
+  
+  return EXIT_SUCCESS;
 
 }
 
-void write_bin(char *file_name) {
-  
+void symbol_table_init(FILE *fptr) {
+
+  // Use tokenizer (strtok_r and strtol)
+
+  // Make sure to store the results in symbol_table
+
+}
+
+int32_t* create_bin_inst(FILE *fptr) {
+
+  // Return an array of 32 bit words to be written into binary file
+
+  return NULL;
+
+}
+
+void write_bin(char *file_name, int32_t *inst) {
+
   // Creating output binary file
   FILE *fptr = fopen(file_name, "w+b");
 
   // Write to output file
-  for (int i = 0; i < ; i++) {
-    fwrite(, 32, 1, fptr);  
-  }
+  fwrite(inst, 32, 1, fptr);  
+  
+
 }
