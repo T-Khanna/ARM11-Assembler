@@ -192,6 +192,7 @@ void data_processing(int32_t* instr, current_state* curr_state){
         // mov : rd = op2
         case 13: curr_state->registers[rd]
                           = op2;
+//                 printf("%i\n"op2);
                 if(s){
                   setBit((&curr_state->CPSR),
                   curr_state->registers[rd]==0,30);
@@ -304,7 +305,7 @@ void single_data_transfer(int32_t* instr, current_state* curr_state){
        //make temperary instruction
        int temp = *instr;
        // settting temperary to 0 to avoid any CPSR setting
-       setBit(&temp,20,0);
+       setBit(&temp,0,20);
       
        offset = getRegVal(&temp,curr_state);
     } else {
@@ -335,6 +336,7 @@ void single_data_transfer(int32_t* instr, current_state* curr_state){
 
     if (mem_address >= 65536){
        printf("Error: Out of bounds memory access at address 0x%08x\n", mem_address);
+       return;
     }
 
     if (l) {
@@ -343,10 +345,9 @@ void single_data_transfer(int32_t* instr, current_state* curr_state){
       curr_state->registers[rd] = readMemory(mem_address,curr_state);
     } else {
       //store
-      for (int i = 0; i<4 ;i++){
-//    printf("%i\n",rd);
+//      printf("%i %i\n",mem_address,curr_state->registers[rd]);
       writeMemory(mem_address,curr_state->registers[rd], curr_state);
-      }
+
     }
 }
 
@@ -384,7 +385,7 @@ void writeMemory(int mem_address,int source,current_state* curr_state){
        return;
     } else {
    setBits(&(curr_state->memory[mem_address/4 + 1]),0,
-           &source,(4-index),index*8); 
+           &source,(4-index)*8,index*8); 
    }
 }
 
