@@ -69,11 +69,11 @@ void data_processing(int32_t* instr, current_state* curr_state){
      int rn = getBits(instr, 16, 4); 
      int rd = getBits(instr, 12, 4);
      int op2 = get_operand2(instr,curr_state,i);
-
+    
      // temp variable
      int result = 0;
      switch(opcode){
-        
+
         // and rd = rn & op2
         case 0: curr_state->registers[rd] 
                  = curr_state->registers[rn] & op2;
@@ -209,7 +209,7 @@ int get_operand2(int32_t* instr, current_state* curr_state,int i){
     if (i == 1){
        return getImmVal(instr);
     }
-    return  getRegVal(instr, curr_state);
+    return getRegVal(instr, curr_state);
 }
 
 //------------------------------
@@ -313,6 +313,8 @@ void single_data_transfer(int32_t* instr, current_state* curr_state){
 
     int mem_address = curr_state->registers[rn];
 
+//    printf("%i\n",mem_address);
+
     // if pc is rn 
     if (rn == 15){
     // making byte addressable and adjusting for pipeline
@@ -329,16 +331,20 @@ void single_data_transfer(int32_t* instr, current_state* curr_state){
                 (curr_state->registers[rn] -= offset); 
     }
 
+//   printf("%i\n",mem_address);
+
     if (mem_address >= 65536){
        printf("Error: Out of bounds memory access at address 0x%08x\n", mem_address);
     }
 
     if (l) {
       // load
+//     printf("%i\n",mem_address);
       curr_state->registers[rd] = readMemory(mem_address,curr_state);
     } else {
       //store
       for (int i = 0; i<4 ;i++){
+//    printf("%i\n",rd);
       writeMemory(mem_address,curr_state->registers[rd], curr_state);
       }
     }
@@ -366,10 +372,12 @@ int32_t readMemory(int mem_address, current_state* curr_state){
 void writeMemory(int mem_address,int source,current_state* curr_state){
 
    int index = mem_address % 4;
-   
+
+//   printf("%i\n",source);   
+
    setBits(&(curr_state->memory[mem_address/4]),8*index,
            &source,0,(4-index)*8);
-   
+ 
    if (index == 0){return;}
 
    if(mem_address/4 == MEMORY_CAPACITY -1){
