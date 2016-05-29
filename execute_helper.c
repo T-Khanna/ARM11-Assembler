@@ -335,6 +335,7 @@ void single_data_transfer(int32_t* instr, current_state* curr_state){
 
     if (mem_address >= 65536){
        printf("Error: Out of bounds memory access at address 0x%08x\n", mem_address);
+       return;
     }
 
     if (l) {
