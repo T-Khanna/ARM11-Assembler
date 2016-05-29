@@ -345,7 +345,7 @@ void single_data_transfer(int32_t* instr, current_state* curr_state){
       curr_state->registers[rd] = readMemory(mem_address,curr_state);
     } else {
       //store
-      printf("%i %i\n",mem_address,curr_state->registers[rd]);
+//      printf("%i %i\n",mem_address,curr_state->registers[rd]);
       writeMemory(mem_address,curr_state->registers[rd], curr_state);
 
     }
