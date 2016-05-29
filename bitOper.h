@@ -1,19 +1,9 @@
-///////////////////////////////////////////////////////////////////////////////
-// ARM Group Project - Year 1 (Group 40)
-// ____________________________________________________________________________
-//
-// File: bitOper.h
-// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
-///////////////////////////////////////////////////////////////////////////////
-#ifndef _BIT_OPER
-  #define _BIT_OPER
+#include<stdint.h>
+#include<stdio.h>
 
-//-- FUNCTION DECLARATIONS ---------------------------------------------------
-
-int getBit(int* num, int index);
-void setBit(int* num, int givenBit, int index);
-int getBits(int* num, int index, int size);
-void setBits(int* target, int index_target, int* source, int index_source, 
-             int size);
-int rotate_right(int num, unsigned int rot_num);
-#endif
+int32_t convBinToDec(int32_t bin[],int32_t size);
+int32_t* convDecToBin(int32_t num,int32_t size);
+void rotate_right(int32_t * array, int size, int rot_num);
+void shift_left(int32_t * array, int size, int rot_num);
+void shift_right(int32_t * array, int size, int rot_num);
+void arith_shift_right(int32_t * array, int size, int rot_num);
