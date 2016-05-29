@@ -57,16 +57,30 @@ int32_t main(int argc, char *argv[]) {
 
     //checking condition (COND) for decoding and executing
     int goAhead = check_condition(&curr_state.pipeline.fetched);
+
+//    printf("fetched : 0x%08x\n",  curr_state.pipeline.fetched);   
  
     //decode
     if (goAhead){
 
+//    printf("go ahead\n");
+
       //decode current fetched instruction in pipeline and store as the 
       //decoded instruction in the pipeline.
       curr_state.pipeline.decoded = decode(&curr_state.pipeline.fetched);
-
+//      printf("decode : %i\n",curr_state.pipeline.decoded);
       //execute appropriate instruction depending on decoded instruction
       switch (curr_state.pipeline.decoded){
+
+        case Data_processing:
+//             printf("data\n");
+             data_processing(&curr_state.pipeline.fetched,
+                             &curr_state);
+             break;
+
+        case Multiply:
+             multiply(&curr_state.pipeline.fetched,&curr_state);
+             break;
 
         case Single_data_transfer:
              single_data_transfer(&curr_state.pipeline.fetched,
@@ -75,15 +89,6 @@ int32_t main(int argc, char *argv[]) {
 
         case Branch:
              branch(&curr_state.pipeline.fetched,&curr_state);
-             break;
-
-        case Data_processing:
-             data_processing(&curr_state.pipeline.fetched,
-			     &curr_state);
-             break;
-
-        case Multiply:
-             multiply(&curr_state.pipeline.fetched,&curr_state);
              break;
 
       }
@@ -140,13 +145,9 @@ void reg_init(char* file){
   //Saving the file data in memory
   for (int i = 0; i < file_size; i++) {
 
-    fread(&curr_state.memory[i], 32, 1, fptr);
-
-    //converting instructions from little endian to big endian 
-  // curr_state.memory[i] = conv_endian(curr_state.memory[i]);
+    fread(&(curr_state.memory[i]), sizeof(int32_t), 1, fptr);
 
   }
-
   //closing the binary input file
   fclose(fptr);
 
@@ -204,9 +205,9 @@ void print_output() {
 //checks condition (COND) to decode and execute the instructions 
 //locations of flags: Nflag = 31, Zflag = 30, Cflag = 29, Vflag = 28
 int check_condition(int32_t* instr){
-
+   
    int case_num = getBits(instr, 28 , 4);
-  
+
    switch(case_num){
 
      //check z flag is set
@@ -215,33 +216,33 @@ int check_condition(int32_t* instr){
      //check z flag is clear
      case 1:  if (getBit(&curr_state.CPSR,30) == 0){         
                  return 1;
-              }
+              }else{return 0;}
 
      //check n equal to v
      case 10: if (getBit(&curr_state.CPSR,31) 
                     == getBit(&curr_state.CPSR,28)){
                  return 1;
-              } 
+              }else{return 0;} 
 
      //n not equal to v
      case 11: if (getBit(&curr_state.CPSR,31)
                     != getBit(&curr_state.CPSR,28)){
                  return 1;
-              }
+              }else{return 0;}
 
      //check z clear and n equal to v
      case 12: if ((getBit(&curr_state.CPSR,31)
                      == getBit(&curr_state.CPSR,28))
                      && getBit(&curr_state.CPSR,30) == 0){
                  return 1;
-              }
+              }else{return 0;}
 
      //check z or (n not equal to v)
      case 13: if ((getBit(&curr_state.CPSR,30)==1) 
                      || (getBit(&curr_state.CPSR,31)
                      != getBit(&curr_state.CPSR,28))){
                  return 1;
-              }
+              }else{return 0;}
 
      //all flags
      case 14: return 1;
@@ -293,13 +294,8 @@ int32_t decode(int32_t* instr){
 
 }
 
-
 //-----------------------------------------------
-////functions to be done. Can we split these up into different files please.
-
-
-
-//-----------------------------------------------
+<<<<<<< HEAD
 /*
 int8_t * fetchInstruction(int8_t littleEndianBuffer[]) {
 
@@ -934,3 +930,5 @@ int32_t main(int32_t argc, char **argv) {
 
 */
 
+=======
+>>>>>>> origin/restruct_optim

@@ -17,6 +17,7 @@
 #include "ARMgen.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 
 //-- CONSTANTS ----------------------------------------------------------------
@@ -28,7 +29,7 @@
 // get value of multiple bits of given size and position
 int getBits(int* num, int index, int size) {
    assert((index >= 0) && (index < WORD_SIZE) &&
-          (size >= 0) && (size < WORD_SIZE));
+          (size > 0) && (size <= WORD_SIZE));
    
    // using result variable as a mask
    int result = 0;
@@ -48,6 +49,7 @@ void setBits(int* target, int index_target,
 
    // get bits that need to be set from source
    int mask = 0;
+//   printf("%i %i \n",index_source,size);
    int source_bits = getBits(source, index_source, size);
    source_bits = (source_bits << index_target);   
    for (int i = index_target; i < index_target+size; i++) {
@@ -93,6 +95,7 @@ int rotate_right(int num, unsigned int rot_num){
    return (int)(right | left);
 }
 
+<<<<<<< HEAD
 /*
 int convBinToDec(int32_t bin[], int32_t size) {
 // converts binary array to int32_t
@@ -205,3 +208,5 @@ int * binary_add(int32_t * arr1, int32_t * arr2, int size) {
 
 */
 
+=======
+>>>>>>> origin/restruct_optim
