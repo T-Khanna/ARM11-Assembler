@@ -17,16 +17,17 @@
 
 #include <stdint.h>
 
+
 //-- CONSTANTS ----------------------------------------------------------------
 
-// memory = 65536 bytes/ 4 words 
-#define MEMORY_CAPACITY (65536/4)
+#define MEMORY_CAPACITY (65536/4) //memory = 65536 bytes/ 4 words 
 #define TOTAL_REGISTERS 17
 #define GEN_PURPOSE_REG 13
 #define INSTRUCTION_BYTE_SIZE 4
 #define BYTE_SIZE 8 
 #define PC registers[15] 
 #define CPSR registers[16]
+
 
 //--  PIPELINE -----------------------------------------------------------------
 

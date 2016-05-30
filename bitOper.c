@@ -26,18 +26,18 @@
 
 
 
-// get value of multiple bits of given size and position
+//gets values of multiple bits of given size and position using pointer
 int getBits(int* num, int index, int size) {
    assert((index >= 0) && (index < WORD_SIZE) &&
           (size > 0) && (size <= WORD_SIZE));
    
-   // using result variable as a mask
+   //result variable is the mask
    int result = 0;
    for (int i = 0; i < size; i++){
-      result = result | (1 << (index + i));
+     result = result | (1 << (index + i));
    } 
   
-   // saving result in result variable
+   //saving result in result variable after obtaining bits
    result = result & (*num);
    return ((unsigned int) result >> index);
 }

@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
-//ARM Group Project - Year 1 (Group 40)
-//____________________________________________________________________________
-//
-//File: emulate.c
-//Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
+// ARM Group Project - Year 1 (Group 40)
+// ____________________________________________________________________________
+// 
+// File: emulate.c
+// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ///////////////////////////////////////////////////////////////////////////////
 
 
