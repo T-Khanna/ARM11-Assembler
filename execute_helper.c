@@ -11,14 +11,13 @@
 // Contains the helper functions that perform the execution operations on the 
 // depending on the instructionsinstruction.
 
-
 #include <stdint.h>
 #include <stdio.h>
 #include "ARMgen.h"
 #include "bitOper.h"
 #include "execute_helper.h"
-#include "gpio_helper.c"
 #include "gpio_helper.h"
+
 
 
 //-- FUNCTION DECLARATIONS -----------------------------------------------------

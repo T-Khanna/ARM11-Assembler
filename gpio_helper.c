@@ -6,16 +6,19 @@
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <stdio.h>
 #include "ARMgen.h"
 #include "gpio_helper.h"
-#include <stdio.h>
+
+
+
+//-- CONSTANTS -----------------------------------------------------------------
 
 #define GPIO_ADDR_0_9			      0x20200000
 #define GPIO_ADDR_10_19		    	0x20200004
 #define GPIO_ADDR_20_29			    0x20200008
 #define GPIO_ADDR_SET		  	    0x2020001C
 #define GPIO_ADDR_CLEAR	    		0x20200028
-
 
 
 //-- FUNCTIONS -----------------------------------------------------------------
@@ -73,7 +76,7 @@ int convGPIOAddr(int* addr) {
 
 	}
 
-	*addr = ((MEMORY_CAPACITY - ((*addr - GPIO_ADDR_10_19) / 4)) - 1) * 4;
+	*addr = ((MEMORY_CAPACITY - ((*addr - GPIO_ADDR_0_9) / 4)) - 1) * 4;
 	return 0;
 }
 

@@ -12,12 +12,14 @@
 // particular to carry out the four instructions specified.
 
 
+#include "ARMgen.h"
+
+
 
 //-- FUNCTION DECLARATIONS -----------------------------------------------------
 
-void setGPIOAddr();
-void clearGPIOAddr();
-int convGPIOAddr();
-
+void setGPIOAddr(current_state* cur_state);
+void clearGPIOAddr(current_state* cur_state);
+int convGPIOAddr(int* addr);
 
 

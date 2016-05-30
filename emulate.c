@@ -17,7 +17,7 @@
 #include "ARMgen.h"
 #include "bitOper.h"
 #include "execute_helper.h"
-#include "gpio_helper.c"
+#include "gpio_helper.h"
 
 
 
@@ -103,6 +103,7 @@ int32_t main(int argc, char *argv[]) {
   printOutput();
 
   return EXIT_SUCCESS;
+
 }
 
 
@@ -300,4 +301,5 @@ int32_t decode(int32_t* instr) {
   }
 
 }
+
 

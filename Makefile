@@ -9,7 +9,7 @@ all: assemble emulate
 
 assemble: assemble.o
 
-emulate: emulate.o bitOper.o execute_helper.o
+emulate: emulate.o bitOper.o execute_helper.o gpio_helper.o
 
 clean:
 	rm -f $(wildcard *.o)
