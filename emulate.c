@@ -17,6 +17,8 @@
 #include "ARMgen.h"
 #include "bitOper.h"
 #include "execute_helper.h"
+#include "gpio_helper.c"
+
 
 
 //-- FUNCTION DECLARATIONS -----------------------------------------------------
@@ -46,6 +48,9 @@ int32_t main(int argc, char *argv[]) {
 
   //initialises the memory, pipeline and registers
   regInit(argv[1]);
+
+  //set GPIO addresses
+  setGPIOAddr(&curr_state);
 
   //fetch, decode, execute cycle
   do {
@@ -90,6 +95,9 @@ int32_t main(int argc, char *argv[]) {
     }
 
   } while(curr_state.pipeline.fetched != 0); //fetch, decode, execute cycle
+
+  //clear GPIO addresses
+  clearGPIOAddr(&curr_state);
 
   //print output of state of registers and non-zero memory.
   printOutput();
