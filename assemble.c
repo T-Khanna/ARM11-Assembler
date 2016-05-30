@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   }
 
   // Open source assembly file
-  FILE *fptr = fopen(argv[0], "r");
+  FILE *fptr = fopen(argv[1], "r");
 
   // Check to ensure that file exists
   if (fptr == NULL) {
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
   
   // Creating output binary file
   int num_of_instrs;
-  write_bin(argv[1], inst, num_of_instrs);
+  write_bin(argv[2], inst, num_of_instrs);
   
   return EXIT_SUCCESS;
 
@@ -72,7 +72,7 @@ int32_t* create_bin_inst(FILE *fptr) {
 
 }
 
-void write_bin(char *file_name, int32_t *instr, int num_of_instrs) {
+void write_bin(char *file_name, int32_t instr[], int num_of_instrs) {
 
   // Creating output binary file
   FILE *fptr = fopen(file_name, "w+b");
