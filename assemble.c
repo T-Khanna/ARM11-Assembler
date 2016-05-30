@@ -17,7 +17,7 @@
 
 void symbol_table_init(FILE *fptr);
 int32_t* create_bin_inst(FILE *fptr);
-void write_bin(char *file_name, int32_t *inst);
+void write_bin(char *file_name, int32_t *instr, int num_of_instrs);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -47,9 +47,10 @@ int main(int argc, char **argv) {
 
   // Performing the second pass over the file
   int32_t *inst = create_bin_inst(fptr);
-
+  
   // Creating output binary file
-  write_bin(argv[1], inst);
+  int num_of_instrs;
+  write_bin(argv[1], inst, num_of_instrs);
   
   return EXIT_SUCCESS;
 
@@ -71,13 +72,16 @@ int32_t* create_bin_inst(FILE *fptr) {
 
 }
 
-void write_bin(char *file_name, int32_t *inst) {
+void write_bin(char *file_name, int32_t *instr, int num_of_instrs) {
 
   // Creating output binary file
   FILE *fptr = fopen(file_name, "w+b");
 
   // Write to output file
-  fwrite(inst, 32, 1, fptr);  
-  
+  for (int i = 0; i < num_of_instrs; i++) {
+    fwrite(&(instr[i]), sizeof(int32_t), 1, fptr);  
+  }
+
+  fclose(fptr);
 
 }
