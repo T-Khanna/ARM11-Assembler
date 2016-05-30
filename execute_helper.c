@@ -17,7 +17,8 @@
 #include "ARMgen.h"
 #include "bitOper.h"
 #include "execute_helper.h"
-
+#include "gpio_helper.c"
+#include "gpio_helper.h"
 
 
 //-- FUNCTION DECLARATIONS -----------------------------------------------------
@@ -377,21 +378,26 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
 
   int mem_address = curr_state->registers[rn];
 
-  // if pc is rn making byte addressable and adjusting for pipeline
+  //if pc is rn making byte addressable and adjusting for pipeline
   if(rn == 15){
     mem_address = mem_address * 4 + 4;
   }
 
   if(p){
-    // value of base register not changed 
+    //value of base register not changed 
     (u) ? (mem_address += offset) : (mem_address -= offset);
 
   } else{
 
-    // updating value of rn
+    //updating value of rn
     (u) ? (curr_state->registers[rn] += offset) : 
       (curr_state->registers[rn] -= offset); 
 
+  }
+
+  //converting GPIO address
+  if(convGPIOAddr(&mem_address)){
+    return;
   }
 
   //checking for mem_address being out of bounds in memory
