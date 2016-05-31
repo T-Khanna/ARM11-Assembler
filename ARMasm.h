@@ -23,10 +23,33 @@
 
 //-- SYMBOL TABLE --------------------------------------------------------------
 
-typedef struct Symbol_table {
+typedef struct symbol_table {
+
   char* *label;
   int32_t* memory_address;
-} Symbol_table;
+
+} symbol_table;
+
+
+//-- TOKENISED -----------------------------------------------------------------
+
+typedef struct tokenised {
+
+  char* label;
+  opcode op;
+  int32_t[4] operands;
+
+} tokenised;
+
+
+//-- OPCODE --------------------------------------------------------------------
+
+enum opcode {
+  
+  //TODO
+
+};
+
 
 #endif
 

@@ -19,31 +19,35 @@ int32_t* get_instr(char* path);
 int32_t* translate_instr(int32_t* assem_instr);
 void write_bin(char* path, int32_t* bin_instr);
 
+
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
 Symbol_table symbol_table;
+
 
 //-- MAIN ---------------------------------------------------------------------
 
 int main(int argc, char **argv) {
 
-  // Checking for an invalid number of arguments
+  //checking for an invalid number of arguments
   if (argc != 3) {
     printf("Expecting two arguments\n");
     return EXIT_FAILURE;
   }
 
-
+  //getting the instruction from source file into an array of 32-bit
+  //instructions that will be translated.
   int32_t* assem_instr = get_instr(argv[1]);
 
-  // Performing the pass over the file
+  //performing the pass over the file to decode into binary that will be written
   int32_t* bin_instr = translate_instr(assem_instr);
 
-  // Creating output binary file
+  //creating output binary file
   write_bin(argv[2], bin_instr);
   return EXIT_SUCCESS;
 
 }
+
 
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
 
@@ -58,22 +62,30 @@ int32_t* get_instr(char* path) {
     return NULL;
   }
 
+  //TODO: CODE HERE
+
   fclose(fptr);
   return NULL;
+
 }
 
+//return an array of 32 bit words to be written into binary file
 int32_t* translate_instr(int32_t* assem_instr) {
 
-  // Return an array of 32 bit words to be written into binary file
+  //TODO: CODE HERE
 
   return NULL;
 
 }
 
+//writes the array of 32 bit words (instructions) into the binary file 
+//specified
 void write_bin(char *path, int32_t* bin_instr) {
 
   // Creating output binary file
   FILE *fptr = fopen(path, "w+b");
+
+  //TODO: CODE HERE
 
   fclose(fptr);
   
