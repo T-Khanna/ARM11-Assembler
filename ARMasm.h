@@ -28,7 +28,7 @@ typedef struct symbol_table {
   char* *label;
   int32_t* memory_address;
 
-} symbol_table;
+};
 
 
 //-- TOKENISED -----------------------------------------------------------------

@@ -22,7 +22,7 @@ void write_bin(char* path, int32_t* bin_instr);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
-Symbol_table symbol_table;
+symbol_table symb_table;
 
 
 //-- MAIN ---------------------------------------------------------------------
@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
 
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
 
+//gets instructions from source file into an array of 32-bit instructions
 int32_t* get_instr(char* path) {
 
   // Open source assembly file
