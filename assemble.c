@@ -1,11 +1,10 @@
 ///////////////////////////////////////////////////////////////////////////////
-//ARM Group Project - Year 1 (Group 40)
-//_____________________________________________________________________________
+// ARM Group Project - Year 1 (Group 40)
+// ____________________________________________________________________________
 //
-//File: assemble.c
-//Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
+// File: assemble.c
+// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ///////////////////////////////////////////////////////////////////////////////
-
 
 #include <string.h>
 #include <stdio.h>
@@ -15,9 +14,9 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
-void symbol_table_init(FILE *fptr);
-int32_t* create_bin_inst(FILE *fptr);
-void write_bin(char *file_name, int32_t *instr, int num_of_instrs);
+int32_t* get_instr(char* path);
+int32_t* translate_instr(int32_t* assem_instr);
+void write_bin(char* path, int32_t* bin_instr);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -33,38 +32,36 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  // Open source assembly file
-  FILE *fptr = fopen(argv[1], "r");
+  int32_t* assem_instr = get_instr(argv[1]);
 
-  // Check to ensure that file exists
-  if (fptr == NULL) {
-    printf("Unable to open file\n");
-    return EXIT_FAILURE;
-  }
+  // Performing the pass over the file
+  int32_t* bin_instr = translate_instr(assem_instr);
 
-  // Performing the first pass over the file
-  symbol_table_init(fptr);
-
-  // Performing the second pass over the file
-  int32_t *inst = create_bin_inst(fptr);
-  
   // Creating output binary file
-  int num_of_instrs;
-  write_bin(argv[2], inst, num_of_instrs);
+  write_bin(argv[2], bin_instr);
   
   return EXIT_SUCCESS;
 
 }
 
-void symbol_table_init(FILE *fptr) {
+//-- FUNCTION DEFINTIONS -------------------------------------------------------
 
-  // Use tokenizer (strtok_r and strtol)
+int32_t* get_instr(char* path) {
 
-  // Make sure to store the results in symbol_table
+  // Open source assembly file
+  FILE *fptr = fopen(path, "r");
 
+  // Check to ensure that file exists
+  if (fptr == NULL) {
+    printf("Unable to open input file\n");
+    return NULL;
+  }
+
+  fclose(fptr);
+  return NULL;
 }
 
-int32_t* create_bin_inst(FILE *fptr) {
+int32_t* translate_instr(int32_t* assem_instr) {
 
   // Return an array of 32 bit words to be written into binary file
 
@@ -72,16 +69,12 @@ int32_t* create_bin_inst(FILE *fptr) {
 
 }
 
-void write_bin(char *file_name, int32_t instr[], int num_of_instrs) {
+void write_bin(char *path, int32_t* bin_instr) {
 
   // Creating output binary file
-  FILE *fptr = fopen(file_name, "w+b");
-
-  // Write to output file
-  for (int i = 0; i < num_of_instrs; i++) {
-    fwrite(&(instr[i]), sizeof(int32_t), 1, fptr);  
-  }
+  FILE *fptr = fopen(path, "w+b");
 
   fclose(fptr);
-
+  
 }
+

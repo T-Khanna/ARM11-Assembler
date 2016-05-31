@@ -2,21 +2,23 @@
 // ARM Group Project - Year 1 (Group 40)
 // _____________________________________________________________________________
 // 
-// File: execute_helper.c
+// File: gpio_helper.h
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ////////////////////////////////////////////////////////////////////////////////
 
 
-//------------------------ EMULATE HELPER HEADER -------------------------------
+//-------------------------- GPIO HELPER HEADER --------------------------------
 // Contains the function definitions for emulate.c, the execute function in 
 // particular to carry out the four instructions specified.
+
+#include "ARMgen.h"
 
 
 
 //-- FUNCTION DECLARATIONS -----------------------------------------------------
 
-void branch(int32_t* instr, current_state* curr_state);
-void dataProcessing(int32_t* instr, current_state* curr_state);
-void multiply(int32_t* instr, current_state* curr_state);
-void singleDataTransfer(int32_t* instr, current_state* curr_state);
+void setGPIOAddr(current_state* cur_state);
+void clearGPIOAddr(current_state* cur_state);
+int findGPIOAddr(int* addr);
+
 
