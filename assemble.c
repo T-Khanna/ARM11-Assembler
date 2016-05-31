@@ -22,7 +22,7 @@ void write_bin(char* path, int32_t* bin_instr);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
-symbol_table symb_table;
+struct symbol_table symb_table;
 
 
 //-- MAIN ---------------------------------------------------------------------
@@ -63,7 +63,8 @@ int32_t* get_instr(char* path) {
     return NULL;
   }
 
-  //TODO: CODE HERE
+  //TODO: CODE that turns each instruction in the source file into an array
+  //      of 32-bit instructions.
 
   fclose(fptr);
   return NULL;
@@ -73,7 +74,7 @@ int32_t* get_instr(char* path) {
 //return an array of 32 bit words to be written into binary file
 int32_t* translate_instr(int32_t* assem_instr) {
 
-  //TODO: CODE HERE
+  //TODO: CODE that translates each 32 bit word into binary
 
   return NULL;
 
@@ -86,7 +87,7 @@ void write_bin(char *path, int32_t* bin_instr) {
   // Creating output binary file
   FILE *fptr = fopen(path, "w+b");
 
-  //TODO: CODE HERE
+  //TODO: CODE that writes given binary to the file specified
 
   fclose(fptr);
   
