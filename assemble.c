@@ -74,11 +74,6 @@ void write_bin(char *path, int32_t* bin_instr) {
   // Creating output binary file
   FILE *fptr = fopen(path, "w+b");
 
-  // Check to ensure that file exists
-  if (fptr == NULL) {
-    printf("Unable to open bin file\n");
-  }
-
   fclose(fptr);
   
 }
