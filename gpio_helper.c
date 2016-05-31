@@ -6,6 +6,11 @@
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ////////////////////////////////////////////////////////////////////////////////
 
+
+//----------------------------- GPIO HELPER  -----------------------------------
+// Contains the function definitions for emulate.c, the execute function in 
+// particular to carry out the four instructions specified.
+
 #include <stdio.h>
 #include "ARMgen.h"
 #include "gpio_helper.h"
@@ -14,11 +19,11 @@
 
 //-- CONSTANTS -----------------------------------------------------------------
 
-#define GPIO_ADDR_0_9			      0x20200000
-#define GPIO_ADDR_10_19		    	0x20200004
-#define GPIO_ADDR_20_29			    0x20200008
-#define GPIO_ADDR_SET		  	    0x2020001C
-#define GPIO_ADDR_CLEAR	    		0x20200028
+#define GPIO_ADDR_0_9		0x20200000
+#define GPIO_ADDR_10_19	0x20200004
+#define GPIO_ADDR_20_29	0x20200008
+#define GPIO_ADDR_SET		0x2020001C
+#define GPIO_ADDR_CLEAR	0x20200028
 
 
 //-- FUNCTIONS -----------------------------------------------------------------
@@ -35,9 +40,9 @@ void setGPIOAddr(current_state* cur_state) {
 //clears addresses in memory of the GPIO pins
 void clearGPIOAddr(current_state* cur_state) {
 
-	cur_state->memory[MEMORY_CAPACITY - 1] = 0;
-	cur_state->memory[MEMORY_CAPACITY - 2] = 0;
 	cur_state->memory[MEMORY_CAPACITY - 3] = 0;
+	cur_state->memory[MEMORY_CAPACITY - 2] = 0;
+	cur_state->memory[MEMORY_CAPACITY - 1] = 0;
 
 }
 
@@ -46,12 +51,12 @@ int convGPIOAddr(int* addr) {
 
   switch(*addr) {
 
-    //SET PIN ADDRESS
+    //set the pin addresses
     case GPIO_ADDR_SET:
       printf("PIN ON\n");
       return 1;
 
-		//CLEAR PIN ADDRESS
+		//clear the pin addresses
 		case GPIO_ADDR_CLEAR:
 			printf("PIN OFF\n");
 			return 1;
