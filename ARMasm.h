@@ -17,16 +17,36 @@
 #define MEMORY_CAPACITY (65536/4)
 #define INSTRUCTION_BYTE_SIZE 4
 #define BYTE_SIZE 8
+#define TOKEN_LIMIT 5
 
 
 //-- OPCODE --------------------------------------------------------------------
 
 enum opcode {
   
-  add,
-  sub,
-  rsb
-  //TODO: add more opcodes
+  ADD,
+  SUB,
+  RSB,
+  AND,
+  EOR,
+  ORR,
+  MOV,
+  TST,
+  TEQ,
+  CMP,
+  MUL,
+  MLA,
+  LDR,
+  STR,
+  BEQ,
+  BNE,
+  BGE,
+  BLT,
+  BGT,
+  BLE,
+  B,
+  LSL,
+  ANDEQ
 
 };
 

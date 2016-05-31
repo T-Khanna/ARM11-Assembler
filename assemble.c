@@ -15,6 +15,7 @@
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 int32_t* get_instr(char* path);
+void tokeniser(char* line);
 int32_t* translate_instr(int32_t* assem_instr);
 void write_bin(char* path, int32_t* bin_instr);
 
@@ -65,11 +66,39 @@ int32_t* get_instr(char* path) {
 
   //TODO: CODE that turns each instruction in the source file into an array
   //      of 32-bit instructions.
+  char line[LIMIT_PER_LINE];
+  
+  // Better than !feof(fptr) as it actually stops at EOF 
+  while (fgets(line, LIMIT_PER_LINE, fptr)) {
+    // This removes the trailing '\n' from fgets
+    line[strcspn(line, "\n")] = 0;
+    tokeniser(line);
+  }
+  
 
   fclose(fptr);
   return NULL;
 
 }
+
+
+int check_label(char *token) {
+  return (*(token + strcspn(token, ":")) == ':') ? 1 : 0;
+}
+
+void tokeniser(char *line) {
+  const char delims[] = " ,";
+  char *tokens[TOKEN_LIMIT], *save_ptr;
+  char* temp = strtok_r(line, delims, &save_ptr);
+  int i = 0;
+  while (temp != NULL && i < sizeof(tokens)) {
+    tokens[i] = temp;
+    temp = strtok_r(NULL, delims, &save_ptr); 
+    i++;
+  }
+  printf("%d\n", check_label(tokens[0]));
+}
+
 
 //return an array of 32 bit words to be written into binary file
 int32_t* translate_instr(int32_t* assem_instr) {
@@ -92,4 +121,5 @@ void write_bin(char *path, int32_t* bin_instr) {
   fclose(fptr);
   
 }
+
 
