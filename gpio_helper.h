@@ -19,6 +19,6 @@
 
 void setGPIOAddr(current_state* cur_state);
 void clearGPIOAddr(current_state* cur_state);
-int convGPIOAddr(int* addr);
+int findGPIOAddr(int* addr);
 
 

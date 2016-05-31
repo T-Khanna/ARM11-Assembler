@@ -29,7 +29,9 @@ int32_t readMemory(int mem_address, current_state* curr_state);
 void writeMemory(int mem_address,int source,current_state* curr_state); 
 
 
-//-- BRANCH --------------------------------------------------------------------
+//-- FUNCTION DEFINITIONS ------------------------------------------------------
+
+// BRANCH 
 // Jumps to required branch (pc) of the code
 // offset = bit 0 to 23
 // offsetn is shifted left 2 and extended to 32 bit 
@@ -57,7 +59,7 @@ void branch(int32_t* instr, current_state* curr_state){
 }
 
 
-//-- DATA PROCESSING -----------------------------------------------------------
+// DATA PROCESSING
 // Process given instruction and perform various functions
 // I = bit 25
 // opcode = 21 to 24
@@ -339,7 +341,7 @@ int getRegVal(int32_t* instr, current_state* curr_state){
 
 
 
-// -- SINGLE DATA TRANSFER -----------------------------------------------------
+// SINGLE DATA TRANSFER 
 // Help to load and store from and to memory
 // Imm offset:     i = bit 25
 // pre/post index  p = bit 24
@@ -364,7 +366,7 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
     //make a temporary instruction
     int temp = *instr;
 
-    //settting temperary to 0 to avoid any CPSR setting
+    //settting temporary to 0 to avoid any CPSR setting
     setBit(&temp,0,20);
 
     offset = getRegVal(&temp,curr_state);
@@ -383,6 +385,7 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
   }
 
   if(p){
+
     //value of base register not changed 
     (u) ? (mem_address += offset) : (mem_address -= offset);
 
@@ -394,8 +397,8 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
 
   }
 
-  //converting GPIO address
-  if(convGPIOAddr(&mem_address)){
+  //checking for mem_address accessing a GPIO pin address in memory
+  if(findGPIOAddr(&mem_address)){
     return;
   }
 
@@ -424,7 +427,7 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
 
 
 
-// ------------------------- Multiply -----------------------------------------
+// MULTIPLY
 // Multiply and store value in a register according to given 
 // given values in instruction
 // Accumulator:   a = bit 21
@@ -473,7 +476,7 @@ void multiply(int32_t* instr, current_state* curr_state){
 }
 
 
-//-- READING AND WRITING MEMORY ------------------------------------------------
+// READING AND WRITING MEMORY 
 
 int32_t readMemory(int mem_address, current_state* curr_state){
 

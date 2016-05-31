@@ -107,7 +107,8 @@ int32_t main(int argc, char *argv[]) {
 }
 
 
-//-- SUPPORTING FUNCTIONS ------------------------------------------------------
+//-- FUNCTION DEFINTIONS -------------------------------------------------------
+//supporting functions 
 
 //initialises registers and memory by setting them to 0.
 void regInit(char* file) {

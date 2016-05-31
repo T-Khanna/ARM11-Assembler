@@ -24,6 +24,8 @@
 #define WORD_SIZE 32
 
 
+//-- FUNCTION DEFINTIONS -------------------------------------------------------
+
 //gets values of multiple bits of given size and position from right using 
 //the specified pointer. Returns the bits needed to the right of the int. 
 //Unwanted bits are 0 when returned

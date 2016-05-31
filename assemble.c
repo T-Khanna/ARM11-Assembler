@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
 
 }
 
+//-- FUNCTION DEFINTIONS -------------------------------------------------------
 
 int32_t* get_instr(char* path) {
 

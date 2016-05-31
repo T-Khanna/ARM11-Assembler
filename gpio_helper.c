@@ -26,9 +26,9 @@
 #define GPIO_ADDR_CLEAR	0x20200028
 
 
-//-- FUNCTIONS -----------------------------------------------------------------
+//-- FUNCTION DEFINITIONS ------------------------------------------------------
 
-//sets addresses as the values of the GPIO pins
+//sets addresses as the values of the GPIO pins in memory
 void setGPIOAddr(current_state* cur_state) {
   
 	cur_state->memory[MEMORY_CAPACITY - 3] = GPIO_ADDR_0_9;
@@ -37,7 +37,7 @@ void setGPIOAddr(current_state* cur_state) {
 
 }
 
-//clears addresses in memory of the GPIO pins
+//clears addresses of the GPIO pins in memory
 void clearGPIOAddr(current_state* cur_state) {
 
 	cur_state->memory[MEMORY_CAPACITY - 3] = 0;
@@ -46,8 +46,8 @@ void clearGPIOAddr(current_state* cur_state) {
 
 }
 
-//converts address of GPIO pins to last memory addresses
-int convGPIOAddr(int* addr) {
+//finds the address of GPIO pins that have been accessed
+int findGPIOAddr(int* addr) {
 
   switch(*addr) {
 
@@ -83,6 +83,7 @@ int convGPIOAddr(int* addr) {
 
 	*addr = ((MEMORY_CAPACITY - ((*addr - GPIO_ADDR_0_9) / 4)) - 1) * 4;
 	return 0;
+
 }
 
 
