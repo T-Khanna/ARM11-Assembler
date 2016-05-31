@@ -11,9 +11,9 @@
 // Contains the function definitions for bitOper.c to perform bitwise 
 // operations on the instruction.
 
-
 #ifndef _BIT_OPER
   #define _BIT_OPER
+
 
 
 //-- FUNCTION DECLARATIONS -----------------------------------------------------
