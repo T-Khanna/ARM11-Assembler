@@ -19,11 +19,37 @@
 #define BYTE_SIZE 8
 
 
+//-- OPCODE --------------------------------------------------------------------
+
+enum opcode {
+  
+  add,
+  sub,
+  rsb
+  //TODO: add more opcodes
+
+};
+
+
 //-- SYMBOL TABLE --------------------------------------------------------------
 
-typedef struct Symbol_table {
+struct symbol_table {
+
   char* *label;
   int32_t* memory_address;
-} Symbol_table;
+
+};
+
+
+//-- TOKENISED -----------------------------------------------------------------
+
+typedef struct tokenised {
+
+  char* label;
+  enum opcode op;
+  int32_t operands[4];
+
+} tokenised;
+
 
 #endif
