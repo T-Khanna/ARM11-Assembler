@@ -14,11 +14,8 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
-int32_t* get_instr(char* path);
-tokenised tokeniser(char* line);
-int32_t* translate_instr(int32_t* assem_instr);
 char* get_instr(char* path);
-void tokeniser(char* line);
+tokenised tokeniser(char* line);
 int32_t* translate_instr(char* assem_instr);
 void write_bin(char* path, int32_t* bin_instr);
 
@@ -70,14 +67,6 @@ char* get_instr(char* path) {
 
   //TODO: CODE that turns each instruction in the source file into an array
   //      of 32-bit instructions.
-
-  char line[LIMIT_PER_LINE];
-  
-  // Better than !feof(fptr) as it actually stops at EOF 
-  while (fgets(line, LIMIT_PER_LINE, fptr)) {
-    // This removes the trailing '\n' from fgets
-    line[strcspn(line, "\n")] = '\0';
-    tokeniser(line);
   //Tanmay's code 
   // char line[LIMIT_PER_LINE];
   // // Better than !feof(fptr) as it actually stops at EOF 

@@ -26,7 +26,7 @@
 struct symbol_table {
 
   char* *label;
-  int32_t* memory_address;
+  long* memory_address;
 
 };
 
