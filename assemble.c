@@ -77,11 +77,6 @@ int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]) {
   // enters loop if current line exists and reading it is succesful. 
   // breaks loop when we reach the end of the file.
   while (fgets(instrs[lines_in_file], LIMIT_PER_LINE, fptr)) {
-<<<<<<< Updated upstream
-    // This replaces the '\n' character with '\0' 
-    // so that it terminates the string
-    instrs[lines_in_file][strcspn(instrs[lines_in_file], "\n")] = '\0';
-=======
 
     //having loaded current line into the array of instructions specified, we
     //need to replace the '\n' at the end of each line to '\0'
@@ -93,7 +88,6 @@ int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]) {
     instrs[lines_in_file][newline_pos] = '\0';
 
     // proceed to the next line in the file
->>>>>>> Stashed changes
     lines_in_file++;
 
   }
