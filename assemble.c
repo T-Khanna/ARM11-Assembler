@@ -68,14 +68,14 @@ char* get_instr(char* path) {
   //TODO: CODE that turns each instruction in the source file into an array
   //      of 32-bit instructions.
   //Tanmay's code 
-  // char line[LIMIT_PER_LINE];
-  // // Better than !feof(fptr) as it actually stops at EOF 
-  // while (fgets(line, LIMIT_PER_LINE, fptr)) {
-  //   // This removes the trailing '\n' from fgets
-  //   line[strcspn(line, "\n")] = '\0';
-  //   puts(line);
-  //   tokeniser(line);
-  // }
+   char line[LIMIT_PER_LINE];
+   // Better than !feof(fptr) as it actually stops at EOF 
+   while (fgets(line, LIMIT_PER_LINE, fptr)) {
+     // This removes the trailing '\n' from fgets
+     line[strcspn(line, "\n")] = '\0';
+     puts(line);
+     tokeniser(line);
+   }
  
  
   //setting file point32_ter to the end of the file
@@ -108,10 +108,13 @@ int check_label(char *token) {
 }
 
 tokenised tokeniser(char *line) {
-  tokenised tokenised;
+  tokenised tokenised_str;
+
+  tokenised_str.label = NULL;
+
   const char delims[] = " ,";
-  char *tokens[TOKEN_LIMIT], *save_ptr;
-  char* temp = strtok_r(line, delims, &save_ptr);
+  char* tokens[TOKEN_LIMIT], *save_ptr;
+  char *temp = strtok_r(line, delims, &save_ptr);
   int i = 0;
   while (temp != NULL && i < sizeof(tokens)) {
     tokens[i] = temp;
@@ -121,14 +124,14 @@ tokenised tokeniser(char *line) {
   if (check_label(tokens[0])) {
     char* label_to_add = tokens[0];
     *(label_to_add + strcspn(label_to_add, ":")) = '\0';
-    tokenised.label = label_to_add;
+    tokenised_str.label = label_to_add;
     *(symb_table.label) = label_to_add;
     *(symb_table.memory_address) = (unsigned long) label_to_add;
     printf("%lx\n", *(symb_table.memory_address));
   } else {
     
   }
-  return tokenised;
+  return tokenised_str;
 }
 
 
