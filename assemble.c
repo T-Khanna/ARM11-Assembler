@@ -101,6 +101,19 @@ int is_letter(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
+int get_code(char* code) {
+  int i = 0;
+  char* instr = op_table[i].mnemonic;
+  while (instr) {
+    if (strcmp(instr, code) == 0) {
+      return op_table[i].code;
+    }
+    i++;
+    instr = op_table[i].mnemonic;
+  }
+  return 0;
+}
+
 tokenised check_label(char *tokens[TOKEN_LIMIT]) {
   
   tokenised tokenised_str;
@@ -108,7 +121,7 @@ tokenised check_label(char *tokens[TOKEN_LIMIT]) {
   // Initialise tokenised_str values
   tokenised_str.label = 0;  
   // Can't use 0 here as that is the opcode for 'and' 
-  tokenised_str.op = 5;  
+  tokenised_str.code = 18;  
   for (int i = 0; i < OPERAND_SIZE; i++) {
     tokenised_str.operands[i] = 0;
   } 
@@ -132,7 +145,10 @@ tokenised check_label(char *tokens[TOKEN_LIMIT]) {
     // label -> address pair
     label_count++;
   } else {
-    // Line starts with assembly opcode
+    tokenised_str.code = get_code(tokens[0]);
+    for (int i = 0; i < OPERAND_SIZE; i++) {
+      tokenised_str.operands[i] = 0; // Need to use strtol here
+    }
   }
   
   return tokenised_str;
@@ -165,6 +181,7 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   for (int i = 0; i < length; i++) {
     current_instruction = assem_instr[i];
     token_line = tokenizer(current_instruction);
+    token_line = token_line;
   }
 
   //TODO: CODE that translates each 32 bit word into binary

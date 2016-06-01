@@ -38,10 +38,52 @@ struct symbol_table {
 typedef struct tokenised {
 
   char* label;
-  int8_t op;
+  int code;
   int32_t operands[OPERAND_SIZE];
 
 } tokenised;
+
+struct mnemonic_code_mapping {
+  char *mnemonic; 
+  int code;
+};
+
+struct mnemonic_code_mapping op_table[] = {
+  
+  // Data Processing
+  {"add", 4},
+  {"sub", 2},
+  {"rsb", 3},
+  {"and", 0},
+  {"eor", 1},
+  {"orr", 12},
+  {"mov", 13},
+  {"tst", 8},
+  {"teq", 9},
+  {"cmp", 10},
+
+  // Multiply
+  {"mul", 14},
+  {"mla", 15},
+
+  // Single Data Transfer
+  {"ldr", 5},
+  {"str", 6},
+
+  // Branch 
+  {"beq", 16}, 
+  {"bne", 17}, 
+  {"bge", 26}, 
+  {"blt", 27}, 
+  {"bgt", 28}, 
+  {"ble", 29}, 
+  {"b", 30},  
+
+  // Special
+  {"lsl", 31},
+  {"andeq", 32}
+
+};
 
 
 #endif
