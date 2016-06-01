@@ -71,31 +71,25 @@ int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]) {
     return 0;
   }
 
-  //TODO: CODE that turns each instruction in the source file into an array
-  //      of 32-bit instructions.
-  
   int lines_in_file = 0;
-  // Reads in a line as long as another line exists
+
+  //Loads each line into the array of instructions specified
+  // enters loop if current line exists and reading it is succesful. 
+  // breaks loop when we reach the end of the file.
   while (fgets(instrs[lines_in_file], LIMIT_PER_LINE, fptr)) {
-<<<<<<< HEAD
-    // Find the position of the '\n' character we want to remove
-=======
 
     //having loaded current line into the array of instructions specified, we
     //need to replace the '\n' at the end of each line to '\0'
 
     // find the position of the '\n' new line character that we want to replace
->>>>>>> tarun
     int newline_pos = strcspn(instrs[lines_in_file], "\n");
+
     // Set the value to '\0' to terminate the string
     instrs[lines_in_file][newline_pos] = '\0';
-<<<<<<< HEAD
-    // Proceed to the next line
-=======
 
     // proceed to the next line in the file
->>>>>>> tarun
     lines_in_file++;
+
   }
  
   fclose(fptr);
