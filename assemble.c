@@ -15,7 +15,7 @@
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 int32_t* get_instr(char* path);
-void tokeniser(char* line);
+tokenised tokeniser(char* line);
 int32_t* translate_instr(int32_t* assem_instr);
 void write_bin(char* path, int32_t* bin_instr);
 
@@ -73,7 +73,6 @@ int32_t* get_instr(char* path) {
   while (fgets(line, LIMIT_PER_LINE, fptr)) {
     // This removes the trailing '\n' from fgets
     line[strcspn(line, "\n")] = '\0';
-    puts(line);
     tokeniser(line);
   }
   
@@ -91,18 +90,28 @@ int check_label(char *token) {
   return *(token + strcspn(token, ":")) == ':' && is_letter(*token);
 }
 
-void tokeniser(char *line) {
+tokenised tokeniser(char *line) {
+  tokenised tokenised;
   const char delims[] = " ,";
   char *tokens[TOKEN_LIMIT], *save_ptr;
   char* temp = strtok_r(line, delims, &save_ptr);
   int i = 0;
   while (temp != NULL && i < sizeof(tokens)) {
     tokens[i] = temp;
-    puts(tokens[i]);
     temp = strtok_r(NULL, delims, &save_ptr); 
     i++;
   }
-  printf("%d\n", check_label(tokens[0]));
+  if (check_label(tokens[0])) {
+    char* label_to_add = tokens[0];
+    *(label_to_add + strcspn(label_to_add, ":")) = '\0';
+    tokenised.label = label_to_add;
+    *(symb_table.label) = label_to_add;
+    *(symb_table.memory_address) = (unsigned long) label_to_add;
+    printf("%lx\n", *(symb_table.memory_address));
+  } else {
+    
+  }
+  return tokenised;
 }
 
 

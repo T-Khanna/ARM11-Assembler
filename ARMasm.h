@@ -35,7 +35,7 @@ struct symbol_table {
 typedef struct tokenised {
 
   char* label;
-  int8_t opcode op;
+  int8_t op;
   int32_t operands[4];
 
 } tokenised;
