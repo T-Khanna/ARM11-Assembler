@@ -68,7 +68,7 @@ char* get_instr(char* path) {
   //TODO: CODE that turns each instruction in the source file into an array
   //      of 32-bit instructions.
 
-  //Vini's code 
+  //Tanmay's code 
   // char line[LIMIT_PER_LINE];
   // // Better than !feof(fptr) as it actually stops at EOF 
   // while (fgets(line, LIMIT_PER_LINE, fptr)) {
