@@ -77,9 +77,11 @@ int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]) {
   int lines_in_file = 0;
   // Reads in a line as long as another line exists
   while (fgets(instrs[lines_in_file], LIMIT_PER_LINE, fptr)) {
-    // This replaces the '\n' character with '\0' 
-    // so that it terminates the string
-    instrs[lines_in_file][strcspn(instrs[lines_in_file], "\n")] = '\0';
+    // Find the position of the '\n' character we want to remove
+    int newline_pos = strcspn(instrs[lines_in_file], "\n");
+    // Set the value to '\0' to terminate the string
+    instrs[lines_in_file][newline_pos] = '\0';
+    // Proceed to the next line
     lines_in_file++;
   }
  
