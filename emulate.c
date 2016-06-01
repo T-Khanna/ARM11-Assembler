@@ -77,46 +77,9 @@ int32_t main(int argc, char *argv[]) {
         case Data_processing:
           dataProcessing(&curr_state.pipeline.fetched, &curr_state);
           break;
-<<<<<<< HEAD
 
         case Multiply:
           multiply(&curr_state.pipeline.fetched,&curr_state);
-=======
-  // RSB        
-  case  3:copyArray(binary_sub(op2, rn, 32), rdVal,  32);
-          for (int i = 0; i < 32; i++) {
-            *(rd + i) = *(rdVal +i);
-          }
-          break;
-  // ADD
-  case  4:copyArray(binary_add(rn, op2, 32), rdVal, 32);
-          for (int i = 0; i < 32; i++) {
-              *(rd + i) = *(rdVal +i);
-          }
-          break;
-  // TST
-  case  8:for (int i = 0; i < 32; i++) {
-            if ((*(rn + i) == 1) && (*(op2 + i) == 1)) {
-              rdVal[i] = 1;
-            } else {
-              rdVal[i] = 0;
-            }
-          }
-          break;
-  // TEQ
-  case  9:for (int i = 0; i < 32; i++) {
-            if ((*(rn + i) == 0) && (*(op2 + i) == 1)) {
-              rdVal[i] = 1;
-            } else  if ((*(rn + i) == 1) && (*(op2 + i) == 0)) {
-              rdVal[i] = 1;
-            } else {
-              rdVal[i] = 0;
-            }
-          }
-          break;
-  //CMP
-  case 10:copyArray(binary_sub(rn, op2, 32), rdVal, 32);
->>>>>>> balint
           break;
 
         case Single_data_transfer:
@@ -193,37 +156,6 @@ void regInit(char* file) {
 
 }
 
-<<<<<<< HEAD
-=======
-
-//NEW
-void execute(Decoded dec) {
-
-  switch(cond) {
-    case 0:  goahead = (currState->CPSR[30] == 1); break; 
-    case 1:  goahead = (currState->CPSR[30] == 0); break;
-    case 10: goahead = (currState->CPSR[31] == currState->CPSR[28]); break;
-    case 11: goahead = (currState->CPSR[31] != currState->CPSR[28]); break;
-    case 12: goahead = (currState->CPSR[30] == 0) &&
-             (currState->CPSR[31] == currState->CPSR[28]); break;
-    case 13: goahead = (currState->CPSR[30] == 1) || 
-                       (currState->CPSR[31] != currState->CPSR[28]); break;
-    case 14: goahead = 1; break;
-    default: perror("Invalid flags\n"); return;
-                                                                           
-  }
-}
-
-
-void decode(int32_t * inst) {
-  // set flags
-  int32_t cond = 0,  goahead = 0 ;
-  for (int i = 31; i >= 28; i--) {
-    cond = cond * 2 + inst[i];
-  }
- 
->>>>>>> balint
-
 //converts instruction from one Endian to the other
 int convEndian(int num) {
 
@@ -239,14 +171,7 @@ int convEndian(int num) {
 
   return result;
 
-<<<<<<< HEAD
 }
-=======
-  currState = calloc(1,sizeof(CurrentState));
-  currState->pipeline = calloc(1,sizeof(Pipeline));
-  //New
-  currState->pipeline->decoded = calloc(1,sizeof(Decoded));
->>>>>>> balint
 
 
 //printing state of registers and all non-zero memory
@@ -333,7 +258,6 @@ int checkCondition(int32_t* instr) {
   }
 }
 
-<<<<<<< HEAD
 
 //decodes the instruction and returns it as a decoded integer, depending upon 
 //the given conditions for the appropriate bits.
@@ -351,116 +275,6 @@ int32_t decode(int32_t* instr) {
     if(getBit(instr,25)){
       return Data_processing;
     }
-=======
-
-int32_t main(int32_t argc, char **argv) {
-
- // checking arguments
-    if (argc != 2) {
-        printf("Expecting one argument\n");
-            return EXIT_FAILURE;
-    }
-               
- // initialize registers
- regInit();
- 
- // open file
- FILE *fptr = fopen(argv[1], "rb");
-                     
- // pass error if unvalid file
- if (!fptr) {
-   printf("Unable to open file\n");
-   return EXIT_FAILURE;
- }
- 
- fseek(fptr, 0, SEEK_END);     // setting file point32_ter to last place
- int32_t file_size = ftell(fptr);  // ftell returns the pos of the file point32_ter
- rewind(fptr);           // rewind resets the file point32_ter to the start pos
- 
- 
- //int8_t littleEndianBuffer[file_size]; // store instruction
- fread(currState->memory, sizeof(int8_t), file_size, fptr);  
-                            
-    
-
-  // fetch the instruction and store in byte
-  int8_t* byte;
-  // NEW
-  // initializing nescessary stuff for while loop
-  Decoded dCode = NULL;
-  int done = 0;
- 
- 
-  //NEW
-  // initialise pipeline
-  currState->pipeline->fetched = NULL;
-  currState->pipeline->decoded = NULL;
-
-/*
-  while (1) {
-    byte = fetchInstruction(currState->memory);
-    currState->pipeline->fetched = instrToBits(byte);
-//    for (int i = 31; i >= 0; i--){
-//    printf("%d", *(currState->pipeline->fetched + i));}
-//    printf("\n");
-//    printf("While loop called.\n");
-    if (allZeroes(currState->pipeline->fetched) == 1) {
-      free(byte);
-      currState->PC += 4;
-      break;
-    }
-    if (byte != NULL) {
-      free(byte);
-    }                     // free instruction memory
-    decode(currState->pipeline->fetched);
-  }  
-*/
-
-
-  //NEW
-  //decode gives a struct that describes the decoded code 
-  while(done == 0) {
-    if (currState->pipeline->fetched == NULL) {
-      //first step
-      byte = fetchInstruction(currState->memory);
-      currState->pipeline->fetched = instrToBits(byte);
-
-    } else if (currState->pipeline->decoded == NULL) {
-      // second step
-      dCoded = decode(currState->pipeline->fetched); //we could use memcpy  
-      currState->pipeline->decoded = dCoded;
-      
-      byte = fetchInstruction(currState->memory);
-      currState->pipeline->fetched = instrToBits(byte);
-    } else {
-    
-      execute(currState->pipeline->decoded);
-      
-      dCoded = decode(currState->pipeline->fetched); //we could use memcpy  
-      currState->pipeline->decoded = dCoded;
-
-      byte = fetchInstruction(currState->memory);
-      currState->pipeline->fetched = instrToBits(byte);
-    }
-
-                            
-    }
-    if (byte != NULL) {
-      free(byte);           
-    }// free instruction memory
-    if (dCoded !=NULL) {
-      free(dCoded);
-    }
-  }  
-    
-
-
-
-
-  //Outputting the state of Registers and non-zero memory
-  
-  printf("Registers:\n");
->>>>>>> balint
 
     if(getBit(instr,4)){
 
@@ -476,7 +290,6 @@ int32_t main(int32_t argc, char **argv) {
 
   }
 
-<<<<<<< HEAD
   //if bit 26 is 1. then the instruction is Single Data Transfer 
   else if((bit26==1) && (bit27==0)){
     return Single_data_transfer;
@@ -487,11 +300,6 @@ int32_t main(int32_t argc, char **argv) {
     return Branch;
   }
 
-=======
-  freeRegs();                    // free memory
- 
-  return EXIT_SUCCESS;
->>>>>>> balint
 }
 
 
