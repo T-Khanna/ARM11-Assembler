@@ -5,7 +5,7 @@
 #include <assert.h>
 
 // Taken form the lecture notes
-// this linkedlist  contains tha command as plaintext
+// this linkedlist  contains tha command as a tokenized structure 
 
 typedef struct list_elem {
  tokenised value;
