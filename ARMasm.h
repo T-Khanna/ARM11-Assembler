@@ -20,37 +20,6 @@
 #define TOKEN_LIMIT 5
 
 
-//-- OPCODE --------------------------------------------------------------------
-
-enum opcode {
-  
-  ADD,
-  SUB,
-  RSB,
-  AND,
-  EOR,
-  ORR,
-  MOV,
-  TST,
-  TEQ,
-  CMP,
-  MUL,
-  MLA,
-  LDR,
-  STR,
-  BEQ,
-  BNE,
-  BGE,
-  BLT,
-  BGT,
-  BLE,
-  B,
-  LSL,
-  ANDEQ
-
-};
-
-
 //-- SYMBOL TABLE --------------------------------------------------------------
 
 struct symbol_table {
@@ -66,7 +35,7 @@ struct symbol_table {
 typedef struct tokenised {
 
   char* label;
-  enum opcode op;
+  int8_t opcode op;
   int32_t operands[4];
 
 } tokenised;

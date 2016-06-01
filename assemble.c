@@ -66,12 +66,14 @@ int32_t* get_instr(char* path) {
 
   //TODO: CODE that turns each instruction in the source file into an array
   //      of 32-bit instructions.
+
   char line[LIMIT_PER_LINE];
   
   // Better than !feof(fptr) as it actually stops at EOF 
   while (fgets(line, LIMIT_PER_LINE, fptr)) {
     // This removes the trailing '\n' from fgets
-    line[strcspn(line, "\n")] = 0;
+    line[strcspn(line, "\n")] = '\0';
+    puts(line);
     tokeniser(line);
   }
   
@@ -81,9 +83,12 @@ int32_t* get_instr(char* path) {
 
 }
 
+int is_letter(char c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
 
 int check_label(char *token) {
-  return (*(token + strcspn(token, ":")) == ':') ? 1 : 0;
+  return *(token + strcspn(token, ":")) == ':' && is_letter(*token);
 }
 
 void tokeniser(char *line) {
@@ -93,6 +98,7 @@ void tokeniser(char *line) {
   int i = 0;
   while (temp != NULL && i < sizeof(tokens)) {
     tokens[i] = temp;
+    puts(tokens[i]);
     temp = strtok_r(NULL, delims, &save_ptr); 
     i++;
   }
