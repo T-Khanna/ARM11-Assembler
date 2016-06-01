@@ -23,7 +23,7 @@ void write_bin(char* path, int32_t* bin_instr);
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
 struct symbol_table symb_table;
-int file_size;
+int lines_in_file;
 
 
 //-- MAIN ---------------------------------------------------------------------
@@ -67,31 +67,19 @@ char* get_instr(char* path) {
 
   //TODO: CODE that turns each instruction in the source file into an array
   //      of 32-bit instructions.
-  //Tanmay's code 
-   char line[LIMIT_PER_LINE];
-   // Better than !feof(fptr) as it actually stops at EOF 
-   while (fgets(line, LIMIT_PER_LINE, fptr)) {
-     // This removes the trailing '\n' from fgets
-     line[strcspn(line, "\n")] = '\0';
-     puts(line);
-     tokeniser(line);
-   }
- 
- 
-  //setting file point32_ter to the end of the file
-  fseek(fptr, 0, SEEK_END);         
-
-  //ftell returns the pos of the file point32_ter
-  int file_size = ftell(fptr);	
-  rewind(fptr); 
-
-  //coverting from num of bytes to num of 32bit word instructions
-  file_size /= INSTRUCTION_BYTE_SIZE;
+  
+  //finding the number of lines in the file
+  int lines_in_file = 0;
+  char line[LIMIT_PER_LINE];
+  while(fgets(line, LIMIT_PER_LINE, fptr)){
+    lines_in_file++;
+  }
 
   //saving the file data in the array
-  char* instructions[file_size];
-  for(int i = 0; i < file_size; i++){
-    fread(&(instructions[i]), sizeof(int32_t), 1, fptr);
+  char *instructions[lines_in_file];
+  for(int i = 0; i < lines_in_file; i++){
+    fgets(instructions[i], LIMIT_PER_LINE - 1, fptr);
+    printf("%s \n", *(instructions + i));
   }
   
   fclose(fptr);
@@ -148,7 +136,7 @@ int32_t* translate_instr(char* assem_instr) {
   //}
 
   //i = 0;
-  //while(i < file_size){
+  //while(i < lines_in_file){
 
   //  int32_t* currentInstruction;
   //  
@@ -166,7 +154,7 @@ void write_bin(char *path, int32_t* bin_instr) {
   // Creating output binary file
   FILE *fptr = fopen(path, "w+b");
 
-  for(int i = 0; i < file_size; i++){
+  for(int i = 0; i < lines_in_file; i++){
     fwrite((bin_instr + i * INSTRUCTION_BIT_SIZE), 1, 
            INSTRUCTION_BIT_SIZE, fptr);
     fputs("\n", fptr);
