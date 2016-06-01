@@ -14,16 +14,16 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
-int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]);
-tokenised tokeniser(char* line);
-int32_t* translate_instr(char assem_instr[MAX_LINES][LIMIT_PER_LINE]);
-void write_bin(char* path, int32_t* bin_instr);
+int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
+tokenised tokenizer(char* line);
+int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
+void write_bin(char* path, int32_t* bin_instr, int lines_in_file);
 
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
-struct symbol_table symb_table;
-int lines_in_file;
+struct symbol_table symb_table[MAX_LABELS];
+int label_count = 0;
 
 
 //-- MAIN ---------------------------------------------------------------------
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
   //getting the instruction from source file into an array of 32-bit
   //instructions that will be translated.
-  char instrs[MAX_LINES][LIMIT_PER_LINE];
+  char instrs[MAX_LINES][CHAR_LIMIT];
   int num_of_lines = get_instrs(argv[1], instrs);
   
   for (int i = 0; i < num_of_lines; i++) {
@@ -46,10 +46,10 @@ int main(int argc, char **argv) {
   }
 
   //performing the pass over the file to decode into binary that will be written
-  int32_t* bin_instr = translate_instr(instrs);
-
+  int32_t* bin_instr = translate_instr(instrs, num_of_lines);
+  
   //creating output binary file
-  write_bin(argv[2], bin_instr);
+  write_bin(argv[2], bin_instr, num_of_lines);
   
   return EXIT_SUCCESS;
 
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 
 //gets instructions from source file into an array of 32-bit instructions
 // Also returns the number of lines to preven segmentation fault
-int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]) {
+int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
   // Open source assembly file
   FILE *fptr = fopen(path, "r");
@@ -76,7 +76,7 @@ int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]) {
   //Loads each line into the array of instructions specified
   // enters loop if current line exists and reading it is succesful. 
   // breaks loop when we reach the end of the file.
-  while (fgets(instrs[lines_in_file], LIMIT_PER_LINE, fptr)) {
+  while (fgets(instrs[lines_in_file], CHAR_LIMIT, fptr)) {
 
     //having loaded current line into the array of instructions specified, we
     //need to replace the '\n' at the end of each line to '\0'
@@ -101,16 +101,49 @@ int is_letter(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-int check_label(char *token) {
-  return *(token + strcspn(token, ":")) == ':' && is_letter(*token);
-}
-
-tokenised tokeniser(char *line) {
+tokenised check_label(char *tokens[TOKEN_LIMIT]) {
+  
   tokenised tokenised_str;
 
-  tokenised_str.label = NULL;
+  // Initialise tokenised_str values
+  tokenised_str.label = 0;  
+  // Can't use 0 here as that is the opcode for 'and' 
+  tokenised_str.op = 5;  
+  for (int i = 0; i < OPERAND_SIZE; i++) {
+    tokenised_str.operands[i] = 0;
+  } 
+  
+  // Check if the first token is a label or not
+  if (*(tokens[0] + strcspn(tokens[0], ":")) == ':' && is_letter(*tokens[0])) {
+    // Line starts with a label  
+    char* new_label = tokens[0];
+    
+    // Remove ':' from label
+    *(new_label + strcspn(new_label, ":")) = '\0';
+    
+    // Update tokenised label variable
+    tokenised_str.label = new_label;
+    
+    // Update label -> address symbol table
+    symb_table[label_count].label = new_label;
+    symb_table[label_count].memory_address = &new_label;
+    
+    // Increment number of labels to move the pointer for the next
+    // label -> address pair
+    label_count++;
+  } else {
+    // Line starts with assembly opcode
+  }
+  
+  return tokenised_str;
 
+}
+
+tokenised tokenizer(char *line) {
+  // Declare deliminator characters
   const char delims[] = " ,";
+  
+  // Method for storing tokens in an array
   char* tokens[TOKEN_LIMIT], *save_ptr;
   char *temp = strtok_r(line, delims, &save_ptr);
   int i = 0;
@@ -119,22 +152,20 @@ tokenised tokeniser(char *line) {
     temp = strtok_r(NULL, delims, &save_ptr); 
     i++;
   }
-  if (check_label(tokens[0])) {
-    char* label_to_add = tokens[0];
-    *(label_to_add + strcspn(label_to_add, ":")) = '\0';
-    tokenised_str.label = label_to_add;
-    *(symb_table.label) = label_to_add;
-    *(symb_table.memory_address) = (unsigned long) label_to_add;
-    printf("%lx\n", *(symb_table.memory_address));
-  } else {
-    
-  }
-  return tokenised_str;
+  
+  return check_label(tokens);
 }
 
-
 //return an array of 32 bit words to be written into binary file
-int32_t* translate_instr(char assem_instr[MAX_LINES][LIMIT_PER_LINE]) {
+int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
+  
+  char* current_instruction;
+  tokenised token_line;
+
+  for (int i = 0; i < length; i++) {
+    current_instruction = assem_instr[i];
+    token_line = tokenizer(current_instruction);
+  }
 
   //TODO: CODE that translates each 32 bit word into binary
   //while(not end of file) {
@@ -159,7 +190,7 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][LIMIT_PER_LINE]) {
 
 //writes the array of 32 bit words (instructions) into the binary file 
 //specified
-void write_bin(char *path, int32_t* bin_instr) {
+void write_bin(char *path, int32_t* bin_instr, int lines_in_file) {
 
   // Creating output binary file
   FILE *fptr = fopen(path, "w+b");
