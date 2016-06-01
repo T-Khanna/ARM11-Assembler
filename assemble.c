@@ -78,7 +78,7 @@ char* get_instr(char* path) {
     // This removes the trailing '\n' from fgets
     line[strcspn(line, "\n")] = '\0';
     tokeniser(line);
-  //Vini's code 
+  //Tanmay's code 
   // char line[LIMIT_PER_LINE];
   // // Better than !feof(fptr) as it actually stops at EOF 
   // while (fgets(line, LIMIT_PER_LINE, fptr)) {
