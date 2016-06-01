@@ -54,6 +54,5 @@ enum instruction_type {
   Branch 
 };
 
-
 #endif
 
