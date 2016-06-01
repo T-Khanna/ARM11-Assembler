@@ -10,7 +10,6 @@
 //------------------------ ARM GENERAL DEFINITIONS -----------------------------
 // Contains the definitions and structure for the Rasberry Pi system.
 
-
 #ifndef _ARM_GEN
   #define _ARM_GEN
 
