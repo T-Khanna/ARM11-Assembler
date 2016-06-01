@@ -14,9 +14,9 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
-char* get_instr(char* path);
+int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]);
 tokenised tokeniser(char* line);
-int32_t* translate_instr(char* assem_instr);
+int32_t* translate_instr(char assem_instr[MAX_LINES][LIMIT_PER_LINE]);
 void write_bin(char* path, int32_t* bin_instr);
 
 
@@ -38,10 +38,15 @@ int main(int argc, char **argv) {
 
   //getting the instruction from source file into an array of 32-bit
   //instructions that will be translated.
-  char* assem_instr = get_instr(argv[1]);
+  char instrs[MAX_LINES][LIMIT_PER_LINE];
+  int num_of_lines = get_instrs(argv[1], instrs);
+  
+  for (int i = 0; i < num_of_lines; i++) {
+    puts(instrs[i]);
+  }
 
   //performing the pass over the file to decode into binary that will be written
-  int32_t* bin_instr = translate_instr(assem_instr);
+  int32_t* bin_instr = translate_instr(instrs);
 
   //creating output binary file
   write_bin(argv[2], bin_instr);
@@ -54,7 +59,8 @@ int main(int argc, char **argv) {
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
 
 //gets instructions from source file into an array of 32-bit instructions
-char* get_instr(char* path) {
+// Also returns the number of lines to preven segmentation fault
+int get_instrs(char* path, char instrs[MAX_LINES][LIMIT_PER_LINE]) {
 
   // Open source assembly file
   FILE *fptr = fopen(path, "r");
@@ -62,28 +68,23 @@ char* get_instr(char* path) {
   // Check to ensure that file exists
   if (fptr == NULL) {
     printf("Unable to open input file\n");
-    return NULL;
+    return 0;
   }
 
   //TODO: CODE that turns each instruction in the source file into an array
   //      of 32-bit instructions.
   
-  //finding the number of lines in the file
   int lines_in_file = 0;
-  char line[LIMIT_PER_LINE];
-  while(fgets(line, LIMIT_PER_LINE, fptr)){
+  // Reads in a line as long as another line exists
+  while (fgets(instrs[lines_in_file], LIMIT_PER_LINE, fptr)) {
+    // This replaces the '\n' character with '\0' 
+    // so that it terminates the string
+    instrs[lines_in_file][strcspn(instrs[lines_in_file], "\n")] = '\0';
     lines_in_file++;
   }
-
-  //saving the file data in the array
-  char *instructions[lines_in_file];
-  for(int i = 0; i < lines_in_file; i++){
-    fgets(instructions[i], LIMIT_PER_LINE - 1, fptr);
-    printf("%s \n", *(instructions + i));
-  }
-  
+ 
   fclose(fptr);
-  return *(instructions);
+  return lines_in_file;
 
 }
 
@@ -124,7 +125,7 @@ tokenised tokeniser(char *line) {
 
 
 //return an array of 32 bit words to be written into binary file
-int32_t* translate_instr(char* assem_instr) {
+int32_t* translate_instr(char assem_instr[MAX_LINES][LIMIT_PER_LINE]) {
 
   //TODO: CODE that translates each 32 bit word into binary
   //while(not end of file) {
