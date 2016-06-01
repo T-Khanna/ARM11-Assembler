@@ -8,7 +8,7 @@
 // this linkedlist  contains tha command as plaintext
 
 typedef struct list_elem {
- char* value;
+ tokenised value;
  struct list_elem *prev;
  struct list_elem *next;
 } list_elem;
@@ -56,7 +56,7 @@ int list_is_internal(list_iter iter) {
   return (iter->prev != NULL) && (iter->next != NULL);
 }
 
-void list_insert(list *l, list_iter iter, char* value) {
+void list_insert(list *l, list_iter iter, tokenised value) {
   list_elem *new_elem = list_alloc_elem();
   new_elem->value = value;
 
@@ -93,12 +93,12 @@ char* list_iter_value(list_iter iter) {
   return iter->value;
 }
 
-void list_insert_front(list *l, char* value) {
+void list_insert_front(list *l, tokenised value) {
   list_insert(l, list_begin(l), value);
 
 }
 
-void list_insert_back(list *l, char* value) {
+void list_insert_back(list *l, tokenised value) {
   list_insert(l, list_end(l), value);
 }
 
