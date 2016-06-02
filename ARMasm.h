@@ -38,19 +38,18 @@ struct symbol_table {
 typedef struct tokenised {
 
   char* label;
-  int code;
   int32_t (*func_pointer)(int32_t[]);
   int32_t operands[OPERAND_SIZE];
 
 } tokenised;
 
-struct mnemonic_code_mapping {
+typedef struct mnemonic_code_mapping {
   char *mnemonic; 
-  int code;
-  int32_t (*op_func_pointer)(int32_t[]);
-};
+  int opcode;
+  //int32_t (*op_func_pointer)(int32_t[]);
+}mnemonic_code_mapping;
 
-extern struct mnemonic_code_mapping op_table[];
+extern mnemonic_code_mapping op_table[23];
 
 //-- OPFUNCTION DECLARATIONS --------------------------------------------------
 
