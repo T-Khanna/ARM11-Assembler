@@ -13,6 +13,7 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
+//TODO: Fill these
 int32_t ARMadd(int32_t operands[]) {
   return 0;
 }

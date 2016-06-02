@@ -39,6 +39,7 @@ typedef struct tokenised {
 
   char* label;
   int code;
+  int32_t (*func_pointer)(int32_t[]);
   int32_t operands[OPERAND_SIZE];
 
 } tokenised;
@@ -46,6 +47,7 @@ typedef struct tokenised {
 struct mnemonic_code_mapping {
   char *mnemonic; 
   int code;
+  int32_t (*op_func_pointer)(int32_t[]);
 };
 
 extern struct mnemonic_code_mapping op_table[];

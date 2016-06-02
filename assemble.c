@@ -27,37 +27,37 @@ int label_count = 0;
 struct mnemonic_code_mapping op_table[] = {
     
   // Data Processing
-  {"add", 4},
-  {"sub", 2},
-  {"rsb", 3},
-  {"and", 0},
-  {"eor", 1},
-  {"orr", 12},
-  {"mov", 13},
-  {"tst", 8},
-  {"teq", 9},
-  {"cmp", 10},
+  {"add", 4, &ARMadd},
+  {"sub", 2, &ARMsub},
+  {"rsb", 3, &ARMrsb},
+  {"and", 0, &ARMand},
+  {"eor", 1, &ARMeor},
+  {"orr", 12, &ARMorr},
+  {"mov", 13, &ARMmov},
+  {"tst", 8, &ARMtst},
+  {"teq", 9, &ARMteq},
+  {"cmp", 10, &ARMcmp},
 
   // Multiply
-  {"mul", 14},
-  {"mla", 15},
+  {"mul", 14, &ARMmul},
+  {"mla", 15, &ARMmla},
  
   // Single Data Transfer
-  {"ldr", 5},
-  {"str", 6},
+  {"ldr", 5, &ARMldr},
+  {"str", 6, &ARMstr},
  
   // Branch 
-  {"beq", 16}, 
-  {"bne", 17}, 
-  {"bge", 26}, 
-  {"blt", 27}, 
-  {"bgt", 28}, 
-  {"ble", 29}, 
-  {"b", 30},  
+  {"beq", 16, &ARMbeq}, 
+  {"bne", 17, &ARMbne}, 
+  {"bge", 26, &ARMbge}, 
+  {"blt", 27, &ARMblt}, 
+  {"bgt", 28, &ARMbgt}, 
+  {"ble", 29, &ARMble}, 
+  {"b", 30, &ARMb},  
   
   // Special
-  {"lsl", 31},
-  {"andeq", 32}
+  {"lsl", 31, &ARMlsl},
+  {"andeq", 32, &ARMandeq}
   
     
 };
@@ -208,36 +208,27 @@ tokenised tokenizer(char *line) {
   return check_label(tokens);
 }
 
+int32_t command_Processor(tokenised input) {
+  return (*input.func_pointer)(input.operands);
+}
+
+
 //return an array of 32 bit words to be written into binary file
 int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   
   char* current_instruction;
   tokenised token_line;
+  int32_t bin_line;
+  static int32_t bin_instr[MAX_LINES];
 
   for (int i = 0; i < length; i++) {
     current_instruction = assem_instr[i];
     token_line = tokenizer(current_instruction);
-    token_line = token_line;
+    bin_line = command_Processor(token_line);
+    bin_instr[i] = bin_line;    
   }
 
-  //TODO: CODE that translates each 32 bit word into binary
-  //while(not end of file) {
-  //  currentInstruction = (correct 32bit int in assem_instr array/pointer);
-  //  tokenLine = tokenise(currentInstruction);
-  //  binLine = commandProcessing(tokenLine);
-  //  append(bin instrs, binline);
-  //  go to next line i++
-  //}
-
-  //i = 0;
-  //while(i < lines_in_file){
-
-  //  int32_t* currentInstruction;
-  //  
-  //  
-  //}
-
-  return NULL;
+  return bin_instr;
 
 }
 
