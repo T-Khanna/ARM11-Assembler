@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMasm.h"
-#include "double_Linked_List.c"
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
@@ -25,6 +24,43 @@ void write_bin(char* path, int32_t* bin_instr, int lines_in_file);
 struct symbol_table symb_table[MAX_LABELS];
 int label_count = 0;
 
+struct mnemonic_code_mapping op_table[] = {
+    
+  // Data Processing
+  {"add", 4},
+  {"sub", 2},
+  {"rsb", 3},
+  {"and", 0},
+  {"eor", 1},
+  {"orr", 12},
+  {"mov", 13},
+  {"tst", 8},
+  {"teq", 9},
+  {"cmp", 10},
+
+  // Multiply
+  {"mul", 14},
+  {"mla", 15},
+ 
+  // Single Data Transfer
+  {"ldr", 5},
+  {"str", 6},
+ 
+  // Branch 
+  {"beq", 16}, 
+  {"bne", 17}, 
+  {"bge", 26}, 
+  {"blt", 27}, 
+  {"bgt", 28}, 
+  {"ble", 29}, 
+  {"b", 30},  
+  
+  // Special
+  {"lsl", 31},
+  {"andeq", 32}
+  
+    
+};
 
 //-- MAIN ---------------------------------------------------------------------
 

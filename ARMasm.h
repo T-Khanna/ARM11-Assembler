@@ -10,7 +10,6 @@
 #define _ARM_ASM
 
 #include <stdint.h>
-#include "OPFunctions.c"
 
 //-- CONSTANTS -----------------------------------------------------------------
 
@@ -49,42 +48,55 @@ struct mnemonic_code_mapping {
   int code;
 };
 
-struct mnemonic_code_mapping op_table[] = {
-  
-  // Data Processing
-  {"add", 4},
-  {"sub", 2},
-  {"rsb", 3},
-  {"and", 0},
-  {"eor", 1},
-  {"orr", 12},
-  {"mov", 13},
-  {"tst", 8},
-  {"teq", 9},
-  {"cmp", 10},
+extern struct mnemonic_code_mapping op_table[];
 
-  // Multiply
-  {"mul", 14},
-  {"mla", 15},
+//-- OPFUNCTION DECLARATIONS --------------------------------------------------
 
-  // Single Data Transfer
-  {"ldr", 5},
-  {"str", 6},
+int32_t ARMadd(int32_t operands[]);
 
-  // Branch 
-  {"beq", 16}, 
-  {"bne", 17}, 
-  {"bge", 26}, 
-  {"blt", 27}, 
-  {"bgt", 28}, 
-  {"ble", 29}, 
-  {"b", 30},  
+int32_t ARMsub(int32_t operands[]);
 
-  // Special
-  {"lsl", 31},
-  {"andeq", 32}
+int32_t ARMrsb(int32_t operands[]);
 
-};
+int32_t ARMand(int32_t operands[]);
 
+int32_t ARMeor(int32_t operands[]);
+
+int32_t ARMorr(int32_t operands[]);
+
+int32_t ARMmov(int32_t operands[]);
+
+int32_t ARMtst(int32_t operands[]);
+
+int32_t ARMteq(int32_t operands[]);
+
+int32_t ARMcmp(int32_t operands[]);
+
+int32_t ARMmul(int32_t operands[]);
+
+int32_t ARMmla(int32_t operands[]);
+
+int32_t ARMldr(int32_t operands[]);
+
+int32_t ARMstr(int32_t operands[]);
+
+int32_t ARMbeq(int32_t operands[]);
+
+int32_t ARMbne(int32_t operands[]);
+
+int32_t ARMbge(int32_t operands[]);
+
+int32_t ARMblt(int32_t operands[]);
+
+
+int32_t ARMbgt(int32_t operands[]);
+
+int32_t ARMble(int32_t operands[]);
+
+int32_t ARMb(int32_t operands[]);
+
+int32_t ARMlsl(int32_t operands[]);
+
+int32_t ARMandeq(int32_t operands[]);
 
 #endif
