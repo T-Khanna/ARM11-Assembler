@@ -212,7 +212,10 @@ void write_bin(char *path, int32_t* bin_instr, int lines_in_file) {
 
   // Creating output binary file
   FILE *fptr = fopen(path, "w+");
-  
+ 
+  // subract number of labels lines from total lines
+  lines_in_file -= label_count;
+
   for(int line = 0; line < lines_in_file; line++){
     int32_t num = bin_instr[line];
     int32_t result = 0;
