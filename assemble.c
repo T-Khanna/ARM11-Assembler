@@ -9,16 +9,16 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "ARMasm.h"
 #include "bitOper.h"
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
-tokenised tokeniser(char* line);
 int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
 void write_bin(char* path, int32_t* bin_instr, int lines_in_file);
-
+tokenised tokeniser(char* line);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -26,7 +26,12 @@ struct symbol_table symb_table[MAX_LABELS];
 int label_count = 0;
 
 //TODO: ADD FUNC POINTER DATABASE
-int32_t (*func_table[32]) (int32_t[]) = {&ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL, &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla, &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL, NULL, &ASMbge, &ASMblt, &ASMble, &ASMb, NULL}; 
+int32_t (*func_table[32]) (int32_t[]) = {
+  &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
+  &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
+  &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
+  NULL, &ASMbge, &ASMblt, &ASMble, &ASMb, NULL
+}; 
 
 mnemonic_code_mapping op_table[] = {
   // Data Processing
@@ -134,82 +139,6 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
   fclose(fptr);
   return lines_in_file;
 
-}
-
-int is_letter(char c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-void set_pointer(char* code, tokenised token_line) {
-  int i = 0;
-  char* instr = op_table[i].mnemonic;
-  while (instr) {
-    if (strcmp(instr, code) == 0) {
-      token_line.func_pointer = func_table[op_table[i].opcode];
-      break;
-    }
-    i++;
-    instr = op_table[i].mnemonic;
-  }
-}
-
-// token_line.func_pointer = op_table[i].op_func_pointer;
-
-tokenised check_label(char *tokens[TOKEN_LIMIT]) {
-  
-  tokenised tokenised_str;
-
-  // Initialise tokenised_str values
-  tokenised_str.label = 0;  
-  tokenised_str.func_pointer = NULL;  
-  for (int i = 0; i < OPERAND_SIZE; i++) {
-    tokenised_str.operands[i] = 0;
-  } 
-  
-  // Check if the first token is a label or not
-  if (*(tokens[0] + strcspn(tokens[0], ":")) == ':' && is_letter(*tokens[0])) {
-    // Line starts with a label  
-    char* new_label = tokens[0];
-    
-    // Remove ':' from label
-    *(new_label + strcspn(new_label, ":")) = '\0';
-    
-    // Update tokenised label variable
-    tokenised_str.label = new_label;
-    
-    // Update label -> address symbol table
-    symb_table[label_count].label = new_label;
-    symb_table[label_count].memory_address = &new_label;
-    
-    // Increment number of labels to move the pointer for the next
-    // label -> address pair
-    label_count++;
-  } else {
-    set_pointer(tokens[0], tokenised_str);
-    for (int i = 0; i < OPERAND_SIZE; i++) {
-      tokenised_str.operands[i] = 0; // Need to use strtol here
-    }
-  }
-  
-  return tokenised_str;
-
-}
-
-tokenised tokeniser(char *line) {
-  // Declare deliminator characters
-  const char delims[] = " ,";
-  
-  // Method for storing tokens in an array
-  char* tokens[TOKEN_LIMIT], *save_ptr;
-  char *temp = strtok_r(line, delims, &save_ptr);
-  int i = 0;
-  while (temp != NULL && i < sizeof(tokens)) {
-    tokens[i] = temp;
-    temp = strtok_r(NULL, delims, &save_ptr); 
-    i++;
-  }
-  
-  return check_label(tokens);
 }
 
 int32_t command_processor(tokenised input) {
