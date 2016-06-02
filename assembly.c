@@ -11,8 +11,7 @@
 #include <stdlib.h>
 #include "ARMasm.h"
 #include "bitOper.h"
-
-
+#include "double_Linked_List.c"
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 

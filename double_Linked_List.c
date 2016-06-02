@@ -87,7 +87,7 @@ list_iter list_iter_prev(list_iter iter) {
   return iter->prev;
 }
 
-char* list_iter_value(list_iter iter) {
+tokenised list_iter_value(list_iter iter) {
   // cannot be called on head or footer;
   assert(list_is_internal(iter));
   return iter->value;
