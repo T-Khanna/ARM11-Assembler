@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "ARMasm.h"
 #include "bitOper.h"
 
@@ -134,9 +135,6 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
 }
 
-int is_letter(char c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
 
 int get_code(char* code) {
   int i = 0;
@@ -164,7 +162,7 @@ tokenised check_label(char *tokens[TOKEN_LIMIT]) {
   } 
   
   // Check if the first token is a label or not
-  if (*(tokens[0] + strcspn(tokens[0], ":")) == ':' && is_letter(*tokens[0])) {
+  if (*(tokens[0] + strcspn(tokens[0], ":")) == ':' && isalpha(*tokens[0])) {
     // Line starts with a label  
     char* new_label = tokens[0];
     
@@ -200,6 +198,7 @@ tokenised tokenizer(char *line) {
   char* tokens[TOKEN_LIMIT], *save_ptr;
   char *temp = strtok_r(line, delims, &save_ptr);
   int i = 0;
+  // stores parts of instruction in tokens array
   while (temp != NULL && i < sizeof(tokens)) {
     tokens[i] = temp;
     temp = strtok_r(NULL, delims, &save_ptr); 
