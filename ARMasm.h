@@ -10,6 +10,7 @@
 #define _ARM_ASM
 
 #include <stdint.h>
+#include "OPFunctions.c"
 
 //-- CONSTANTS -----------------------------------------------------------------
 
