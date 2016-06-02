@@ -10,6 +10,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMasm.h"
+<<<<<<< HEAD:src/assemble.c
+=======
+#include "bitOper.h"
+#include "double_Linked_List.c"
+>>>>>>> refs/remotes/origin/master:src/assembly.c
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
@@ -246,16 +251,26 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
 void write_bin(char *path, int32_t* bin_instr, int lines_in_file) {
 
   // Creating output binary file
-  FILE *fptr = fopen(path, "w+b");
+  FILE *fptr = fopen(path, "w+");
+ 
+  // subract number of labels lines from total lines
+  lines_in_file -= label_count;
 
-  for(int i = 0; i < lines_in_file; i++){
-    fwrite((bin_instr + i * INSTRUCTION_BIT_SIZE), 1, 
-           INSTRUCTION_BIT_SIZE, fptr);
-    fputs("\n", fptr);
+  for(int line = 0; line < lines_in_file; line++){
+    int32_t num = bin_instr[line];
+    int32_t result = 0;
+    for(int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
+      result = result | (getBits(&num, i * BYTE_SIZE, BYTE_SIZE) //gets a byte
+               << ((INSTRUCTION_BYTE_SIZE -1 - i) * BYTE_SIZE));
+    }
+    bin_instr[line] = result;
   }
+
+  fwrite(bin_instr, INSTRUCTION_BYTE_SIZE, lines_in_file, fptr);
 
   //closing file
   fclose(fptr);
+
   
 }
 
