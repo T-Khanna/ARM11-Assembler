@@ -10,11 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMasm.h"
-<<<<<<< HEAD:src/assemble.c
-=======
 #include "bitOper.h"
-#include "double_Linked_List.c"
->>>>>>> refs/remotes/origin/master:src/assembly.c
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
