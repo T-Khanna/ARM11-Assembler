@@ -70,8 +70,25 @@ uint32_t ASMstr(uint32_t operands[]) {
   return 0;
 }
 
-// Branch
+uint32_t ASMlsl(int32_t operands[]) {
+//lsl Rn, <#expression> as though it were mov Rn, Rn, lsl <#expression>
+  
+  //finding out suitable operands to call mov from operands specified
+  int32_t operands_for_mov[4] = {operands[0], operands[0], atoi("lsl"),
+                                 operands[1]};
 
+  //redirecting to mov with suitable operands
+  return ASMmov(operands_for_mov);
+
+}
+
+uint32_t ASMandeq(int32_t operands[]) {
+  //compiles the instruction andeq r0, r0, r0 to the binary value 0x00000000
+  return 0;
+}
+
+
+// Branch
 /* 
   For each of these instructions, there is only one operand. Due to the way
   we assigned the enum value to the function, the condition is always the
@@ -117,11 +134,5 @@ uint32_t ASMb(uint32_t operands[]) {
   return compute_cond(B);
 }
 
-uint32_t ASMlsl(uint32_t operands[]) {
-  return 0;
-}
 
-uint32_t ASMandeq(uint32_t operands[]) {
-  return 0;
-}
 
