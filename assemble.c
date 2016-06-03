@@ -16,8 +16,8 @@
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
-int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
-void write_bin(char* path, int32_t* bin_instr, int lines_in_file);
+uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
+void write_bin(char* path, uint32_t* bin_instr, int lines_in_file);
 tokenised tokeniser(char* line);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
@@ -25,7 +25,7 @@ tokenised tokeniser(char* line);
 extern int label_count;
 
 //TODO: ADD FUNC POINTER DATABASE
-int32_t (*func_table[32]) (int32_t[]) = {
+uint32_t (*func_table[32]) (int32_t[]) = {
   &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
   &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
   }
 
   //performing the pass over the file to decode into binary that will be written
-  int32_t* bin_instr = translate_instr(instrs, num_of_lines);
+  uint32_t* bin_instr = translate_instr(instrs, num_of_lines);
   
   //creating output binary file
   write_bin(argv[2], bin_instr, num_of_lines);
@@ -140,16 +140,16 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
 }
 
-int32_t command_processor(tokenised input) {
+uint32_t command_processor(tokenised input) {
  return (*input.func_pointer)(input.operands);
 }
 
 //return an array of 32 bit words to be written into binary file
-int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
+uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   
   char* current_instruction;
   tokenised token_line;
-  static int32_t bin_instr[MAX_LINES];
+  static uint32_t bin_instr[MAX_LINES];
 
   for (int i = 0; i < length; i++) {
     current_instruction = assem_instr[i];
@@ -165,7 +165,7 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
 
 //writes the array of 32 bit words (instructions) into the binary file 
 //specified
-void write_bin(char *path, int32_t* bin_instr, int lines_in_file) {
+void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
 
   // Creating output binary file
   FILE *fptr = fopen(path, "w+");
@@ -174,10 +174,10 @@ void write_bin(char *path, int32_t* bin_instr, int lines_in_file) {
   lines_in_file -= label_count;
 
   for(int line = 0; line < lines_in_file; line++){
-    int32_t num = bin_instr[line];
-    int32_t result = 0;
+    uint32_t num = bin_instr[line];
+    uint32_t result = 0;
     for(int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
-      result = result | (getBits(&num, i * BYTE_SIZE, BYTE_SIZE) //gets a byte
+      result = result | (getBits((int32_t*)&num, i * BYTE_SIZE, BYTE_SIZE) //gets a byte
                << ((INSTRUCTION_BYTE_SIZE -1 - i) * BYTE_SIZE));
     }
     bin_instr[line] = result;

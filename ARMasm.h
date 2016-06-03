@@ -55,51 +55,51 @@ struct symbol_table symb_table[MAX_LABELS];
 
 //-- OPFUNCTION DECLARATIONS ---------------------------------------------------
 
-int32_t ASMadd(int32_t operands[]);
+uint32_t ASMadd(int32_t operands[]);
 
-int32_t ASMsub(int32_t operands[]);
+uint32_t ASMsub(int32_t operands[]);
 
-int32_t ASMrsb(int32_t operands[]);
+uint32_t ASMrsb(int32_t operands[]);
 
-int32_t ASMand(int32_t operands[]);
+uint32_t ASMand(int32_t operands[]);
 
-int32_t ASMeor(int32_t operands[]);
+uint32_t ASMeor(int32_t operands[]);
 
-int32_t ASMorr(int32_t operands[]);
+uint32_t ASMorr(int32_t operands[]);
 
-int32_t ASMmov(int32_t operands[]);
+uint32_t ASMmov(int32_t operands[]);
 
-int32_t ASMtst(int32_t operands[]);
+uint32_t ASMtst(int32_t operands[]);
 
-int32_t ASMteq(int32_t operands[]);
+uint32_t ASMteq(int32_t operands[]);
 
-int32_t ASMcmp(int32_t operands[]);
+uint32_t ASMcmp(int32_t operands[]);
 
-int32_t ASMmul(int32_t operands[]);
+uint32_t ASMmul(int32_t operands[]);
 
-int32_t ASMmla(int32_t operands[]);
+uint32_t ASMmla(int32_t operands[]);
 
-int32_t ASMldr(int32_t operands[]);
+uint32_t ASMldr(int32_t operands[]);
 
-int32_t ASMstr(int32_t operands[]);
+uint32_t ASMstr(int32_t operands[]);
 
-int32_t ASMbeq(int32_t operands[]);
+uint32_t ASMbeq(int32_t operands[]);
 
-int32_t ASMbne(int32_t operands[]);
+uint32_t ASMbne(int32_t operands[]);
 
-int32_t ASMbge(int32_t operands[]);
+uint32_t ASMbge(int32_t operands[]);
 
-int32_t ASMblt(int32_t operands[]);
+uint32_t ASMblt(int32_t operands[]);
 
 
-int32_t ASMbgt(int32_t operands[]);
+uint32_t ASMbgt(int32_t operands[]);
 
-int32_t ASMble(int32_t operands[]);
+uint32_t ASMble(int32_t operands[]);
 
-int32_t ASMb(int32_t operands[]);
+uint32_t ASMb(int32_t operands[]);
 
-int32_t ASMlsl(int32_t operands[]);
+uint32_t ASMlsl(int32_t operands[]);
 
-int32_t ASMandeq(int32_t operands[]);
+uint32_t ASMandeq(int32_t operands[]);
 
 #endif
