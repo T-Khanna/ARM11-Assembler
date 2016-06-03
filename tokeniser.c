@@ -42,14 +42,12 @@ void set_pointer(char* code, tokenised token_line) {
 
 tokenised get_tokenised(char *tokens[TOKEN_LIMIT], int num_of_tokens) {
   tokenised tokenised_str;
-  
   // Initialise tokenised_str values
   tokenised_str.label = NULL;  
   tokenised_str.func_pointer = NULL;  
   for (int i = 0; i < OPERAND_SIZE; i++) {
     tokenised_str.operands[i] = 0;
   }
- 
   // Check if the first token is a label or not
   if (*(tokens[0] + strcspn(tokens[0], ":")) == ':' && isalpha(*tokens[0])) {
     // Line starts with a label  
@@ -68,20 +66,19 @@ tokenised get_tokenised(char *tokens[TOKEN_LIMIT], int num_of_tokens) {
     // Increment number of labels to move the pointer for the next
     // label -> address pair
     label_count++;
+    return tokenised_str;
+  } 
+  set_pointer(tokens[0], tokenised_str);
+  if (*tokens[0] == 'b') {
+    // Mnemonic is a branch instruction
+    // TODO: Need to find a way of getting the address of the label
   } else {
-    set_pointer(tokens[0], tokenised_str);
-    if (*tokens[0] == 'b') {
-      // Mnemonic is a branch instruction
-      // TODO: Need to find a way of getting the address of the label
-    } else {
-      // At this point, we know that a label cannot exist in the tokens
-      int num_of_operands = num_of_tokens - 1;
-      for (int i = 0; i < num_of_operands; i++) {
-        tokenised_str.operands[i] = get_operands(tokens[i+1], num_of_operands);
-      }
+    // At this point, we know that a label cannot exist in the tokens
+    int num_of_operands = num_of_tokens - 1;
+    for (int i = 0; i < num_of_operands; i++) {
+      tokenised_str.operands[i] = get_operands(tokens[i+1], num_of_operands);
     }
   }
-
   return tokenised_str;
 }
 

@@ -154,7 +154,7 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   for (int i = 0; i < length; i++) {
     current_instruction = assem_instr[i];
     token_line = tokeniser(current_instruction);
-    bin_instr[i] = command_processor(token_line);
+//    bin_instr[i] = command_processor(token_line);
   
   }
 
