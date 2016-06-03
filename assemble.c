@@ -19,6 +19,7 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
 uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
 void write_bin(char* path, uint32_t* bin_instr, int lines_in_file);
 tokenised tokeniser(char* line);
+uint32_t command_processor(tokenised input);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -140,9 +141,6 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
 }
 
-uint32_t command_processor(tokenised input) {
- return (*input.func_pointer)(input.operands);
-}
 
 //return an array of 32 bit words to be written into binary file
 uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
@@ -162,6 +160,11 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   return bin_instr;
 
 }
+
+uint32_t command_processor(tokenised input) {
+   return (*input.func_pointer)(input.operands);
+}
+
 
 //writes the array of 32 bit words (instructions) into the binary file 
 //specified
