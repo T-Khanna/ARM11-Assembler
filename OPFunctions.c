@@ -147,6 +147,7 @@ uint32_t ASMlsl(int32_t operands[]) {
 
 uint32_t ASMandeq(int32_t operands[]) {
   //compiles the instruction andeq r0, r0, r0 to the binary value 0x00000000
+  //TODO: not sure if i have to check all 3 operands to be r0's here...
   return 0;
 }
 
