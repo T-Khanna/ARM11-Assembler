@@ -3,6 +3,10 @@
 #include <ctype.h>
 #include "ARMasm.h"
 
+int label_count = 0;
+extern mnemonic_code_mapping table[23];
+extern int32_t (*func_table[32]) (int32_t[]);
+ 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 int get_operands(char* operand, int size);
@@ -23,14 +27,14 @@ int get_operands(char* operand, int size) {
 
 void set_pointer(char* code, tokenised token_line) {
   int i = 0;
-  char* instr = op_table[i].mnemonic;
+  char* instr = table[i].mnemonic;
   while (instr) {
     if (strcmp(instr, code) == 0) {
-      token_line.func_pointer = func_table[op_table[i].opcode];
+      token_line.func_pointer = func_table[table[i].opcode];
       break;
     }
     i++;
-    instr = op_table[i].mnemonic;
+    instr = table[i].mnemonic;
   }
 }
 
