@@ -14,95 +14,95 @@
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 //TODO: Fill these
-int32_t ARMadd(int32_t operands[]) {
+extern int32_t ASMadd(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMsub(int32_t operands[]) {
+int32_t ASMsub(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMrsb(int32_t operands[]) {
+int32_t ASMrsb(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMand(int32_t operands[]) {
+int32_t ASMand(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMeor(int32_t operands[]) {
+int32_t ASMeor(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMorr(int32_t operands[]) {
+int32_t ASMorr(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMmov(int32_t operands[]) {
+int32_t ASMmov(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMtst(int32_t operands[]) {
+int32_t ASMtst(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMteq(int32_t operands[]) {
+int32_t ASMteq(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMcmp(int32_t operands[]) {
+int32_t ASMcmp(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMmul(int32_t operands[]) {
+int32_t ASMmul(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMmla(int32_t operands[]) {
+int32_t ASMmla(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMldr(int32_t operands[]) {
+int32_t ASMldr(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMstr(int32_t operands[]) {
+int32_t ASMstr(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMbeq(int32_t operands[]) {
+int32_t ASMbeq(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMbne(int32_t operands[]) {
+int32_t ASMbne(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMbge(int32_t operands[]) {
+int32_t ASMbge(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMblt(int32_t operands[]) {
+int32_t ASMblt(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMbgt(int32_t operands[]) {
+int32_t ASMbgt(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMble(int32_t operands[]) {
+int32_t ASMble(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMb(int32_t operands[]) {
+int32_t ASMb(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMlsl(int32_t operands[]) {
+int32_t ASMlsl(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMandeq(int32_t operands[]) {
+int32_t ASMandeq(int32_t operands[]) {
   return 0;
 }
 
