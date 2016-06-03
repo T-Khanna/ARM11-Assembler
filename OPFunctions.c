@@ -14,7 +14,7 @@
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 //TODO: Fill these
-extern int32_t ASMadd(int32_t operands[]) {
+int32_t ASMadd(int32_t operands[]) {
   return 0;
 }
 
