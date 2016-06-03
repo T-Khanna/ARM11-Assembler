@@ -98,11 +98,21 @@ int32_t ARMb(int32_t operands[]) {
   return 0;
 }
 
-int32_t ARMlsl(int32_t operands[]) {
-  return 0;
+
+int32_t ASMlsl(int32_t operands[]) {
+//lsl Rn, <#expression> as though it were mov Rn, Rn, lsl <#expression>
+  
+  //finding out suitable operands to call mov from operands specified
+  int32_t operands_for_mov[4] = {operands[0], operands[0], atoi("lsl"),
+                                 operands[1]};
+
+  //redirecting to mov with suitable operands
+  return ARMmov(operands_for_mov);
+
 }
 
-int32_t ARMandeq(int32_t operands[]) {
+int32_t ASMandeq(int32_t operands[]) {
+  //compiles the instruction andeq r0, r0, r0 to the binary value 0x00000000
   return 0;
 }
 
