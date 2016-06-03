@@ -7,14 +7,15 @@
 int label_count = 0;
 extern mnemonic_code_mapping table[23];
 extern int32_t (*func_table[32]) (int32_t[]);
-list* label_list;
+list label_list;
  
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 int get_operands(char* operand, int size);
 void set_pointer(char* code, tokenised* token_line);
-tokenised get_tokenised(char* tokens[TOKEN_LIMIT], int num_of_tokens);
-tokenised tokeniser(char* line);
+tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
+                              int num_of_tokens, int line_num);
+tokenised tokeniser(char* line, int line_num);
 
 //-- TOKENISER ----------------------------------------------------------------
 
@@ -42,15 +43,23 @@ void set_pointer(char* code, tokenised* token_line) {
 
 // token_line.func_pointer = op_table[i].op_func_pointer;
 
-tokenised get_tokenised(char *tokens[TOKEN_LIMIT], int num_of_tokens) {
-  tokenised* tokenised_str = malloc(sizeof(tokenised));
-
-  // Initialise tokenised_str values
+void tokenise_init(tokenised* tokenised_str) {
   tokenised_str->label = NULL;  
   tokenised_str->func_pointer = NULL;  
   for (int i = 0; i < OPERAND_SIZE; i++) {
     tokenised_str->operands[i] = 0;
   }
+}
+
+tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
+                              int num_of_tokens, int line_num) {
+  tokenised* tokenised_str = malloc(sizeof(tokenised));
+
+  // Initialise tokenised_str values
+  tokenise_init(tokenised_str);
+
+  // Initialise label_list
+  list_init(&label_list);
 
   // Check if the first token is a label or not
   if (*(tokens[0] + strcspn(tokens[0], ":")) == ':' && isalpha(*tokens[0])) {
@@ -63,18 +72,21 @@ tokenised get_tokenised(char *tokens[TOKEN_LIMIT], int num_of_tokens) {
     // Update tokenised label variable
     tokenised_str->label = new_label;
     
-    // Update label -> address symbol table
+    // Update label -> address in symbol table and label_list
     symb_table[label_count].label = new_label;
-    symb_table[label_count].memory_address = &new_label;
-    
+    symb_table[label_count].position = line_num;
+ 
+    // TODO: Update label_list and check for backward references to
+    //       previously undeclared labels.
+ 
     // Increment number of labels to move the pointer for the next
     // label -> address pair
     label_count++;
   } else { 
-  set_pointer(tokens[0], tokenised_str);
+    set_pointer(tokens[0], tokenised_str);
     if (*tokens[0] == 'b') {
       // Mnemonic is a branch instruction
-      // TODO: Need to find a way of getting the address of the label
+      // TODO: Use label_list to replace label with line_num, if possible.
     } else {
       // At this point, we know that a label cannot exist in the tokens
       int num_of_operands = num_of_tokens - 1;
@@ -88,7 +100,7 @@ tokenised get_tokenised(char *tokens[TOKEN_LIMIT], int num_of_tokens) {
   return result;
 }
 
-tokenised tokeniser(char *line) {
+tokenised tokeniser(char *line, int line_num) {
   // Declare deliminator characters
   const char delims[] = " ,";
   
@@ -101,6 +113,5 @@ tokenised tokeniser(char *line) {
     temp = strtok_r(NULL, delims, &save_ptr); 
     num_of_tokens++;
   }
-  
-  return get_tokenised(tokens, num_of_tokens);
+  return get_tokenised(tokens, num_of_tokens, line_num);
 }

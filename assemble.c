@@ -18,7 +18,7 @@
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
 int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
 void write_bin(char* path, int32_t* bin_instr, int lines_in_file);
-tokenised tokeniser(char* line);
+tokenised tokeniser(char* line, int line_num);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -151,9 +151,9 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   tokenised token_line;
   static int32_t bin_instr[MAX_LINES];
 
-  for (int i = 0; i < length; i++) {
-    current_instruction = assem_instr[i];
-    token_line = tokeniser(current_instruction);
+  for (int line_num = 0; line_num < length; line_num++) {
+    current_instruction = assem_instr[line_num];
+    token_line = tokeniser(current_instruction, line_num);
 //    bin_instr[i] = command_processor(token_line);
     token_line = token_line;
   }

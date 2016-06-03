@@ -58,7 +58,7 @@ enum mnemonic_code {
 struct symbol_table {
 
   char* label;
-  char** memory_address;
+  int position;
 
 };
 
