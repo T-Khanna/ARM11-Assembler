@@ -25,7 +25,7 @@ tokenised tokeniser(char* line);
 extern int label_count;
 
 //TODO: ADD FUNC POINTER DATABASE
-int32_t (*func_table[32]) (int32_t[]) = {
+uint32_t (*func_table[32]) (uint32_t[]) = {
   &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
   &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
@@ -73,29 +73,6 @@ mnemonic_code_mapping table[23] = {
 
 int main(int argc, char **argv) {
 
-  printf("%d\n", AND);
-  printf("%d\n", EOR);
-  printf("%d\n", SUB);
-  printf("%d\n", RSB);
-  printf("%d\n", ADD);
-  printf("%d\n", LDR);
-  printf("%d\n", STR);
-  printf("%d\n", TST);
-  printf("%d\n", TEQ);
-  printf("%d\n", CMP);
-  printf("%d\n", ORR);
-  printf("%d\n", MOV);
-  printf("%d\n", MUL);
-  printf("%d\n", MLA);
-  printf("%d\n", BEQ);
-  printf("%d\n", BNE);
-  printf("%d\n", LSL);
-  printf("%d\n", ANDEQ);
-  printf("%d\n", BGE);
-  printf("%d\n", BLT);
-  printf("%d\n", BGT);
-  printf("%d\n", BLE);
-  printf("%d\n", B);
   //checking for an invalid number of arguments
   if (argc != 3) {
     printf("Expecting two arguments\n");
