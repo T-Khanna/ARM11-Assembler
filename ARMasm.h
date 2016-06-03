@@ -47,11 +47,16 @@ typedef struct mnemonic_code_mapping {
   char *mnemonic; 
   int opcode;
   //int32_t (*op_func_pointer)(int32_t[]);
-}mnemonic_code_mapping;
+} mnemonic_code_mapping;
 
 extern mnemonic_code_mapping op_table[23];
 
-//-- OPFUNCTION DECLARATIONS --------------------------------------------------
+//-- GLOBAL VARIABLES ----------------------------------------------------------
+
+struct symbol_table symb_table[MAX_LABELS];
+int label_count = 0;
+
+//-- OPFUNCTION DECLARATIONS ---------------------------------------------------
 
 int32_t ARMadd(int32_t operands[]);
 

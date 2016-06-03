@@ -7,7 +7,7 @@
 
 int get_operands(char* operand, int size);
 void set_pointer(char* code, tokenised token_line);
-tokenised get_tokenised(char* tokens[TOKEN_LIMIT]);
+tokenised get_tokenised(char* tokens[TOKEN_LIMIT], int num_of_tokens);
 tokenised tokeniser(char* line);
 
 //-- TOKENISER ----------------------------------------------------------------
@@ -71,8 +71,9 @@ tokenised get_tokenised(char *tokens[TOKEN_LIMIT], int num_of_tokens) {
       // TODO: Need to find a way of getting the address of the label
     } else {
       // At this point, we know that a label cannot exist in the tokens
-      for (int i = 0; i < num_of_tokens - 1; i++) {
-        tokenised_str.operands[i] = get_operands(tokens[i + 1]);
+      int num_of_operands = num_of_tokens - 1;
+      for (int i = 0; i < num_of_operands - 1; i++) {
+        tokenised_str.operands[i] = get_operands(tokens[i+1], num_of_operands);
       }
     }
   }

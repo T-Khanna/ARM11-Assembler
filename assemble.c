@@ -22,16 +22,13 @@ tokenised tokeniser(char* line);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
-struct symbol_table symb_table[MAX_LABELS];
-int label_count = 0;
-
 //TODO: ADD FUNC POINTER DATABASE
-int32_t (*func_table[32]) (int32_t[]) = {
+/*int32_t (*func_table[32]) (int32_t[]) = {
   &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
   &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
   NULL, &ASMbge, &ASMblt, &ASMble, &ASMb, NULL
-}; 
+};*/ 
 
 mnemonic_code_mapping op_table[] = {
   // Data Processing
