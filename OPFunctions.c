@@ -70,6 +70,17 @@ int32_t ASMstr(int32_t operands[]) {
   return 0;
 }
 
+// Branch
+
+/* 
+  For each of these instructions, there is only one operand. Due to the way
+  we assigned the enum value to the function, the condition is always the
+  mnemonic_code - 16. Bits 27-24 are 1010. Remaining is the 26-bit signed
+  offset between the current address and the label, which should be shifted
+  right two bits, only storing the lower 24 bits. This must also take into
+  account the off-by-8 bytes effect from the ARM pipeline.
+*/
+
 int32_t ASMbeq(int32_t operands[]) {
   return 0;
 }

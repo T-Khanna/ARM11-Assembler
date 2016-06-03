@@ -34,37 +34,37 @@ int32_t (*func_table[32]) (int32_t[]) = {
 
 mnemonic_code_mapping table[23] = {
   // Data Processing
-  {"add", 4},
-  {"sub", 2},
-  {"rsb", 3},
-  {"and", 0},
-  {"eor", 1},
-  {"orr", 12},
-  {"mov", 13},
-  {"tst", 8},
-  {"teq", 9},
-  {"cmp", 10},
+  {"add", ADD},
+  {"sub", SUB},
+  {"rsb", RSB},
+  {"and", AND},
+  {"eor", EOR},
+  {"orr", ORR},
+  {"mov", MOV},
+  {"tst", TST},
+  {"teq", TEQ},
+  {"cmp", CMP},
 
   // Multiply
-  {"mul", 14},
-  {"mla", 15},
+  {"mul", MUL},
+  {"mla", MLA},
  
   // Single Data Transfer
-  {"ldr", 5},
-  {"str", 6},
+  {"ldr", LDR},
+  {"str", STR},
  
   // Branch 
-  {"beq", 16}, 
-  {"bne", 17}, 
-  {"bge", 26}, 
-  {"blt", 27}, 
-  {"bgt", 28}, 
-  {"ble", 29}, 
-  {"b", 30},  
+  {"beq", BEQ}, 
+  {"bne", BNE}, 
+  {"bge", BGE}, 
+  {"blt", BLT}, 
+  {"bgt", BGT}, 
+  {"ble", BLE}, 
+  {"b", B},  
   
   // Special
-  {"lsl", 18},
-  {"andeq", 19}
+  {"lsl", LSL},
+  {"andeq", ANDEQ}
 
 };
 
@@ -73,6 +73,29 @@ mnemonic_code_mapping table[23] = {
 
 int main(int argc, char **argv) {
 
+  printf("%d\n", AND);
+  printf("%d\n", EOR);
+  printf("%d\n", SUB);
+  printf("%d\n", RSB);
+  printf("%d\n", ADD);
+  printf("%d\n", LDR);
+  printf("%d\n", STR);
+  printf("%d\n", TST);
+  printf("%d\n", TEQ);
+  printf("%d\n", CMP);
+  printf("%d\n", ORR);
+  printf("%d\n", MOV);
+  printf("%d\n", MUL);
+  printf("%d\n", MLA);
+  printf("%d\n", BEQ);
+  printf("%d\n", BNE);
+  printf("%d\n", LSL);
+  printf("%d\n", ANDEQ);
+  printf("%d\n", BGE);
+  printf("%d\n", BLT);
+  printf("%d\n", BGT);
+  printf("%d\n", BLE);
+  printf("%d\n", B);
   //checking for an invalid number of arguments
   if (argc != 3) {
     printf("Expecting two arguments\n");
@@ -155,7 +178,7 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
     current_instruction = assem_instr[i];
     token_line = tokeniser(current_instruction);
 //    bin_instr[i] = command_processor(token_line);
-  
+    token_line = token_line;
   }
 
   
