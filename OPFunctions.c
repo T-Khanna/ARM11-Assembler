@@ -10,63 +10,126 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMasm.h"
+#include "bitOper.c"
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 //TODO: Fill these
-uint32_t ASMadd(uint32_t operands[]) {
+uint32_t ASMadd(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMsub(uint32_t operands[]) {
+uint32_t ASMsub(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMrsb(uint32_t operands[]) {
+uint32_t ASMrsb(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMand(uint32_t operands[]) {
+uint32_t ASMand(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMeor(uint32_t operands[]) {
+uint32_t ASMeor(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMorr(uint32_t operands[]) {
+uint32_t ASMorr(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMmov(uint32_t operands[]) {
+uint32_t ASMmov(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMtst(uint32_t operands[]) {
+uint32_t ASMtst(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMteq(uint32_t operands[]) {
+uint32_t ASMteq(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMcmp(uint32_t operands[]) {
+uint32_t ASMcmp(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMmul(uint32_t operands[]) {
+uint32_t ASMmul(int32_t operands[]) {
+
+  int32_t result = 0;
+
+  //setting A bit 21 to 0
+  setBit(&result, 0, 21); 
+
+  //setting S bit 20 to 0
+  setBit(&result, 0, 20);
+
+  //setting Cond field to 1110
+  int cond_field = 1110;
+  setBits(&result, 28, &cond_field, 0, 4);
+
+  //setting bits 4-7 to 1001
+  int bits_4_7 = 1001;
+  setBits(&result, 4, &bits_4_7, 0, 4);
+
+  //setting bits of Rd using operands
+  setBits(&result, 16, &operands[0], 0, 4);
+  
+  //setting bits of Rm using operands
+  setBits(&result, 0, &operands[1], 0, 4);
+
+  //setting bits of Rs using operands
+  setBits(&result, 8, &operands[2], 0, 4);
+
+  //bits of Rn will be 0 as result is initialised
+  //bits 22-27 will be 0 as result is initialised
+
+  return result;
+
+}
+
+uint32_t ASMmla(int32_t operands[]) {
+
+  int32_t result = 0;
+
+  //setting A bit 21 to 1
+  setBit(&result, 1, 21); 
+
+  //setting S bit 20 to 0
+  setBit(&result, 0, 20);
+
+  //setting Cond field to 1110
+  int cond_field = 1110;
+  setBits(&result, 28, &cond_field, 0, 4);
+
+  //setting bits 4-7 to 1001
+  int bits_4_7 = 1001;
+  setBits(&result, 4, &bits_4_7, 0, 4);
+
+  //setting bits of Rd using operands
+  setBits(&result, 16, &operands[0], 0, 4);
+  
+  //setting bits of Rm using operands
+  setBits(&result, 0, &operands[1], 0, 4);
+
+  //setting bits of Rs using operands
+  setBits(&result, 8, &operands[2], 0, 4);
+
+  //setting bits of Rn using operands
+  setBits(&result, 12, &operands[3], 0, 4);
+
+  //bits 22-27 will be 0 as result is initialised
+
+  return result;
+
+}
+
+uint32_t ASMldr(int32_t operands[]) {
   return 0;
 }
 
-uint32_t ASMmla(uint32_t operands[]) {
-  return 0;
-}
-
-uint32_t ASMldr(uint32_t operands[]) {
-  return 0;
-}
-
-uint32_t ASMstr(uint32_t operands[]) {
+uint32_t ASMstr(int32_t operands[]) {
   return 0;
 }
 
@@ -106,31 +169,31 @@ uint32_t compute_cond(enum mnemonic_code cond) {
   return cond + branch_mask;
 }
 
-uint32_t ASMbeq(uint32_t operands[]) {
+uint32_t ASMbeq(int32_t operands[]) {
   return compute_cond(BEQ);
 }
 
-uint32_t ASMbne(uint32_t operands[]) {
+uint32_t ASMbne(int32_t operands[]) {
   return compute_cond(BNE);
 }
 
-uint32_t ASMbge(uint32_t operands[]) {
+uint32_t ASMbge(int32_t operands[]) {
   return compute_cond(BGE);
 }
 
-uint32_t ASMblt(uint32_t operands[]) {
+uint32_t ASMblt(int32_t operands[]) {
   return compute_cond(BLT);
 }
 
-uint32_t ASMbgt(uint32_t operands[]) {
+uint32_t ASMbgt(int32_t operands[]) {
   return compute_cond(BGT);
 }
 
-uint32_t ASMble(uint32_t operands[]) {
+uint32_t ASMble(int32_t operands[]) {
   return compute_cond(BLE);
 }
 
-uint32_t ASMb(uint32_t operands[]) {
+uint32_t ASMb(int32_t operands[]) {
   return compute_cond(B);
 }
 
