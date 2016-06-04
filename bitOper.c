@@ -110,12 +110,12 @@ int decToBin(int num){
 
     int bin = 0;
     int i = 1;
-    int rem;
+    int rem = 0;
 
     while(num != 0){
       rem = num % 2;
-      num /= 2;
-      bin += rem * i;
+      num = num / 2;
+      bin += (rem * i);
       i *= 10;
     }
 
