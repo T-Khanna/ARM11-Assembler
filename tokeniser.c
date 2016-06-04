@@ -51,42 +51,78 @@ void tokenise_init(tokenised* tokenised_str) {
   }
 }
 
+// Check if the first token is a label or not.
+int is_label(char* token) {
+  return *(token + strcspn(token, ":")) == ':' && isalpha(*token);
+}
+
 tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
                               int num_of_tokens, int line_num) {
   tokenised tokenised_str;
 
-  // Initialise tokenised_str values
+  // Initialise tokenised_str values.
   tokenise_init(&tokenised_str);
 
-  // Initialise label_list
+  // Initialise label_list.
   list_init(&label_list);
 
-  // Check if the first token is a label or not
-  if (*(tokens[0] + strcspn(tokens[0], ":")) == ':' && isalpha(*tokens[0])) {
-    // Line starts with a label  
+  if (is_label(tokens[0])) {
+    // Line starts with a label.  
     char* new_label = tokens[0];
     
-    // Remove ':' from label
+    // Remove ':' from label.
     *(new_label + strcspn(new_label, ":")) = '\0';
     
-    // Update tokenised label variable
+    // Update tokenised label variable.
     tokenised_str.label = new_label;
+    tokenised_str.label_pos = line_num;
     
-    // Update label -> address in symbol table and label_list
+    // Update label->address in the symbol table for resolving any futures
+    // backward references.
     symb_table[label_count].label = new_label;
     symb_table[label_count].position = line_num;
  
-    // TODO: Update label_list and check for backward references to
-    //       previously undeclared labels.
+    // Update label_list and check for forward references to
+    // previously undeclared labels.
+    list_iter iter = list_end(&label_list);
+    // Iterating from the end to the front of the list.
+    while (iter != label_list.header) {
+      if (strcmp(iter->value.label, new_label) == 0) {
+        // We need to update the label position for this value.
+        iter->value.label_pos = line_num;
+        list_remove(&label_list, iter);
+      } else {
+        list_iter_prev(iter);
+      }   
+    }
  
     // Increment number of labels to move the pointer for the next
     // label -> address pair
     label_count++;
-  } else { 
+  } else {
+    // We are dealing with a mnemonic as the first token, so we need to set
+    // the function pointer to match the mnemonic. 
     set_pointer(tokens[0], &tokenised_str);
+    
     if (*tokens[0] == 'b') {
-      // Mnemonic is a branch instruction
-      // TODO: Use label_list to replace label with line_num, if possible.
+      // Mnemonic is a branch instruction.
+
+      // Check if the label is in symb_table. 
+      int i = 0;
+      while (symb_table[i].label) {
+        if (strcmp(symb_table[i].label, tokens[1]) == 0) {
+          char offset_val[10];
+          int offset = (line_num - symb_table[i].position) 
+                          * BYTE_SIZE - PIPELINE_OFFSET;
+          sprintf(offset_val, "%d", offset);
+          tokenised_str.operands[0] = offset_val;
+        }
+      }
+      
+      if (tokenised_str.operands[0] == NULL) {
+        // Label is a forward reference to an unknown address
+      }
+
     } else {
       // At this point, we know that a label cannot exist in the tokens
       int num_of_operands = num_of_tokens - 1;

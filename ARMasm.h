@@ -22,6 +22,7 @@
 #define INSTRUCTION_BIT_SIZE 32
 #define BYTE_SIZE 8
 #define OPERAND_SIZE 4
+#define PIPELINE_OFFSET 8
 
 //-- ENUM CODE MAPPING ---------------------------------------------------------
 
@@ -68,6 +69,7 @@ struct symbol_table {
 typedef struct tokenised {
 
   char* label;
+  int label_pos;
   uint32_t (*func_pointer)(char* operands[]);
   char* operands[OPERAND_SIZE];
 
