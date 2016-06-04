@@ -16,7 +16,6 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
-<<<<<<< HEAD
 int32_t setDataIntrBits(int32_t result,
 		int s, int opcode, int rn, int rd);
 int32_t setOperand(int32_t result, int operand2);
@@ -24,137 +23,6 @@ int32_t setOperand(int32_t result, int operand2);
 // uncondiniotanl mask
 const uint32_t uncond_mask = (1<<31) + (1<<30) + (1<<29);
 
-//TODO: Fill these
-uint32_t ASMadd(int32_t operands[]) {
-  int32_t result = 0;
-  //setting given intruction bits
-  result = setDataIntrBits(result,0,4,operands[1],operands[0]);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  setBit(&result, isshift, 25); // set 25 bit to isshift
-
-  result = setOperand(result, operands[2]);
-
-  return (unsigned) result;
-}
-
-uint32_t ASMsub(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,0,2,operands[1],operands[0]);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  setBit(&result,isshift,25); // set 25 bit to isshift
-
-  result = setOperand(result, operands[2]);
-
-  return (unsigned) result;
-}
-
-uint32_t ASMrsb(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,0,3,operands[1],operands[0]);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  setBit(&result,isshift,25); // set 25 bit to isshift
-
-  result = setOperand(result, operands[2]);
-  
-  return (unsigned) result;
-}
-
-uint32_t ASMand(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,0,0,operands[1],operands[0]);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
-  result = setOperand(result, operands[2]);
-
-  return (unsigned) result;
-}
-
-uint32_t ASMeor(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,0,1,operands[1],operands[0]);
-   
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
-  result = setOperand(result, operands[2]);
-   
-  return (unsigned) result;
-}
-
-uint32_t ASMorr(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,0,12,operands[1],operands[0]);
- 
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
-  result = setOperand(result, operands[2]);
-       
-  return (unsigned) result;
-}
-
-uint32_t ASMmov(int32_t operands[]) {
-  // fix this
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,0,13,0,operands[0]);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
-  result = setOperand(result, operands[1]);
-       
-  return (unsigned) result;
-}
-
-uint32_t ASMtst(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,1,8,operands[1],operands[0]);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
-  result = setOperand(result, operands[2]);
-       
-  return (unsigned) result;
-}
-
-uint32_t ASMteq(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,1,9,operands[1],operands[0]);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
-  result = setOperand(result, operands[2]);
-
-  return (unsigned) result;
-}
-
-uint32_t ASMcmp(int32_t operands[]) {
-  int32_t result = 0;
-   //setting given intruction bits
-  result = setDataIntrBits(result,1,10,operands[1],operands[0]);
-   
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
-  result = setOperand(result, operands[2]);
-       
-  return (unsigned)  result;
-=======
 int getRegBin(char* reg){
 
   //removing the r in the register string gived
@@ -170,48 +38,147 @@ int getRegBin(char* reg){
 
 }
 
-
 //TODO: Fill these
-uint32_t ASMadd(char * operands[]) {
-  return 0;
+uint32_t ASMadd(char* operands[]) {
+  int32_t result = 0;
+  //setting given intruction bits
+  result = setDataIntrBits(result, 0, ADD, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+
+  int32_t isshift = 0; // have to implement the logic for this
+  setBit(&result, isshift, 25); // set 25 bit to isshift
+
+  result = setOperand(result, getRegBin(operands[2]));
+
+  return (unsigned) result;
 }
 
-uint32_t ASMsub(char * operands[]) {
-  return 0;
+uint32_t ASMsub(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 0, SUB, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+  int32_t isshift = 0; // have to implement the logic for this
+  setBit(&result,isshift,25); // set 25 bit to isshift
+
+  result = setOperand(result, getRegBin(operands[2]));
+
+  return (unsigned) result;
 }
 
-uint32_t ASMrsb(char * operands[]) {
-  return 0;
+uint32_t ASMrsb(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 0, RSB, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+
+  int32_t isshift = 0; // have to implement the logic for this
+  setBit(&result,isshift,25); // set 25 bit to isshift
+
+  result = setOperand(result, getRegBin(operands[2]));
+  
+  return (unsigned) result;
 }
 
-uint32_t ASMand(char * operands[]) {
-  return 0;
+uint32_t ASMand(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 0, AND, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+
+  int32_t isshift = 0; // have to implement the logic for this
+  result |= (isshift) << 25; // += I * 2^25
+
+  result = setOperand(result, getRegBin(operands[2]));
+
+  return (unsigned) result;
 }
 
-uint32_t ASMeor(char * operands[]) {
-  return 0;
+uint32_t ASMeor(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 0, EOR, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+   
+  int32_t isshift = 0; // have to implement the logic for this
+  result |= (isshift) << 25; // += I * 2^25
+
+  result = setOperand(result, getRegBin(operands[2]));
+   
+  return (unsigned) result;
 }
 
-uint32_t ASMorr(char * operands[]) {
-  return 0;
+uint32_t ASMorr(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 0, ORR, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+ 
+  int32_t isshift = 0; // have to implement the logic for this
+  result |= (isshift) << 25; // += I * 2^25
+
+  result = setOperand(result, getRegBin(operands[2]));
+       
+  return (unsigned) result;
 }
 
-uint32_t ASMmov(char * operands[]) {
-  return 0;
+uint32_t ASMmov(char* operands[]) {
+  // fix this
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 0, MOV, 0, getRegBin(operands[0]));
+
+  int32_t isshift = 0; // have to implement the logic for this
+  result |= (isshift) << 25; // += I * 2^25
+
+  result = setOperand(result, getRegBin(operands[1]));
+       
+  return (unsigned) result;
 }
 
-uint32_t ASMtst(char * operands[]) {
-  return 0;
+uint32_t ASMtst(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 1, TST, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+
+  int32_t isshift = 0; // have to implement the logic for this
+  result |= (isshift) << 25; // += I * 2^25
+
+  result = setOperand(result, getRegBin(operands[2]));
+       
+  return (unsigned) result;
 }
 
-uint32_t ASMteq(char * operands[]) {
-  return 0;
+uint32_t ASMteq(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 1, TEQ, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+
+  int32_t isshift = 0; // have to implement the logic for this
+  result |= (isshift) << 25; // += I * 2^25
+
+  result = setOperand(result, getRegBin(operands[2]));
+
+  return (unsigned) result;
 }
 
-uint32_t ASMcmp(char * operands[]) {
-  return 0;
->>>>>>> master
+uint32_t ASMcmp(char* operands[]) {
+  int32_t result = 0;
+   //setting given intruction bits
+  result = setDataIntrBits(result, 1, CMP, getRegBin(operands[1]),
+      getRegBin(operands[0]));
+   
+  int32_t isshift = 0; // have to implement the logic for this
+  result |= (isshift) << 25; // += I * 2^25
+
+  result = setOperand(result, getRegBin(operands[2]));
+       
+  return (unsigned)  result;
 }
+
+
 
 uint32_t ASMmul(char * operands[]) {
   
@@ -292,7 +259,6 @@ uint32_t ASMmla(char * operands[]) {
   return 0;
 }
 
-<<<<<<< HEAD
 int32_t setDataIntrBits(int32_t result,int s,
 	       	int opcode, int rn, int rd){
   result |= uncond_mask;
@@ -315,8 +281,6 @@ int32_t setOperand(int32_t result, int operand2){
  return result;
 }
 
-uint32_t ASMldr(int32_t operands[]) {
-=======
 uint32_t ASMldr(char * operands[]) {
 //instruction has syntax ldr Rd, <address>  
 /*
@@ -343,7 +307,6 @@ uint32_t ASMldr(char * operands[]) {
 
   return (unsigned) result;
 */
->>>>>>> master
   return 0;
 }
 
@@ -436,11 +399,4 @@ uint32_t ASMble(char * operands[]) {
 uint32_t ASMb(char * operands[]) {
   return calculate_branch(B, operands);
 }
-<<<<<<< HEAD
-=======
 
-
-
-
-
->>>>>>> master
