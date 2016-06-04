@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ARMasm.h"
-#include "bitOper.c"
+#include "bitOper.h"
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
