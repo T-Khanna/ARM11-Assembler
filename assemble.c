@@ -24,6 +24,10 @@ uint32_t command_processor(tokenised input);
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
 extern int label_count;
+extern uint32_t *bin_instr;
+extern int num_of_lines;
+extern int line_num;
+extern int extra_data;
 
 //TODO: ADD FUNC POINTER DATABASE
 uint32_t (*func_table[32]) (char* operands[]) = {
@@ -83,14 +87,15 @@ int main(int argc, char **argv) {
   //getting the instruction from source file into an array of 32-bit
   //instructions that will be translated.
   char instrs[MAX_LINES][CHAR_LIMIT];
-  int num_of_lines = get_instrs(argv[1], instrs);
+  num_of_lines = get_instrs(argv[1], instrs);
   
-  for (int i = 0; i < num_of_lines; i++) {
-    puts(instrs[i]);
-  }
+  //TODO: Testing
+  //for (int i = 0; i < num_of_lines; i++) {
+  //  puts(instrs[i]);
+  //}
 
   //performing the pass over the file to decode into binary that will be written
-  uint32_t* bin_instr = translate_instr(instrs, num_of_lines);
+  bin_instr = translate_instr(instrs, num_of_lines);
   
   //creating output binary file
   write_bin(argv[2], bin_instr, num_of_lines);
@@ -143,18 +148,23 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
 
 //return an array of 32 bit words to be written into binary file
-uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
+uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], 
+                         int length_in_lines) {
   
   char* current_instruction;
   tokenised token_line;
   static uint32_t bin_instr[MAX_LINES];
+  extra_data = 0;
 
-  for (int line_num = 0; line_num < length; line_num++) {
+  for (line_num = 0; line_num < length_in_lines; line_num++) {
     current_instruction = assem_instr[line_num];
     token_line = tokeniser(current_instruction, line_num);
     bin_instr[line_num] = command_processor(token_line);
   }
 
+  // subract number of labels lines from total lines to store only the number
+  // of valid output lines as num_of_lines variable
+  num_of_lines -= label_count;
   
   return bin_instr;
 
@@ -173,7 +183,6 @@ void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
   FILE *fptr = fopen(path, "w+");
  
   // subract number of labels lines from total lines
-  lines_in_file -= label_count;
 
   for(int line = 0; line < lines_in_file; line++){
     uint32_t num = bin_instr[line];

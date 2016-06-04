@@ -13,6 +13,7 @@
 #include <math.h>
 #include "ARMasm.h"
 #include "bitOper.h"
+#include "assemble.c"
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
@@ -35,6 +36,10 @@ int getRegBin(char* reg){
   int reg_bin = decToBin(reg_num);
   
   return reg_bin;
+
+}
+
+void getAddress(int *result, char** operands){
 
 }
 
@@ -283,36 +288,85 @@ int32_t setOperand(int32_t result, int operand2){
 
 uint32_t ASMldr(char * operands[]) {
 //instruction has syntax ldr Rd, <address>  
-/*
+//  Rd := (address) 
+//"ldr r0, [r1,r2]" will give an array of 
+//{"r0", "[r1", "r2"]"}
+
+  //if argument is not greater than 0xFF, it is redirected to mov
+  if(!(strncmp(operands[1], "=0xFF", 32) > 0)) {
+    return ASMmov(operands);
+  }
+
   int32_t result = 0;
-  int check = 0xFF;
 
   //setting L bit 20 to 1
   setBit(&result, 1, 20);   
+
+  //setting COND
+  int cond = 1110;
+  setBits(&result, 28, &cond, 0, 4);
 
   //setting bits 27-26 to 01
   setBit(&result, 0, 27);   
   setBit(&result, 1, 26);   
 
+  //setting bits 21 22 to 01
+  setBit(&result, 0, 21);   
+  setBit(&result, 0, 22);   
+
   //setting bits of rd using operands
-  int rd_bin = decToBin(operands[0]);
+  int rd_bin = getRegBin(operands[0]);
   setBits(&result, 12, &rd_bin, 0 , 4);
 
   //if <address> is a numeric constant of the form: <=expression>
+  if(*(operands[1]) == '='){
+    
+    //setting the base register as the pc register (r15)
+    int pc = 15;
+    setBits(&result, 16, &pc, 0, 4);
 
-  
-  //if <address> is a pre-indexed address specificaition
-  
-  //if <address> is a post-indexing addressing specification
+    //obtaining arg as int without the '='
+    char* argStr = operands[1];
+    argStr++;
+    int arg = atoi(argStr);
+
+    //incrementing num_of_lines in the file and extra_data before storing arg
+    num_of_lines++;
+    extra_data++;
+    bin_instr[num_of_lines] = arg;
+
+    //curr has to be amended form current line_num due to PC being off by 
+    //8-bytes. Which is 2 instruction lines
+    int curr = line_num + 2;
+
+    //calculating offset (in bytes) from where the arg was placed to curr
+    int offset = (num_of_lines - curr) * INSTRUCTION_BYTE_SIZE; 
+
+    //setting offset to bits 0-12
+    setBits(&result, 0, &offset, 0, 12);
+    
+    //setting P bit (24th bit) to 1 for pre-indexed
+    setBit(&result, 24, 1);
+
+
+  } else{
+
+    //if <address> is a pre-indexed address specificaition
+    //if <address> is a post-indexing addressing specification
+    getAddress(&result, operands);
+
+  }
+
+  //bits 20 21 will be 0 as result is initialised
 
   return (unsigned) result;
-*/
-  return 0;
+
 }
 
 uint32_t ASMstr(char * operands[]) {
 //instruction has syntax str Rd, <address>  
-/*  
+// (address) := Rd
+
   int32_t result = 0;
 
   //setting L bit 20 to 0
@@ -323,16 +377,17 @@ uint32_t ASMstr(char * operands[]) {
   setBit(&result, 1, 26);   
 
   //setting bits of rd using operands
-  int rd_bin = decToBin(operands[0]);
+  int rd_bin = getRegBin(operands[0]);
   setBits(&result, 12, &rd_bin, 0 , 4);
 
   //if <address> is a pre-indexed address specificaition
-  
   //if <address> is a post-indexing addressing specification
+  getAddress(&result, operands);
 
+  //bits 20 21 will be 0 as result is initialised
+  
   return (unsigned) result;
-*/
-  return 0;
+
 }
 
 uint32_t ASMlsl(char * operands[]) {
