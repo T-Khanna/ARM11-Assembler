@@ -18,7 +18,7 @@
 
 int32_t setDataIntrBits(int32_t result,
 		int s, int opcode, int rn, int rd);
-int32_t setOperand(int32_t result, int operand2);
+int32_t setOperand(int32_t result, char* operand2);
 
 // uncondiniotanl mask
 const uint32_t uncond_mask = (1<<31) + (1<<30) + (1<<29);
@@ -31,14 +31,10 @@ int getRegBin(char* reg){
   //obtaining register number in decimal
   int reg_num = atoi(reg);
 
-  //obtaining register number in binary
-  int reg_bin = decToBin(reg_num);
-  
-  return reg_bin;
+  return reg_num;
 
 }
 
-//TODO: Fill these
 uint32_t ASMadd(char* operands[]) {
   int32_t result = 0;
   //setting given intruction bits
@@ -48,7 +44,7 @@ uint32_t ASMadd(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result, isshift, 25); // set 25 bit to isshift
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
 
   return (unsigned) result;
 }
@@ -61,7 +57,7 @@ uint32_t ASMsub(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result,isshift,25); // set 25 bit to isshift
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
 
   return (unsigned) result;
 }
@@ -75,7 +71,7 @@ uint32_t ASMrsb(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result,isshift,25); // set 25 bit to isshift
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
   
   return (unsigned) result;
 }
@@ -89,7 +85,7 @@ uint32_t ASMand(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
 
   return (unsigned) result;
 }
@@ -103,7 +99,7 @@ uint32_t ASMeor(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
    
   return (unsigned) result;
 }
@@ -117,7 +113,7 @@ uint32_t ASMorr(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
        
   return (unsigned) result;
 }
@@ -131,7 +127,7 @@ uint32_t ASMmov(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, getRegBin(operands[1]));
+  result = setOperand(result, operands[1]);
        
   return (unsigned) result;
 }
@@ -145,7 +141,7 @@ uint32_t ASMtst(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
        
   return (unsigned) result;
 }
@@ -159,7 +155,7 @@ uint32_t ASMteq(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
 
   return (unsigned) result;
 }
@@ -173,7 +169,7 @@ uint32_t ASMcmp(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, getRegBin(operands[2]));
+  result = setOperand(result, operands[2]);
        
   return (unsigned)  result;
 }
@@ -269,15 +265,17 @@ int32_t setDataIntrBits(int32_t result,int s,
   return result;
 }
 
-int32_t setOperand(int32_t result, int operand2){
+int32_t setOperand(int32_t result, char* operand2){
  
- if(ispunct(operand2)){
+ if(ispunct(*(operand2))){
     // store operant in intruction bits
-   setBits(&result, 0, &operand2, 0, 8); 
+   int imm_value = getRegBin(operand2);
+   setBits(&result, 0, &(imm_value), 0, 8); 
    return result;
  }
 
  // TODO : 
+printf("optional case not coded");
  return result;
 }
 
