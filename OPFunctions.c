@@ -111,7 +111,7 @@ uint32_t ASMmul(char * operands[]) {
 }
 
 uint32_t ASMmla(char * operands[]) {
-/*
+
   int32_t result = 0;
 
   //setting A bit 21 to 1
@@ -129,25 +129,25 @@ uint32_t ASMmla(char * operands[]) {
   setBits(&result, 4, &bits_4_7, 0, 4);
 
   //setting bits of rd using operands
-  int rd_bin = decToBin(operands[0]);
+  int rd_bin = getRegBin(operands[0]);
   setBits(&result, 16, &rd_bin, 0, 4);
   
   //setting bits of rm using operands
-  int rm_bin = decToBin(operands[1]);
+  int rm_bin = getRegBin(operands[1]);
   setBits(&result, 0, &rm_bin, 0, 4);
 
   //setting bits of rs using operands
-  int rs_bin = decToBin(operands[2]);
+  int rs_bin = getRegBin(operands[2]);
   setBits(&result, 8, &rs_bin, 0 , 4);
 
   //setting bits of rn using operands
-  int rn_bin = decToBin(operands[3]);
+  int rn_bin = getRegBin(operands[3]);
   setBits(&result, 12, &rn_bin, 0, 4);
 
   //bits 22-27 will be 0 as result is initialised
 
   return (unsigned) result;
-*/
+
   return 0;
 }
 
