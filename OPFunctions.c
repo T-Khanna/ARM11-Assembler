@@ -129,16 +129,59 @@ uint32_t ASMmla(int32_t operands[]) {
 
   //bits 22-27 will be 0 as result is initialised
 
-  return result;
+  return (unsigned) result;
 
 }
 
 uint32_t ASMldr(int32_t operands[]) {
-  return 0;
+//instruction has syntax ldr Rd, <address>  
+  
+  int32_t result = 0;
+  int check = 0xFF;
+
+  //setting L bit 20 to 1
+  setBit(&result, 1, 20);   
+
+  //setting bits 27-26 to 01
+  setBit(&result, 0, 27);   
+  setBit(&result, 1, 26);   
+
+  //setting bits of rd using operands
+  int rd_bin = decToBin(operands[0]);
+  setBits(&result, 12, &rd_bin, 0 , 4);
+
+  //if <address> is a numeric constant of the form: <=expression>
+
+  
+  //if <address> is a pre-indexed address specificaition
+  
+  //if <address> is a post-indexing addressing specification
+
+  return (unsigned) result;
 }
 
 uint32_t ASMstr(int32_t operands[]) {
-  return 0;
+//instruction has syntax str Rd, <address>  
+  
+  int32_t result = 0;
+
+  //setting L bit 20 to 0
+  setBit(&result, 0, 20);   
+
+  //setting bits 27-26 to 01
+  setBit(&result, 0, 27);   
+  setBit(&result, 1, 26);   
+
+  //setting bits of rd using operands
+  int rd_bin = decToBin(operands[0]);
+  setBits(&result, 12, &rd_bin, 0 , 4);
+
+  //if <address> is a pre-indexed address specificaition
+  
+  //if <address> is a post-indexing addressing specification
+
+  return (unsigned) result;
+
 }
 
 uint32_t ASMlsl(int32_t operands[]) {
