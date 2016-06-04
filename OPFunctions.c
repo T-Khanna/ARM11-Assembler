@@ -16,48 +16,48 @@
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 //TODO: Fill these
-uint32_t ASMadd(int32_t operands[]) {
+uint32_t ASMadd(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMsub(int32_t operands[]) {
+uint32_t ASMsub(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMrsb(int32_t operands[]) {
+uint32_t ASMrsb(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMand(int32_t operands[]) {
+uint32_t ASMand(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMeor(int32_t operands[]) {
+uint32_t ASMeor(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMorr(int32_t operands[]) {
+uint32_t ASMorr(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMmov(int32_t operands[]) {
+uint32_t ASMmov(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMtst(int32_t operands[]) {
+uint32_t ASMtst(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMteq(int32_t operands[]) {
+uint32_t ASMteq(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMcmp(int32_t operands[]) {
+uint32_t ASMcmp(char * operands[]) {
   return 0;
 }
 
-uint32_t ASMmul(int32_t operands[]) {
-
+uint32_t ASMmul(char * operands[]) {
+/*
   int32_t result = 0;
 
   //setting A bit 21 to 0
@@ -90,11 +90,12 @@ uint32_t ASMmul(int32_t operands[]) {
   //bits 22-27 will be 0 as result is initialised
 
   return result;
-
+*/
+  return 0;
 }
 
-uint32_t ASMmla(int32_t operands[]) {
-
+uint32_t ASMmla(char * operands[]) {
+/*
   int32_t result = 0;
 
   //setting A bit 21 to 1
@@ -130,12 +131,13 @@ uint32_t ASMmla(int32_t operands[]) {
   //bits 22-27 will be 0 as result is initialised
 
   return (unsigned) result;
-
+*/
+  return 0;
 }
 
-uint32_t ASMldr(int32_t operands[]) {
+uint32_t ASMldr(char * operands[]) {
 //instruction has syntax ldr Rd, <address>  
-  
+/*
   int32_t result = 0;
   int check = 0xFF;
 
@@ -158,11 +160,13 @@ uint32_t ASMldr(int32_t operands[]) {
   //if <address> is a post-indexing addressing specification
 
   return (unsigned) result;
+*/
+  return 0;
 }
 
-uint32_t ASMstr(int32_t operands[]) {
+uint32_t ASMstr(char * operands[]) {
 //instruction has syntax str Rd, <address>  
-  
+/*  
   int32_t result = 0;
 
   //setting L bit 20 to 0
@@ -181,22 +185,24 @@ uint32_t ASMstr(int32_t operands[]) {
   //if <address> is a post-indexing addressing specification
 
   return (unsigned) result;
-
+*/
+  return 0;
 }
 
-uint32_t ASMlsl(int32_t operands[]) {
+uint32_t ASMlsl(char * operands[]) {
 //lsl Rn, <#expression> as though it were mov Rn, Rn, lsl <#expression>
-  
+/*  
   //finding out suitable operands to call mov from operands specified
   int32_t operands_for_mov[4] = {operands[0], operands[0], atoi("lsl"),
                                  operands[1]};
 
   //redirecting to mov with suitable operands
   return ASMmov(operands_for_mov);
-
+*/
+  return 0;
 }
 
-uint32_t ASMandeq(int32_t operands[]) {
+uint32_t ASMandeq(char * operands[]) {
   //compiles the instruction andeq r0, r0, r0 to the binary value 0x00000000
   //TODO: not sure if i have to check all 3 operands to be r0's here...
   return 0;
@@ -221,31 +227,31 @@ uint32_t compute_cond(enum mnemonic_code cond) {
   return cond + branch_mask;
 }
 
-uint32_t ASMbeq(int32_t operands[]) {
+uint32_t ASMbeq(char * operands[]) {
   return compute_cond(BEQ);
 }
 
-uint32_t ASMbne(int32_t operands[]) {
+uint32_t ASMbne(char * operands[]) {
   return compute_cond(BNE);
 }
 
-uint32_t ASMbge(int32_t operands[]) {
+uint32_t ASMbge(char * operands[]) {
   return compute_cond(BGE);
 }
 
-uint32_t ASMblt(int32_t operands[]) {
+uint32_t ASMblt(char * operands[]) {
   return compute_cond(BLT);
 }
 
-uint32_t ASMbgt(int32_t operands[]) {
+uint32_t ASMbgt(char * operands[]) {
   return compute_cond(BGT);
 }
 
-uint32_t ASMble(int32_t operands[]) {
+uint32_t ASMble(char * operands[]) {
   return compute_cond(BLE);
 }
 
-uint32_t ASMb(int32_t operands[]) {
+uint32_t ASMb(char * operands[]) {
   return compute_cond(B);
 }
 

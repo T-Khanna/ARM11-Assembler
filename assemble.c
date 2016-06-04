@@ -25,7 +25,7 @@ tokenised tokeniser(char* line, int line_num);
 extern int label_count;
 
 //TODO: ADD FUNC POINTER DATABASE
-uint32_t (*func_table[32]) (uint32_t[]) = {
+uint32_t (*func_table[32]) (char* operands[]) = {
   &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
   &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
@@ -154,8 +154,7 @@ int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   for (int line_num = 0; line_num < length; line_num++) {
     current_instruction = assem_instr[line_num];
     token_line = tokeniser(current_instruction, line_num);
-//    bin_instr[i] = command_processor(token_line);
-    token_line = token_line;
+    bin_instr[line_num] = command_processor(token_line);
   }
 
   
