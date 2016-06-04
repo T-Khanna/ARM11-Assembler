@@ -15,6 +15,22 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
+int getRegBin(char* reg){
+
+  //removing the r in the register string gived
+  reg++;
+
+  //obtaining register number in decimal
+  int reg_num = atoi(reg);
+
+  //obtaining register number in binary
+  int reg_bin = decToBin(reg_num);
+  
+  return reg_bin;
+
+}
+
+
 //TODO: Fill these
 uint32_t ASMadd(char * operands[]) {
   return 0;
@@ -75,16 +91,16 @@ uint32_t ASMmul(char * operands[]) {
   setBits(&result, 4, &bits_4_7, 0, 4);
 
   //setting bits of rd using operands
-  //int rd_bin = decToBin(operands[0]);
-  //setBits(&result, 16, &rd_bin, 0, 4);
+  int rd_bin = getRegBin(operands[0]);
+  setBits(&result, 16, &rd_bin, 0, 4);
   
   //setting bits of rm using operands
-  //int rm_bin = decToBin(operands[1]);
-  //setBits(&result, 0, &rm_bin, 0, 4);
+  int rm_bin = getRegBin(operands[1]);
+  setBits(&result, 0, &rm_bin, 0, 4);
 
   //setting bits of rs using operands
-  //int rs_bin = decToBin(operands[2]);
-  //setBits(&result, 8, &rs_bin, 0 , 4);
+  int rs_bin = getRegBin(operands[2]);
+  setBits(&result, 8, &rs_bin, 0 , 4);
 
   //bits of Rn will be 0 as result is initialised
   //bits 22-27 will be 0 as result is initialised
@@ -256,20 +272,6 @@ uint32_t ASMb(char * operands[]) {
 }
 
 
-int getRegBin(char* reg){
-
-  //removing the r in the register string gived
-  reg++;
-
-  //obtaining register number in decimal
-  int reg_num = atoi(reg);
-
-  //obtaining register number in binary
-  int reg_bin = decToBin(reg_num);
-  
-  return reg_bin;
-
-}
 
 
 
