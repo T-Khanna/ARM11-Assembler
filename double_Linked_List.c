@@ -44,7 +44,7 @@ void list_init(list *l) {
   l->footer->prev = l->header;
 }
 
-  list_iter list_begin(list *l) {
+list_iter list_begin(list *l) {
   return l->header->next;
 }
 

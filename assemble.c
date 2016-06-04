@@ -18,7 +18,7 @@
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
 uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
 void write_bin(char* path, uint32_t* bin_instr, int lines_in_file);
-tokenised tokeniser(char* line);
+tokenised tokeniser(char *line, int line_num);
 uint32_t command_processor(tokenised input);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
@@ -35,37 +35,37 @@ uint32_t (*func_table[32]) (int32_t[]) = {
 
 mnemonic_code_mapping table[23] = {
   // Data Processing
-  {"add", 4},
-  {"sub", 2},
-  {"rsb", 3},
-  {"and", 0},
-  {"eor", 1},
-  {"orr", 12},
-  {"mov", 13},
-  {"tst", 8},
-  {"teq", 9},
-  {"cmp", 10},
+  {"add", ADD},
+  {"sub", SUB},
+  {"rsb", RSB},
+  {"and", AND},
+  {"eor", EOR},
+  {"orr", ORR},
+  {"mov", MOV},
+  {"tst", TST},
+  {"teq", TEQ},
+  {"cmp", CMP},
 
   // Multiply
-  {"mul", 14},
-  {"mla", 15},
+  {"mul", MUL},
+  {"mla", MLA},
  
   // Single Data Transfer
-  {"ldr", 5},
-  {"str", 6},
+  {"ldr", LDR},
+  {"str", STR},
  
   // Branch 
-  {"beq", 16}, 
-  {"bne", 17}, 
-  {"bge", 26}, 
-  {"blt", 27}, 
-  {"bgt", 28}, 
-  {"ble", 29}, 
-  {"b", 30},  
+  {"beq", BEQ}, 
+  {"bne", BNE}, 
+  {"bge", BGE}, 
+  {"blt", BLT}, 
+  {"bgt", BGT}, 
+  {"ble", BLE}, 
+  {"b", B},  
   
   // Special
-  {"lsl", 18},
-  {"andeq", 19}
+  {"lsl", LSL},
+  {"andeq", ANDEQ}
 
 };
 
@@ -149,11 +149,10 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   tokenised token_line;
   static uint32_t bin_instr[MAX_LINES];
 
-  for (int i = 0; i < length; i++) {
-    current_instruction = assem_instr[i];
-    token_line = tokeniser(current_instruction);
-    bin_instr[i] = command_processor(token_line);
-  
+  for (int line_num = 0; line_num < length; line_num++) {
+    current_instruction = assem_instr[line_num];
+    token_line = tokeniser(current_instruction, line_num);
+//    bin_instr[i] = command_processor(token_line);
   }
 
   

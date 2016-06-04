@@ -23,12 +23,42 @@
 #define BYTE_SIZE 8
 #define OPERAND_SIZE 4
 
+//-- ENUM CODE MAPPING ---------------------------------------------------------
+
+enum mnemonic_code {
+
+  AND,
+  EOR,
+  SUB,
+  RSB,
+  ADD,
+  LDR,
+  STR,
+  TST = 8,
+  TEQ,
+  CMP,
+  ORR = 12,
+  MOV,
+  MUL,
+  MLA,
+  BEQ,
+  BNE,
+  LSL,
+  ANDEQ,
+  BGE = 26,
+  BLT,
+  BGT,
+  BLE,
+  B,
+   
+};
+
 //-- SYMBOL TABLE --------------------------------------------------------------
 
 struct symbol_table {
 
   char* label;
-  char** memory_address;
+  int position;
 
 };
 
@@ -45,7 +75,7 @@ typedef struct tokenised {
 
 typedef struct mnemonic_code_mapping {
   char *mnemonic; 
-  int opcode;
+  enum mnemonic_code opcode;
   //int32_t (*op_func_pointer)(int32_t[]);
 } mnemonic_code_mapping;
 
