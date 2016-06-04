@@ -47,7 +47,7 @@ void tokenise_init(tokenised* tokenised_str) {
   tokenised_str->label = NULL;  
   tokenised_str->func_pointer = NULL;  
   for (int i = 0; i < OPERAND_SIZE; i++) {
-    tokenised_str->operands[i] = "";
+    tokenised_str->operands[i] = NULL;
   }
 }
 
@@ -113,7 +113,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
         if (strcmp(symb_table[i].label, tokens[1]) == 0) {
           char offset_val[10];
           int offset = (line_num - symb_table[i].position) 
-                          * BYTE_SIZE - PIPELINE_OFFSET;
+                          * INSTRUCTION_BYTE_SIZE - PIPELINE_OFFSET;
           sprintf(offset_val, "%d", offset);
           tokenised_str.operands[0] = offset_val;
         }
@@ -121,6 +121,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
       
       if (tokenised_str.operands[0] == NULL) {
         // Label is a forward reference to an unknown address
+        return tokenised_str;
       }
 
     } else {

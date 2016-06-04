@@ -235,40 +235,39 @@ uint32_t ASMandeq(char * operands[]) {
   account the off-by-8 bytes effect from the ARM pipeline.
 */
 
-uint32_t branch_mask = 0x0a000000;
-
-uint32_t compute_cond(enum mnemonic_code cond) {
+int32_t calculate_branch(enum mnemonic_code cond, char * operands[]) {
   cond -= 16;
-  cond <<= 28;
-  return cond + branch_mask;
+  int32_t offset = atoi(operands[0]);
+  offset >>= 2;
+  return (cond << 28) | 0x0a000000 | (offset & 0x00ffffff);
 }
 
 uint32_t ASMbeq(char * operands[]) {
-  return compute_cond(BEQ);
+  return calculate_branch(BEQ, operands);
 }
 
 uint32_t ASMbne(char * operands[]) {
-  return compute_cond(BNE);
+  return calculate_branch(BNE, operands);
 }
 
 uint32_t ASMbge(char * operands[]) {
-  return compute_cond(BGE);
+  return calculate_branch(BGE, operands);
 }
 
 uint32_t ASMblt(char * operands[]) {
-  return compute_cond(BLT);
+  return calculate_branch(BLT, operands);
 }
 
 uint32_t ASMbgt(char * operands[]) {
-  return compute_cond(BGT);
+  return calculate_branch(BGT, operands);
 }
 
 uint32_t ASMble(char * operands[]) {
-  return compute_cond(BLE);
+  return calculate_branch(BLE, operands);
 }
 
 uint32_t ASMb(char * operands[]) {
-  return compute_cond(B);
+  return calculate_branch(B, operands);
 }
 
 
