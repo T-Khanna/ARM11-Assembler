@@ -15,6 +15,22 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
+int getRegBin(char* reg){
+
+  //removing the r in the register string gived
+  reg++;
+
+  //obtaining register number in decimal
+  int reg_num = atoi(reg);
+
+  //obtaining register number in binary
+  int reg_bin = decToBin(reg_num);
+  
+  return reg_bin;
+
+}
+
+
 //TODO: Fill these
 uint32_t ASMadd(char * operands[]) {
   return 0;
@@ -57,7 +73,7 @@ uint32_t ASMcmp(char * operands[]) {
 }
 
 uint32_t ASMmul(char * operands[]) {
-/*
+  
   int32_t result = 0;
 
   //setting A bit 21 to 0
@@ -75,27 +91,27 @@ uint32_t ASMmul(char * operands[]) {
   setBits(&result, 4, &bits_4_7, 0, 4);
 
   //setting bits of rd using operands
-  int rd_bin = decToBin(operands[0]);
+  int rd_bin = getRegBin(operands[0]);
   setBits(&result, 16, &rd_bin, 0, 4);
   
   //setting bits of rm using operands
-  int rm_bin = decToBin(operands[1]);
+  int rm_bin = getRegBin(operands[1]);
   setBits(&result, 0, &rm_bin, 0, 4);
 
   //setting bits of rs using operands
-  int rs_bin = decToBin(operands[2]);
+  int rs_bin = getRegBin(operands[2]);
   setBits(&result, 8, &rs_bin, 0 , 4);
 
   //bits of Rn will be 0 as result is initialised
   //bits 22-27 will be 0 as result is initialised
 
   return result;
-*/
+
   return 0;
 }
 
 uint32_t ASMmla(char * operands[]) {
-/*
+
   int32_t result = 0;
 
   //setting A bit 21 to 1
@@ -113,25 +129,25 @@ uint32_t ASMmla(char * operands[]) {
   setBits(&result, 4, &bits_4_7, 0, 4);
 
   //setting bits of rd using operands
-  int rd_bin = decToBin(operands[0]);
+  int rd_bin = getRegBin(operands[0]);
   setBits(&result, 16, &rd_bin, 0, 4);
   
   //setting bits of rm using operands
-  int rm_bin = decToBin(operands[1]);
+  int rm_bin = getRegBin(operands[1]);
   setBits(&result, 0, &rm_bin, 0, 4);
 
   //setting bits of rs using operands
-  int rs_bin = decToBin(operands[2]);
+  int rs_bin = getRegBin(operands[2]);
   setBits(&result, 8, &rs_bin, 0 , 4);
 
   //setting bits of rn using operands
-  int rn_bin = decToBin(operands[3]);
+  int rn_bin = getRegBin(operands[3]);
   setBits(&result, 12, &rn_bin, 0, 4);
 
   //bits 22-27 will be 0 as result is initialised
 
   return (unsigned) result;
-*/
+
   return 0;
 }
 
@@ -191,21 +207,21 @@ uint32_t ASMstr(char * operands[]) {
 
 uint32_t ASMlsl(char * operands[]) {
 //lsl Rn, <#expression> as though it were mov Rn, Rn, lsl <#expression>
-/*  
+
   //finding out suitable operands to call mov from operands specified
-  int32_t operands_for_mov[4] = {operands[0], operands[0], atoi("lsl"),
-                                 operands[1]};
+  char* operands_for_mov[4] = {operands[0], operands[0], "lsl",
+                               operands[1]};
 
   //redirecting to mov with suitable operands
   return ASMmov(operands_for_mov);
-*/
-  return 0;
+
 }
 
 uint32_t ASMandeq(char * operands[]) {
+
   //compiles the instruction andeq r0, r0, r0 to the binary value 0x00000000
-  //TODO: not sure if i have to check all 3 operands to be r0's here...
   return 0;
+
 }
 
 
@@ -254,6 +270,7 @@ uint32_t ASMble(char * operands[]) {
 uint32_t ASMb(char * operands[]) {
   return compute_cond(B);
 }
+
 
 
 
