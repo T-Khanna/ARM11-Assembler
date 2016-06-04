@@ -28,6 +28,8 @@ int get_operands(char* operand, int size) {
   return 0;
 }
 */
+
+// Sets the function pointer in token_line based on the code
 void set_pointer(char* code, tokenised* token_line) {
   int i = 0;
   char* instr = table[i].mnemonic;
@@ -40,8 +42,6 @@ void set_pointer(char* code, tokenised* token_line) {
     instr = table[i].mnemonic;
   }
 }
-
-// token_line.func_pointer = op_table[i].op_func_pointer;
 
 void tokenise_init(tokenised* tokenised_str) {
   tokenised_str->label = NULL;  
@@ -91,6 +91,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
         // We need to update the label position for this value.
         iter->value.label_pos = line_num;
         list_remove(&label_list, iter);
+        // TODO: Need to resolve previously unknown forward reference.
       } else {
         list_iter_prev(iter);
       }   
@@ -121,6 +122,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
       
       if (tokenised_str.operands[0] == NULL) {
         // Label is a forward reference to an unknown address
+        // TODO: Need to deal with this case
         return tokenised_str;
       }
 
@@ -152,5 +154,7 @@ tokenised tokeniser(char *line, int line_num) {
     temp = strtok_r(NULL, delim1, &save_ptr); 
     num_of_tokens++;
   }
+  // Note, this function will also try to turn a label into a bin_instr
+  // TODO: Need to deal with this case
   return get_tokenised(tokens, num_of_tokens, line_num);
 }
