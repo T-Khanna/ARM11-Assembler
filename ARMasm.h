@@ -16,12 +16,13 @@
 #define MAX_LABELS 50
 #define CHAR_LIMIT 511
 #define MAX_LINES 1000
-#define TOKEN_LIMIT 5
+#define TOKEN_LIMIT 10
 #define MEMORY_CAPACITY (65536/4)
 #define INSTRUCTION_BYTE_SIZE 4
 #define INSTRUCTION_BIT_SIZE 32
 #define BYTE_SIZE 8
 #define OPERAND_SIZE 4
+#define PIPELINE_OFFSET 8
 
 //-- ENUM CODE MAPPING ---------------------------------------------------------
 
@@ -68,8 +69,9 @@ struct symbol_table {
 typedef struct tokenised {
 
   char* label;
-  int32_t (*func_pointer)(int32_t[]);
-  int32_t operands[OPERAND_SIZE];
+  int label_pos;
+  uint32_t (*func_pointer)(char* operands[]);
+  char* operands[OPERAND_SIZE];
 
 } tokenised;
 
@@ -85,51 +87,51 @@ struct symbol_table symb_table[MAX_LABELS];
 
 //-- OPFUNCTION DECLARATIONS ---------------------------------------------------
 
-uint32_t ASMadd(int32_t operands[]);
+uint32_t ASMadd(char* operands[]);
 
-uint32_t ASMsub(int32_t operands[]);
+uint32_t ASMsub(char* operands[]);
 
-uint32_t ASMrsb(int32_t operands[]);
+uint32_t ASMrsb(char* operands[]);
 
-uint32_t ASMand(int32_t operands[]);
+uint32_t ASMand(char* operands[]);
 
-uint32_t ASMeor(int32_t operands[]);
+uint32_t ASMeor(char* operands[]);
 
-uint32_t ASMorr(int32_t operands[]);
+uint32_t ASMorr(char* operands[]);
 
-uint32_t ASMmov(int32_t operands[]);
+uint32_t ASMmov(char* operands[]);
 
-uint32_t ASMtst(int32_t operands[]);
+uint32_t ASMtst(char* operands[]);
 
-uint32_t ASMteq(int32_t operands[]);
+uint32_t ASMteq(char* operands[]);
 
-uint32_t ASMcmp(int32_t operands[]);
+uint32_t ASMcmp(char* operands[]);
 
-uint32_t ASMmul(int32_t operands[]);
+uint32_t ASMmul(char* operands[]);
 
-uint32_t ASMmla(int32_t operands[]);
+uint32_t ASMmla(char* operands[]);
 
-uint32_t ASMldr(int32_t operands[]);
+uint32_t ASMldr(char* operands[]);
 
-uint32_t ASMstr(int32_t operands[]);
+uint32_t ASMstr(char* operands[]);
 
-uint32_t ASMbeq(int32_t operands[]);
+uint32_t ASMbeq(char* operands[]);
 
-uint32_t ASMbne(int32_t operands[]);
+uint32_t ASMbne(char* operands[]);
 
-uint32_t ASMbge(int32_t operands[]);
+uint32_t ASMbge(char* operands[]);
 
-uint32_t ASMblt(int32_t operands[]);
+uint32_t ASMblt(char* operands[]);
 
 
-uint32_t ASMbgt(int32_t operands[]);
+uint32_t ASMbgt(char* operands[]);
 
-uint32_t ASMble(int32_t operands[]);
+uint32_t ASMble(char* operands[]);
 
-uint32_t ASMb(int32_t operands[]);
+uint32_t ASMb(char* operands[]);
 
-uint32_t ASMlsl(int32_t operands[]);
+uint32_t ASMlsl(char* operands[]);
 
-uint32_t ASMandeq(int32_t operands[]);
+uint32_t ASMandeq(char* operands[]);
 
 #endif

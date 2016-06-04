@@ -106,4 +106,21 @@ int rotateRight(int num, unsigned int rot_num) {
 
 }
 
+int decToBin(int num){
+
+    int bin = 0;
+    int i = 1;
+    int rem = 0;
+
+    while(num != 0){
+      rem = num % 2;
+      num = num / 2;
+      bin += (rem * i);
+      i *= 10;
+    }
+
+    return bin;
+
+}
+
 

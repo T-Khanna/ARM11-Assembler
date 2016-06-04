@@ -26,7 +26,11 @@ uint32_t command_processor(tokenised input);
 extern int label_count;
 
 //TODO: ADD FUNC POINTER DATABASE
+<<<<<<< HEAD
 uint32_t (*func_table[32]) (int32_t[]) = {
+=======
+uint32_t (*func_table[32]) (char* operands[]) = {
+>>>>>>> master
   &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
   &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
@@ -152,7 +156,11 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
   for (int line_num = 0; line_num < length; line_num++) {
     current_instruction = assem_instr[line_num];
     token_line = tokeniser(current_instruction, line_num);
+<<<<<<< HEAD
 //    bin_instr[i] = command_processor(token_line);
+=======
+    bin_instr[line_num] = command_processor(token_line);
+>>>>>>> master
   }
 
   
