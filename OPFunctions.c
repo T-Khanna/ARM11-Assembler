@@ -13,7 +13,14 @@
 #include <math.h>
 #include "ARMasm.h"
 #include "bitOper.h"
-#include "assemble.c"
+
+//-- GLOBAL VARIABLES ---------------------------------------------------------
+
+extern int label_count;
+extern uint32_t *bin_instr;
+extern int num_of_lines;
+extern int line_num;
+extern int extra_data;
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 

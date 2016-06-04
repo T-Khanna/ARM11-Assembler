@@ -23,11 +23,11 @@ uint32_t command_processor(tokenised input);
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
-extern int label_count;
-extern uint32_t *bin_instr;
-extern int num_of_lines;
-extern int line_num;
-extern int extra_data;
+int label_count;
+uint32_t *bin_instr;
+int num_of_lines;
+int line_num;
+int extra_data;
 
 //TODO: ADD FUNC POINTER DATABASE
 uint32_t (*func_table[32]) (char* operands[]) = {
