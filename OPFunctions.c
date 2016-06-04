@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "ARMasm.h"
 #include "bitOper.h"
 
@@ -73,14 +74,17 @@ uint32_t ASMmul(int32_t operands[]) {
   int bits_4_7 = 1001;
   setBits(&result, 4, &bits_4_7, 0, 4);
 
-  //setting bits of Rd using operands
-  setBits(&result, 16, &operands[0], 0, 4);
+  //setting bits of rd using operands
+  int rd_bin = decToBin(operands[0]);
+  setBits(&result, 16, &rd_bin, 0, 4);
   
-  //setting bits of Rm using operands
-  setBits(&result, 0, &operands[1], 0, 4);
+  //setting bits of rm using operands
+  int rm_bin = decToBin(operands[1]);
+  setBits(&result, 0, &rm_bin, 0, 4);
 
-  //setting bits of Rs using operands
-  setBits(&result, 8, &operands[2], 0, 4);
+  //setting bits of rs using operands
+  int rs_bin = decToBin(operands[2]);
+  setBits(&result, 8, &rs_bin, 0 , 4);
 
   //bits of Rn will be 0 as result is initialised
   //bits 22-27 will be 0 as result is initialised
@@ -107,17 +111,21 @@ uint32_t ASMmla(int32_t operands[]) {
   int bits_4_7 = 1001;
   setBits(&result, 4, &bits_4_7, 0, 4);
 
-  //setting bits of Rd using operands
-  setBits(&result, 16, &operands[0], 0, 4);
+  //setting bits of rd using operands
+  int rd_bin = decToBin(operands[0]);
+  setBits(&result, 16, &rd_bin, 0, 4);
   
-  //setting bits of Rm using operands
-  setBits(&result, 0, &operands[1], 0, 4);
+  //setting bits of rm using operands
+  int rm_bin = decToBin(operands[1]);
+  setBits(&result, 0, &rm_bin, 0, 4);
 
-  //setting bits of Rs using operands
-  setBits(&result, 8, &operands[2], 0, 4);
+  //setting bits of rs using operands
+  int rs_bin = decToBin(operands[2]);
+  setBits(&result, 8, &rs_bin, 0 , 4);
 
-  //setting bits of Rn using operands
-  setBits(&result, 12, &operands[3], 0, 4);
+  //setting bits of rn using operands
+  int rn_bin = decToBin(operands[3]);
+  setBits(&result, 12, &rn_bin, 0, 4);
 
   //bits 22-27 will be 0 as result is initialised
 
@@ -197,6 +205,7 @@ uint32_t ASMble(int32_t operands[]) {
 uint32_t ASMb(int32_t operands[]) {
   return compute_cond(B);
 }
+
 
 
 

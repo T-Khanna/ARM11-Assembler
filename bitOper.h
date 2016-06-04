@@ -24,6 +24,7 @@ int getBits(int* num, int index, int size);
 void setBits(int* target, int index_target, int* source, int index_source, 
              int size);
 int rotateRight(int num, unsigned int rot_num);
+int decToBin(int n);
 
 
 #endif
