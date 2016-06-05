@@ -31,20 +31,17 @@ int32_t setOperand(int32_t result, char* str);
 // uncondiniotanl mask
 const uint32_t uncond_mask = (1<<31) + (1<<30) + (1<<29);
 
-int getRegBin(char* reg){
+int getRegBin(char* operand){
 
-  //removing the r in the register string gived
-  reg++;
+  //removing the r in the operandister string gived
+  operand++;
 
   //obtaining register number in decimal
-  int reg_num = atoi(reg);
-
-  return reg_num;
+  return (int) strtol(operand, NULL, 0);
 
 }
 
 void getAddress(int *result, char** operands){
-
 }
 
 //TODO: Fill these
