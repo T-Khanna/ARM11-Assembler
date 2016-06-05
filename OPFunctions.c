@@ -522,11 +522,17 @@ uint32_t ASMstr(char * operands[]) {
 }
 
 uint32_t ASMlsl(char * operands[]) {
-//lsl Rn, <#expression> as though it were mov Rn, Rn, lsl <#expression>
+//lsl Rn, <#expression> as though it were 
+//mov Rn, Rn, lsl <#expression>
+
+//Your assembler should compile the instruction lsl Rn, <#expression> as though 
+//it were mov Rn, Rn, lsl <#expression>. The binary form of this can be found 
+//in the emulator section, under Data Processing Instructions, when Operand2 is 
+//a register, shifted by a constant amount.  
 
   //finding out suitable operands to call mov from operands specified
-  char* operands_for_mov[4] = {operands[0], operands[0], "lsl",
-                               operands[1]};
+  char* lsl_expr = strcat("lsl ", operands[1]);
+  char* operands_for_mov[4] = {operands[0], operands[0], lsl_expr};
 
   //redirecting to mov with suitable operands
   return ASMmov(operands_for_mov);
