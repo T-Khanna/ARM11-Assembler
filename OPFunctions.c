@@ -412,14 +412,14 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  char type[3];
  strncpy(type,shift,3);
  if(strcmp(type,"lsr")){
-  setBit(&result, 0, 5);
-  setBit(&result, 1, 6);
+  setBit(&result, 1, 5);
+  setBit(&result, 0, 6);
  } else if (strcmp(type,"lsl")){
   setBit(&result, 0, 5);
   setBit(&result, 0, 6);
  } else if (strcmp(type,"asr")){
-  setBit(&result, 1, 5);
-  setBit(&result, 0, 6);
+  setBit(&result, 0, 5);
+  setBit(&result, 1, 6);
  } else if (strcmp(type,"ror")){
   setBit(&result, 1, 5);
   setBit(&result, 1, 6);
@@ -431,7 +431,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  setBits(&result, 8, &reg_num, 0, 4);
  setBit(&result, 1 ,4); 
 } 
-// printf("%u\n",result);
+ printf("%u\n",result);
  return result;
 }
 
