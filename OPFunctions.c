@@ -285,7 +285,7 @@ int32_t setOperand(int32_t result, char* str){
  
  int operand2 =0;
 
- if(ispunct(*(str))){
+ if(*(str) == '#'){
    
    // setting i bit
    setBit(&result, 1 , 25);
@@ -296,7 +296,10 @@ int32_t setOperand(int32_t result, char* str){
    return result;
  }
  
- // TODO : 
+ // TODO :
+ operand2 = getRegBin(str);
+ setBits(&result, 0, &operand2, 0, 4); 
+ printf("%u\n",result);
  return result;
 }
 
