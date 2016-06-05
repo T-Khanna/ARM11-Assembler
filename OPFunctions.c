@@ -63,12 +63,12 @@ void resPrePostAddressing(int *result, char** operands){
     if(operands[1] == NULL) {
 
       //if there is no second operand set P bit to 1 due to Pre-indexing
-      setBit(result, 24, 1);
+      setBit(result, 1, 24);
 
     } else {
 
       //set P bit to 1 due to Post-indexing
-      setBit(result, 24, 0);
+      setBit(result, 0, 24);
 
 			//two possibilities
 			//[Rn], #expression
@@ -88,7 +88,7 @@ void resPrePostAddressing(int *result, char** operands){
 
       //setting bit for U (bit 23) depending on if offset is negative or not
       //determines if offset should be added or subtracted.
-      setBit(result, 23, isNegative == 0);
+      setBit(result, isNegative == 0, 23);
 
       //amending offset based on sign
       if(isNegative) {
@@ -105,7 +105,7 @@ void resPrePostAddressing(int *result, char** operands){
     //if operand0 does not have a ']' in it
 
     //set P bit to 1 due to Pre-indexing
-    setBit(result, 24, 1);
+    setBit(result, 1, 24);
 
 		//One of the following
 		//[Rn, #expression]
@@ -129,7 +129,7 @@ void resPrePostAddressing(int *result, char** operands){
 
     //setting bit for U (bit 23) depending on if offset is negative or not
     //determines if offset should be added or subtracted.
-    setBit(result, 23, isNegative == 0);
+    setBit(result, isNegative == 0, 23);
 
     //amending offset based on sign
     if(isNegative) {
@@ -484,7 +484,7 @@ uint32_t ASMldr(char * operands[]) {
     setBits(&result, 0, &offset, 0, 12);
     
     //setting P bit (24th bit) to 1 for pre-indexed
-    setBit(&result, 24, 1);
+    setBit(&result, 1, 24);
 
 
   } else{
