@@ -31,7 +31,7 @@ int32_t setOperand(int32_t result, char* str);
 // uncondiniotanl mask
 const uint32_t uncond_mask = (1<<31) + (1<<30) + (1<<29);
 
-int getRegBin(char* operand){
+int numFromStr(char* operand){
 
   //removing the r in the operandister string gived
   operand++;
@@ -41,15 +41,112 @@ int getRegBin(char* operand){
 
 }
 
-void getAddress(int *result, char** operands){
+void resPrePostAddressing(int *result, char** operands){
+  //"ldr r0, [r1,r2,lsl #2]" will give an array of 
+  //{"r0", "[r1", "r2", "lsl #2]"}
+  
+  //setting base register Rn to bits 16-19 in result
+  char* rn_str = operands[0];
+  rn_str++; //ommitting the '[' in "[rn"
+  int rn_num = numFromStr(rn_str);
+  setBits(result, 16, &rn_num, 0, 4);
+
+  //identifying [Rn] from [Rn
+  //char lastCharInOP1 = *(operands[1]) - 1; //TODO: Not sure if this is working
+  //int closeBracket = (lastCharInOP1 == ']');
+  //returns NULL if not found. index pointer if found
+  char *closeBracketInOp0 = strchr(operands[0], ']');
+
+  if(closeBracketInOp0 != NULL) { 
+  //if operand0 has a ']' in it
+    
+    if(operands[1] == NULL) {
+
+      //if there is no second operand set P bit to 1 due to Pre-indexing
+      setBit(result, 24, 1);
+
+    } else {
+
+      //set P bit to 1 due to Post-indexing
+      setBit(result, 24, 0);
+
+			//two possibilities
+			//[Rn], #expression
+			//(Opt) [Rn], {+/-}Rm{, <shift>}
+
+      int offset = numFromStr(operands[2]);
+
+      //checking if offset fits
+      if(offset < 0xfffff800 || offset > 0x7ff) {
+        printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
+                 ,offset);
+        exit(EXIT_FAILURE);
+      }
+
+      //checking for sign using sign bit 31
+      int isNegative = getBit(&offset, 31);
+
+      //setting bit for U (bit 23) depending on if offset is negative or not
+      //determines if offset should be added or subtracted.
+      setBit(result, 23, isNegative == 0);
+
+      //amending offset based on sign
+      if(isNegative) {
+        offset = -offset;
+      }
+
+      //setting bits 0-11 for offset
+      setBits(result, 0, &offset, 0, 11);
+
+    }
+
+
+  } else {
+    //if operand0 does not have a ']' in it
+
+    //set P bit to 1 due to Pre-indexing
+    setBit(result, 24, 1);
+
+		//One of the following
+		//[Rn, #expression]
+		//(Opt) [Rn, {+/-}Rm{, <shift>}]
+    
+    //remove the char ']' from operand2 "#expr]"
+    //operands[2] = blah(operands[2]);
+    strncpy(operands[2], operands[2], strlen(operands[2])-1);
+
+    int offset = numFromStr(operands[2]);
+
+    //checking if offset fits
+    if(offset < 0xfffff800 || offset > 0x7ff) {
+      printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
+               ,offset);
+      exit(EXIT_FAILURE);
+    }
+
+    //checking for sign using sign bit 31
+    int isNegative = getBit(&offset, 31);
+
+    //setting bit for U (bit 23) depending on if offset is negative or not
+    //determines if offset should be added or subtracted.
+    setBit(result, 23, isNegative == 0);
+
+    //amending offset based on sign
+    if(isNegative) {
+      offset = -offset;
+    }
+
+    //setting bits 0-11 for offset
+    setBits(result, 0, &offset, 0, 11);
+
+  }  
 }
 
-//TODO: Fill these
 uint32_t ASMadd(char* operands[]) {
   int32_t result = 0;
   //setting given intruction bits
-  result = setDataIntrBits(result, 0, ADD, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 0, ADD, numFromStr(operands[1]),
+      numFromStr(operands[0]));
   
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result, isshift, 25); // set 25 bit to isshift
@@ -62,8 +159,8 @@ uint32_t ASMadd(char* operands[]) {
 uint32_t ASMsub(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 0, SUB, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 0, SUB, numFromStr(operands[1]),
+      numFromStr(operands[0]));
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result,isshift,25); // set 25 bit to isshift
 
@@ -75,8 +172,8 @@ uint32_t ASMsub(char* operands[]) {
 uint32_t ASMrsb(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 0, RSB, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 0, RSB, numFromStr(operands[1]),
+      numFromStr(operands[0]));
 
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result,isshift,25); // set 25 bit to isshift
@@ -89,8 +186,8 @@ uint32_t ASMrsb(char* operands[]) {
 uint32_t ASMand(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 0, AND, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 0, AND, numFromStr(operands[1]),
+      numFromStr(operands[0]));
 
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
@@ -103,8 +200,8 @@ uint32_t ASMand(char* operands[]) {
 uint32_t ASMeor(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 0, EOR, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 0, EOR, numFromStr(operands[1]),
+      numFromStr(operands[0]));
    
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
@@ -117,8 +214,8 @@ uint32_t ASMeor(char* operands[]) {
 uint32_t ASMorr(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 0, ORR, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 0, ORR, numFromStr(operands[1]),
+      numFromStr(operands[0]));
  
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
@@ -133,7 +230,7 @@ uint32_t ASMmov(char* operands[]) {
   // fix this
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 0, MOV, 0, getRegBin(operands[0]));
+  result = setDataIntrBits(result, 0, MOV, 0, numFromStr(operands[0]));
 
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
@@ -146,8 +243,8 @@ uint32_t ASMmov(char* operands[]) {
 uint32_t ASMtst(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 1, TST, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 1, TST, numFromStr(operands[1]),
+      numFromStr(operands[0]));
 
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
@@ -160,8 +257,8 @@ uint32_t ASMtst(char* operands[]) {
 uint32_t ASMteq(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 1, TEQ, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 1, TEQ, numFromStr(operands[1]),
+      numFromStr(operands[0]));
 
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
@@ -174,8 +271,8 @@ uint32_t ASMteq(char* operands[]) {
 uint32_t ASMcmp(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 1, CMP, getRegBin(operands[1]),
-      getRegBin(operands[0]));
+  result = setDataIntrBits(result, 1, CMP, numFromStr(operands[1]),
+      numFromStr(operands[0]));
    
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
@@ -205,16 +302,16 @@ uint32_t ASMmul(char * operands[]) {
   setBits(&result, 4, &bits_4_7, 0, 4);
 
   //setting bits of rd using operands
-  int rd_bin = getRegBin(operands[0]);
-  setBits(&result, 16, &rd_bin, 0, 4);
+  int rd_num = numFromStr(operands[0]);
+  setBits(&result, 16, &rd_num, 0, 4);
   
   //setting bits of rm using operands
-  int rm_bin = getRegBin(operands[1]);
-  setBits(&result, 0, &rm_bin, 0, 4);
+  int rm_num = numFromStr(operands[1]);
+  setBits(&result, 0, &rm_num, 0, 4);
 
   //setting bits of rs using operands
-  int rs_bin = getRegBin(operands[2]);
-  setBits(&result, 8, &rs_bin, 0 , 4);
+  int rs_num = numFromStr(operands[2]);
+  setBits(&result, 8, &rs_num, 0 , 4);
 
   //bits of Rn will be 0 as result is initialised
   //bits 22-27 will be 0 as result is initialised
@@ -242,20 +339,20 @@ uint32_t ASMmla(char * operands[]) {
   setBits(&result, 4, &bits_4_7, 0, 4);
 
   //setting bits of rd using operands
-  int rd_bin = getRegBin(operands[0]);
-  setBits(&result, 16, &rd_bin, 0, 4);
+  int rd_num = numFromStr(operands[0]);
+  setBits(&result, 16, &rd_num, 0, 4);
   
   //setting bits of rm using operands
-  int rm_bin = getRegBin(operands[1]);
-  setBits(&result, 0, &rm_bin, 0, 4);
+  int rm_num = numFromStr(operands[1]);
+  setBits(&result, 0, &rm_num, 0, 4);
 
   //setting bits of rs using operands
-  int rs_bin = getRegBin(operands[2]);
-  setBits(&result, 8, &rs_bin, 0 , 4);
+  int rs_num = numFromStr(operands[2]);
+  setBits(&result, 8, &rs_num, 0 , 4);
 
   //setting bits of rn using operands
-  int rn_bin = getRegBin(operands[3]);
-  setBits(&result, 12, &rn_bin, 0, 4);
+  int rn_num = numFromStr(operands[3]);
+  setBits(&result, 12, &rn_num, 0, 4);
 
   //bits 22-27 will be 0 as result is initialised
 
@@ -286,7 +383,7 @@ int32_t setOperand(int32_t result, char* str){
    setBit(&result, 1 , 25);
 
    // store operant in intruction bits
-   operand2 = getRegBin(str);
+   operand2 = numFromStr(str);
 
    int rotation = 0;
    unsigned int left,right;
@@ -301,13 +398,14 @@ int32_t setOperand(int32_t result, char* str){
  
 //   printf("%u\n",rotation);
    setBits(&result, 8, &rotation, 0, 4);
+
    setBits(&result, 0, &operand2, 0, 8);
 //   printf("%u\n",result);
    return result;
  }
  
  // TODO :
- operand2 = getRegBin(str);
+ operand2 = numFromStr(str);
  setBits(&result, 0, &operand2, 0, 4); 
 // printf("%u\n",result);
  return result;
@@ -324,26 +422,13 @@ uint32_t ASMldr(char * operands[]) {
     return ASMmov(operands);
   }
 
+  //settting all the known bits of the result
   int32_t result = 0;
-
-  //setting L bit 20 to 1
-  setBit(&result, 1, 20);   
-
-  //setting COND
-  int cond = 1110;
-  setBits(&result, 28, &cond, 0, 4);
-
-  //setting bits 27-26 to 01
-  setBit(&result, 0, 27);   
-  setBit(&result, 1, 26);   
-
-  //setting bits 21 22 to 01
-  setBit(&result, 0, 21);   
-  setBit(&result, 0, 22);   
+	result = 0xe4900000;
 
   //setting bits of rd using operands
-  int rd_bin = getRegBin(operands[0]);
-  setBits(&result, 12, &rd_bin, 0 , 4);
+  int rd_num = numFromStr(operands[0]);
+  setBits(&result, 12, &rd_num, 0 , 4);
 
   //if <address> is a numeric constant of the form: <=expression>
   if(*(operands[1]) == '='){
@@ -352,10 +437,12 @@ uint32_t ASMldr(char * operands[]) {
     int pc = 15;
     setBits(&result, 16, &pc, 0, 4);
 
-    //obtaining arg as int without the '='
-    char* argStr = operands[1];
-    argStr++;
-    int arg = atoi(argStr);
+    //obtaining arg as int without the '=' using numFromStr which omits the
+    //first character and returns the rest of the operand as an int
+    int arg = numFromStr(operands[1]);
+    //char* argStr = operands[1];
+    //argStr++;
+    //int arg = atoi(argStr);
 
     //incrementing num_of_lines in the file and extra_data before storing arg
     num_of_lines++;
@@ -380,7 +467,7 @@ uint32_t ASMldr(char * operands[]) {
 
     //if <address> is a pre-indexed address specificaition
     //if <address> is a post-indexing addressing specification
-    getAddress(&result, operands);
+    resPrePostAddressing(&result, operands);
 
   }
 
@@ -394,25 +481,18 @@ uint32_t ASMstr(char * operands[]) {
 //instruction has syntax str Rd, <address>  
 // (address) := Rd
 
+  //setting all known bits in register
   int32_t result = 0;
-
-  //setting L bit 20 to 0
-  setBit(&result, 0, 20);   
-
-  //setting bits 27-26 to 01
-  setBit(&result, 0, 27);   
-  setBit(&result, 1, 26);   
+  result = 0xe4800000;
 
   //setting bits of rd using operands
-  int rd_bin = getRegBin(operands[0]);
-  setBits(&result, 12, &rd_bin, 0 , 4);
+  int rd_num = numFromStr(operands[0]);
+  setBits(&result, 12, &rd_num, 0 , 4);
 
   //if <address> is a pre-indexed address specificaition
   //if <address> is a post-indexing addressing specification
-  getAddress(&result, operands);
+  resPrePostAddressing(&result, operands);
 
-  //bits 20 21 will be 0 as result is initialised
-  
   return (unsigned) result;
 
 }
