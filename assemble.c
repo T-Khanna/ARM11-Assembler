@@ -182,21 +182,10 @@ void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
   // Creating output binary file
   FILE *fptr = fopen(path, "w+");
  
-  //for(int line = 0; line < lines_in_file; line++){
-  //  uint32_t num = bin_instr[line];
-  //  uint32_t result = 0;
-  //  for(int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
-  //    result = result | (getBits((int32_t*)&num, i * BYTE_SIZE, BYTE_SIZE) //gets a byte
-  //             << ((INSTRUCTION_BYTE_SIZE -1 - i) * BYTE_SIZE));
-  //  }
-  //  bin_instr[line] = result;
-  //}
-
   fwrite(bin_instr, INSTRUCTION_BYTE_SIZE, lines_in_file, fptr);
 
   //closing file
   fclose(fptr);
-
   
 }
 
