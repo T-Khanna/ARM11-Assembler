@@ -425,13 +425,24 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
   setBit(&result, 1, 6);
  }
 
+ if (shift[4] == '#'){
+  // shift is a expression
+  char reg[4];
+  strcpy(reg, &(shift[4]));
+  int reg_num = numFromStr(reg);
+  setBits(&result, 7, &reg_num, 0, 5);  
+  setBit(&result, 0 ,4);
+ }
+ else {
+ //shift is a register
  char reg[3];
  strcpy(reg, &(shift[4]));
  int reg_num = numFromStr(reg);
  setBits(&result, 8, &reg_num, 0, 4);
  setBit(&result, 1 ,4); 
+ }
 } 
- printf("%u\n",result);
+ //printf("%u\n",result);
  return result;
 }
 
