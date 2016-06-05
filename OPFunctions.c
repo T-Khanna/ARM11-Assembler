@@ -442,6 +442,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  setBit(&result, 1 ,4); 
  }
 } 
+
  //printf("%u\n",result);
  return result;
 }
