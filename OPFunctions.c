@@ -198,8 +198,7 @@ uint32_t ASMmul(char * operands[]) {
   setBit(&result, 0, 20);
 
   //setting Cond field to 1110
-  int cond_field = 1110;
-  setBits(&result, 28, &cond_field, 0, 4);
+  result |= uncond_mask;
 
   //setting bits 4-7 to 1001
   int bits_4_7 = 1001;
@@ -236,8 +235,7 @@ uint32_t ASMmla(char * operands[]) {
   setBit(&result, 0, 20);
 
   //setting Cond field to 1110
-  int cond_field = 1110;
-  setBits(&result, 28, &cond_field, 0, 4);
+  result |= uncond_mask;
 
   //setting bits 4-7 to 1001
   int bits_4_7 = 1001;
