@@ -285,14 +285,24 @@ int32_t setOperand(int32_t result, char* str){
    // setting i bit
    setBit(&result, 1 , 25);
 
-   if(*(str+1) == '0' && *(str+2) == 'x'){
-   // convert hex to decimal value
-   // TODO 
-   } 
-
    // store operant in intruction bits
    operand2 = getRegBin(str);
+
+   int rotation = 0;
+   unsigned int left,right;
+   while (abs(operand2)>255){
+   // need to rotate
+   left = (unsigned) operand2<<2;
+   right = (unsigned) operand2>>30;
+   operand2 = (unsigned int)(right | left);
+   rotation ++;
+//   printf("left = %u  right = %u  %u\n",left,right,operand2);
+   }
+ 
+//   printf("%u\n",rotation);
+   setBits(&result, 8, &rotation, 0, 4);
    setBits(&result, 0, &operand2, 0, 8);
+//   printf("%u\n",result);
    return result;
  }
  
