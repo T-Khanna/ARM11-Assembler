@@ -252,13 +252,12 @@ uint32_t ASMmov(char* operands[]) {
 uint32_t ASMtst(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 1, TST, numFromStr(operands[1]),
-      numFromStr(operands[0]));
+  result = setDataIntrBits(result, 1, TST, numFromStr(operands[0]),0);
 
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2],operands[3]);
+  result = setOperand(result, operands[1],operands[2]);
        
   return (unsigned) result;
 }
@@ -266,13 +265,12 @@ uint32_t ASMtst(char* operands[]) {
 uint32_t ASMteq(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 1, TEQ, numFromStr(operands[1]),
-      numFromStr(operands[0]));
+  result = setDataIntrBits(result, 1, TEQ, numFromStr(operands[0]),0);
 
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2],operands[3]);
+  result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
 }
@@ -280,15 +278,15 @@ uint32_t ASMteq(char* operands[]) {
 uint32_t ASMcmp(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
-  result = setDataIntrBits(result, 1, CMP, numFromStr(operands[1]),
-      numFromStr(operands[0]));
-   
+  result = setDataIntrBits(result, 1, CMP, numFromStr(operands[0]),0);
+//    printf("%u\n",result);
+ 
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2],operands[3]);
+  result = setOperand(result, operands[1],operands[2]);
        
-  return (unsigned)  result;
+  return (unsigned) result;
 }
 
 
@@ -416,6 +414,8 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  operand2 = numFromStr(str);
  setBits(&result, 0, &operand2, 0, 4);
 
+// printf("%u\n",result);
+
  if (shift != NULL){
  // shifting by some value
  char type[3];
@@ -452,7 +452,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  }
 } 
 
- //printf("%u\n",result);
+// printf("%u\n",result);
  return result;
 }
 
