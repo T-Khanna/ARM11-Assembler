@@ -330,7 +330,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  strcpy(reg, &(shift[4]));
  int reg_num = getRegBin(reg);
  setBits(&result, 8, &reg_num, 0, 4);
- 
+ setBit(&result, 1 ,4); 
 } 
 // printf("%u\n",result);
  return result;
