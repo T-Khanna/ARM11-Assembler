@@ -45,8 +45,8 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
 
   // Initialise tokenised_str values.
   tokenise_init(&tokenised_str);
-
   if (is_label(tokens[0])) {
+    tokenised_str.operands[0] = tokens[0];
     return tokenised_str;
   }
   // We are dealing with a mnemonic as the first token, so we need to set
@@ -64,15 +64,14 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
                         * INSTRUCTION_BYTE_SIZE - PIPELINE_OFFSET;
         sprintf(offset_val, "%d", offset);
         tokenised_str.operands[0] = offset_val;
+        return tokenised_str;
       }
     }
-  } else {
-    // At this point, we know that a label cannot exist in the tokens
-    int num_of_operands = num_of_tokens - 1;
-    for (int i = 0; i < num_of_operands; i++) {
-      tokenised_str.operands[i] = tokens[i + 1];
-      puts(tokenised_str.operands[i]);
-    }
+  }
+  // At this point, we know that a label cannot exist in the tokens
+  int num_of_operands = num_of_tokens - 1;
+  for (int i = 0; i < num_of_operands; i++) {
+    tokenised_str.operands[i] = tokens[i + 1];
   }
  
   return tokenised_str;

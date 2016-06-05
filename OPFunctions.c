@@ -561,7 +561,11 @@ int32_t calculate_branch(enum mnemonic_code cond, char * operands[]) {
   cond -= 16;
   int32_t offset = atoi(operands[0]);
   offset >>= 2;
-  return (cond << 28) | 0x0a000000 | (offset & 0x00ffffff);
+  offset &= 0x00ffffff;
+  offset |= 0x0a000000;
+  offset |= (cond << 28);
+  return offset;
+//  return (cond << 28) | 0x0a000000 | (offset & 0x00ffffff);
 }
 
 uint32_t ASMbeq(char * operands[]) {
