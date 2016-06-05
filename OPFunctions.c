@@ -290,6 +290,11 @@ int32_t setOperand(int32_t result, char* str){
    // setting i bit
    setBit(&result, 1 , 25);
 
+   if(*(str+1) == '0' && *(str+2) == 'x'){
+   // convert hex to decimal value
+   // TODO 
+   } 
+
    // store operant in intruction bits
    operand2 = getRegBin(str);
    setBits(&result, 0, &operand2, 0, 8);
@@ -299,7 +304,7 @@ int32_t setOperand(int32_t result, char* str){
  // TODO :
  operand2 = getRegBin(str);
  setBits(&result, 0, &operand2, 0, 4); 
- printf("%u\n",result);
+// printf("%u\n",result);
  return result;
 }
 
