@@ -90,9 +90,9 @@ int main(int argc, char **argv) {
   num_of_lines = get_instrs(argv[1], instrs);
   
   //TODO: Testing
-  //for (int i = 0; i < num_of_lines; i++) {
-  //  puts(instrs[i]);
-  //}
+ // for (int i = 0; i < num_of_lines; i++) {
+ //   puts(instrs[i]);
+ // }
 
   //performing the pass over the file to decode into binary that will be written
   bin_instr = translate_instr(instrs, num_of_lines);

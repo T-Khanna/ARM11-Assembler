@@ -106,7 +106,7 @@ int rotateRight(int num, unsigned int rot_num) {
 
 }
 
-int decToBin(int num){
+int decToBin(unsigned int num){
 
     int bin = 0;
     int i = 1;
