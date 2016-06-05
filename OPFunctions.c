@@ -44,6 +44,13 @@ int numFromStr(char* operand){
 void resPrePostAddressing(int *result, char** operands){
   //"ldr r0, [r1,r2,lsl #2]" will give an array of 
   //{"r0", "[r1", "r2", "lsl #2]"}
+
+
+  //for(int i = 0; i < 6; i ++){
+  //  if(operands[i] != NULL){
+  //    puts(operands[i]);
+  //  }
+  //}
   
   //setting base register Rn to bits 16-19 in result
   char* rn_str = operands[0];
@@ -55,12 +62,12 @@ void resPrePostAddressing(int *result, char** operands){
   //char lastCharInOP1 = *(operands[1]) - 1; //TODO: Not sure if this is working
   //int closeBracket = (lastCharInOP1 == ']');
   //returns NULL if not found. index pointer if found
-  char *closeBracketInOp0 = strchr(operands[0], ']');
+  char *closeBracketInOp0 = strchr(operands[1], ']');
 
   if(closeBracketInOp0 != NULL) { 
   //if operand0 has a ']' in it
     
-    if(operands[1] == NULL) {
+    if(operands[2] == NULL) {
 
       //if there is no second operand set P bit to 1 due to Pre-indexing
       setBit(result, 1, 24);
@@ -113,7 +120,9 @@ void resPrePostAddressing(int *result, char** operands){
     
     //remove the char ']' from operand2 "#expr]"
     //operands[2] = blah(operands[2]);
-    strncpy(operands[2], operands[2], strlen(operands[2])-1);
+      
+
+    strncpy(operands[2], operands[2], strlen(operands[2]) - 1);
 
     int offset = numFromStr(operands[2]);
 
