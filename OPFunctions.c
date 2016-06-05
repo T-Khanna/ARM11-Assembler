@@ -26,7 +26,7 @@ extern int extra_data;
 
 int32_t setDataIntrBits(int32_t result,
 		int s, int opcode, int rn, int rd);
-int32_t setOperand(int32_t result, char* str);
+int32_t setOperand(int32_t result, char* str, char* shift);
 
 // uncondiniotanl mask
 const uint32_t uncond_mask = (1<<31) + (1<<30) + (1<<29);
@@ -44,7 +44,6 @@ int getRegBin(char* operand){
 void getAddress(int *result, char** operands){
 }
 
-//TODO: Fill these
 uint32_t ASMadd(char* operands[]) {
   int32_t result = 0;
   //setting given intruction bits
@@ -54,7 +53,7 @@ uint32_t ASMadd(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result, isshift, 25); // set 25 bit to isshift
  
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2], operands[3]);
  // printf("final result = %u\n",result);
   return (unsigned) result;
 }
@@ -67,7 +66,7 @@ uint32_t ASMsub(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result,isshift,25); // set 25 bit to isshift
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
 }
@@ -81,7 +80,7 @@ uint32_t ASMrsb(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   setBit(&result,isshift,25); // set 25 bit to isshift
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
   
   return (unsigned) result;
 }
@@ -95,7 +94,7 @@ uint32_t ASMand(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
 }
@@ -109,7 +108,7 @@ uint32_t ASMeor(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
    
   return (unsigned) result;
 }
@@ -123,7 +122,7 @@ uint32_t ASMorr(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
        
   return (unsigned) result;
 }
@@ -138,7 +137,7 @@ uint32_t ASMmov(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[1]);
+  result = setOperand(result, operands[1],operands[2]);
        
   return (unsigned) result;
 }
@@ -152,7 +151,7 @@ uint32_t ASMtst(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
        
   return (unsigned) result;
 }
@@ -166,7 +165,7 @@ uint32_t ASMteq(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
 }
@@ -180,7 +179,7 @@ uint32_t ASMcmp(char* operands[]) {
   int32_t isshift = 0; // have to implement the logic for this
   result |= (isshift) << 25; // += I * 2^25
 
-  result = setOperand(result, operands[2]);
+  result = setOperand(result, operands[2],operands[3]);
        
   return (unsigned)  result;
 }
@@ -276,7 +275,7 @@ int32_t setDataIntrBits(int32_t result,int s,
   return result;
 }
 
-int32_t setOperand(int32_t result, char* str){
+int32_t setOperand(int32_t result, char* str ,char* shift){
  
  int operand2 =0;
 
@@ -306,9 +305,33 @@ int32_t setOperand(int32_t result, char* str){
    return result;
  }
  
- // TODO :
  operand2 = getRegBin(str);
- setBits(&result, 0, &operand2, 0, 4); 
+ setBits(&result, 0, &operand2, 0, 4);
+
+ if (shift != NULL){
+ // shifting by some value
+ char type[3];
+ strncpy(type,shift,3);
+ if(strcmp(type,"lsr")){
+  setBit(&result, 0, 5);
+  setBit(&result, 1, 6);
+ } else if (strcmp(type,"lsl")){
+  setBit(&result, 0, 5);
+  setBit(&result, 0, 6);
+ } else if (strcmp(type,"asr")){
+  setBit(&result, 1, 5);
+  setBit(&result, 0, 6);
+ } else if (strcmp(type,"ror")){
+  setBit(&result, 1, 5);
+  setBit(&result, 1, 6);
+ }
+
+ char reg[3];
+ strcpy(reg, &(shift[4]));
+ int reg_num = getRegBin(reg);
+ setBits(&result, 8, &reg_num, 0, 4);
+ 
+} 
 // printf("%u\n",result);
  return result;
 }
