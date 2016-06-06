@@ -76,6 +76,9 @@ void resPrePostAddressing(int *result, char** operands){
       setBits(result, 16, &rn_num, 0, 4);
       setBit(result, 1, 24);
 
+      //setting I bit (bit 25)
+      setBit(result, 1, 25);
+
     } else {
 
       //set P bit to 1 due to Post-indexing
@@ -155,9 +158,6 @@ void resPrePostAddressing(int *result, char** operands){
 
     //setting bits 0-11 for offset
     setBits(result, 0, &offset, 0, 12);
-
-    //setting I bit (bit 25)
-    setBit(result, 1, 25);
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
