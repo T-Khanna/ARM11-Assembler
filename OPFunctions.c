@@ -17,7 +17,8 @@
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
 extern int label_count;
-extern uint32_t *bin_instr;
+//extern uint32_t *bin_instr;
+extern uint32_t bin_instr_curr[MAX_LINES];
 extern int num_of_lines;
 extern int line_num;
 extern int extra_data;
@@ -462,8 +463,12 @@ uint32_t ASMldr(char * operands[]) {
 //"ldr r0, [r1,r2]" will give an array of 
 //{"r0", "[r1", "r2"]"}
 
+
+
   //if argument is not greater than 0xFF, it is redirected to mov
-  if(!(strncmp(operands[1], "=0xFF", 32) > 0)) {
+  //if(!(strncmp(operands[1], "=0xFF", 32) > 0)) {
+  if(!(numFromStr(operands[1]) > (numFromStr("0xFF")))) {
+    puts("going to mov");
     return ASMmov(operands);
   }
 
@@ -484,7 +489,9 @@ uint32_t ASMldr(char * operands[]) {
 
     //obtaining arg as int without the '=' using numFromStr which omits the
     //first character and returns the rest of the operand as an int
-    int arg = numFromStr(operands[1]);
+    //int arg = numFromStr(operands[1]);
+    uint32_t arg = numFromStr(operands[1]);
+    printf("%x\n", arg);
     //char* argStr = operands[1];
     //argStr++;
     //int arg = atoi(argStr);
@@ -492,7 +499,7 @@ uint32_t ASMldr(char * operands[]) {
     //incrementing num_of_lines in the file and extra_data before storing arg
     num_of_lines++;
     extra_data++;
-    bin_instr[num_of_lines] = arg;
+    bin_instr_curr[num_of_lines - 1] = arg;
 
     //curr has to be amended form current line_num due to PC being off by 
     //8-bytes. Which is 2 instruction lines

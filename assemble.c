@@ -25,6 +25,7 @@ uint32_t command_processor(tokenised input);
 
 int label_count;
 uint32_t *bin_instr;
+uint32_t bin_instr_curr[MAX_LINES];
 int num_of_lines;
 int line_num;
 int extra_data;
@@ -153,20 +154,19 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
   
   char* current_instruction;
   tokenised token_line;
-  static uint32_t bin_instr[MAX_LINES];
   extra_data = 0;
 
   for (line_num = 0; line_num < length_in_lines; line_num++) {
     current_instruction = assem_instr[line_num];
     token_line = tokeniser(current_instruction, line_num);
-    bin_instr[line_num] = command_processor(token_line);
+    bin_instr_curr[line_num] = command_processor(token_line);
   }
 
   // subract number of labels lines from total lines to store only the number
   // of valid output lines as num_of_lines variable
   num_of_lines -= label_count;
   
-  return bin_instr;
+  return bin_instr_curr;
 
 }
 
