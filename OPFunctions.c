@@ -550,7 +550,11 @@ uint32_t ASMlsl(char * operands[]) {
 //a register, shifted by a constant amount.  
 
   //finding out suitable operands to call mov from operands specified
-  char* lsl_expr = strcat("lsl ", operands[1]);
+  puts(operands[1]);
+  puts(operands[0]);
+  char lsl[12]; // how big can this be?
+  strcpy(lsl, "lsl ");
+  char* lsl_expr = strcat(lsl, operands[1]);
   char* operands_for_mov[4] = {operands[0], operands[0], lsl_expr};
 
   //redirecting to mov with suitable operands
