@@ -76,8 +76,8 @@ void resPrePostAddressing(int *result, char** operands){
       setBits(result, 16, &rn_num, 0, 4);
       setBit(result, 1, 24);
 
-      //setting I bit (bit 25)
-      setBit(result, 1, 25);
+      ////setting I bit (bit 25)
+      //setBit(result, 1, 25);
 
     } else {
 
