@@ -66,6 +66,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
         tokenised_str.operands[0] = offset_val;
         return tokenised_str;
       }
+      i++;
     }
   }
   // At this point, we know that a label cannot exist in the tokens
