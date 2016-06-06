@@ -72,6 +72,10 @@ void resPrePostAddressing(int *result, char** operands){
     if(operands[2] == NULL) {
 
       //if there is no second operand set P bit to 1 due to Pre-indexing
+      operands[1]++;
+      puts(operands[1]);
+      int rn_num = numFromStr(operands[1]);
+      setBits(result, 16, &rn_num, 0, 4);
       setBit(result, 1, 24);
 
     } else {
@@ -468,11 +472,13 @@ uint32_t ASMldr(char * operands[]) {
 
   //if argument is not greater than 0xFF(255 in dec), it is redirected to mov
   if(!(numFromStr(operands[1]) > 255) && (*(operands[1])) != '[') {
+
+    //TODO: testing
     puts(operands[0]);
     puts(operands[1]);
     puts("going to mov");
-    *(operands[1]) = '#';
 
+    *(operands[1]) = '#';
 
     return ASMmov(operands);
   }
