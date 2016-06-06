@@ -61,7 +61,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
       if (strcmp(symb_table[i].label, tokens[1]) == 0) {
         char offset_val[10];
         int offset = (line_num - symb_table[i].position) 
-                        * INSTRUCTION_BYTE_SIZE - PIPELINE_OFFSET;
+                        * INSTRUCTION_BYTE_SIZE + PIPELINE_OFFSET;
         sprintf(offset_val, "%d", offset);
         tokenised_str.operands[0] = offset_val;
         return tokenised_str;

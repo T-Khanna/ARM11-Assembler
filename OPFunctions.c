@@ -585,9 +585,9 @@ uint32_t ASMandeq(char * operands[]) {
 
 int32_t calculate_branch(enum mnemonic_code cond, char* operand) {
   cond -= 16;
-  int32_t offset = atoi(operand);
-//  offset >>= 2;
-//  offset &= 0x00ffffff;
+  int32_t offset = strtol(operand, NULL, 10);
+//  printf("%x\n", offset);
+//  printf("%x\n", ((offset >> 2) & 0x00ffffff));
   return (cond << 28) | 0x0a000000 | ((offset >> 2) & 0x00ffffff);
 }
 
