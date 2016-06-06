@@ -142,6 +142,11 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
   // breaks loop when we reach the end of the file.
   while (fgets(instrs[lines_in_file], CHAR_LIMIT, fptr)) {
 
+    // Check if line is empty
+    if (*instrs[lines_in_file] == '\n') {
+      continue;
+    }
+
     //having loaded current line into the array of instructions specified, we
     //need to replace the '\n' at the end of each line to '\0'
 
