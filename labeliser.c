@@ -15,11 +15,13 @@ void store_labels(char assem_instrs[MAX_LINES][CHAR_LIMIT], int num_of_lines);
 
 // Check if the first token is a label or not.
 int is_label(char* token) {
-  return *(token + strcspn(token, ":")) == ':' && isalpha(*token);
+  return token != NULL && *(token + strcspn(token, ":")) == ':' 
+            && isalpha(*token);
 }
 
 void labeliser(char *line, int line_num) {
-  char delim[] = " ", *save_ptr, *token = strtok_r(line, delim, &save_ptr);
+  char delim[] = " ", *save_ptr;
+  char* token = strtok_r(line, delim, &save_ptr);
   // Check for label
   if (is_label(token)) {
     // Update symbol table
