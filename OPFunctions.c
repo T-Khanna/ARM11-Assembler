@@ -60,8 +60,6 @@ void resPrePostAddressing(int *result, char** operands){
   setBits(result, 16, &rn_num, 0, 4);
 
   //identifying [Rn] from [Rn
-  //char lastCharInOP1 = *(operands[1]) - 1; //TODO: Not sure if this is working
-  //int closeBracket = (lastCharInOP1 == ']');
   //returns NULL if not found. index pointer if found
   char *closeBracketInOp0 = strchr(operands[1], ']');
 
@@ -158,6 +156,11 @@ void resPrePostAddressing(int *result, char** operands){
 
     //setting bits 0-11 for offset
     setBits(result, 0, &offset, 0, 12);
+
+    if(*(operands[2]) == 'r'){
+      //setting I bit (bit 25)
+      setBit(result, 1, 25);
+    }
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
