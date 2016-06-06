@@ -67,6 +67,7 @@ void resPrePostAddressing(int *result, char** operands){
 
   if(closeBracketInOp0 != NULL) { 
   //if operand0 has a ']' in it
+  puts("This should be called");
     
     if(operands[2] == NULL) {
 
@@ -466,9 +467,13 @@ uint32_t ASMldr(char * operands[]) {
 
 
   //if argument is not greater than 0xFF(255 in dec), it is redirected to mov
-  if(!(numFromStr(operands[1]) > 255)) {
+  if(!(numFromStr(operands[1]) > 255) && (*(operands[1])) != '[') {
+    puts(operands[0]);
+    puts(operands[1]);
     puts("going to mov");
     *(operands[1]) = '#';
+
+
     return ASMmov(operands);
   }
 
@@ -491,7 +496,6 @@ uint32_t ASMldr(char * operands[]) {
     //first character and returns the rest of the operand as an int
     //int arg = numFromStr(operands[1]);
     uint32_t arg = numFromStr(operands[1]);
-    printf("%x\n", arg);
     //char* argStr = operands[1];
     //argStr++;
     //int arg = atoi(argStr);
