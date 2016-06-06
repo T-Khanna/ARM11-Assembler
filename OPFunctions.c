@@ -173,9 +173,6 @@ uint32_t ASMadd(char* operands[]) {
   result = setDataIntrBits(result, 0, ADD, numFromStr(operands[1]),
       numFromStr(operands[0]));
   
-  int32_t isshift = 0; // have to implement the logic for this
-  setBit(&result, isshift, 25); // set 25 bit to isshift
- 
   result = setOperand(result, operands[2], operands[3]);
  // printf("final result = %u\n",result);
   return (unsigned) result;
@@ -186,8 +183,6 @@ uint32_t ASMsub(char* operands[]) {
    //setting given intruction bits
   result = setDataIntrBits(result, 0, SUB, numFromStr(operands[1]),
       numFromStr(operands[0]));
-  int32_t isshift = 0; // have to implement the logic for this
-  setBit(&result,isshift,25); // set 25 bit to isshift
 
   result = setOperand(result, operands[2],operands[3]);
 
@@ -200,9 +195,6 @@ uint32_t ASMrsb(char* operands[]) {
   result = setDataIntrBits(result, 0, RSB, numFromStr(operands[1]),
       numFromStr(operands[0]));
 
-  int32_t isshift = 0; // have to implement the logic for this
-  setBit(&result,isshift,25); // set 25 bit to isshift
-
   result = setOperand(result, operands[2],operands[3]);
   
   return (unsigned) result;
@@ -213,9 +205,6 @@ uint32_t ASMand(char* operands[]) {
    //setting given intruction bits
   result = setDataIntrBits(result, 0, AND, numFromStr(operands[1]),
       numFromStr(operands[0]));
-
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
 
   result = setOperand(result, operands[2],operands[3]);
 
@@ -228,9 +217,6 @@ uint32_t ASMeor(char* operands[]) {
   result = setDataIntrBits(result, 0, EOR, numFromStr(operands[1]),
       numFromStr(operands[0]));
    
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
   result = setOperand(result, operands[2],operands[3]);
    
   return (unsigned) result;
@@ -242,9 +228,6 @@ uint32_t ASMorr(char* operands[]) {
   result = setDataIntrBits(result, 0, ORR, numFromStr(operands[1]),
       numFromStr(operands[0]));
  
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
   result = setOperand(result, operands[2],operands[3]);
        
   return (unsigned) result;
@@ -257,9 +240,6 @@ uint32_t ASMmov(char* operands[]) {
    //setting given intruction bits
   result = setDataIntrBits(result, 0, MOV, 0, numFromStr(operands[0]));
 
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
   result = setOperand(result, operands[1],operands[2]);
        
   return (unsigned) result;
@@ -270,9 +250,6 @@ uint32_t ASMtst(char* operands[]) {
    //setting given intruction bits
   result = setDataIntrBits(result, 1, TST, numFromStr(operands[0]),0);
 
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
   result = setOperand(result, operands[1],operands[2]);
        
   return (unsigned) result;
@@ -282,9 +259,6 @@ uint32_t ASMteq(char* operands[]) {
   int32_t result = 0;
    //setting given intruction bits
   result = setDataIntrBits(result, 1, TEQ, numFromStr(operands[0]),0);
-
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
 
   result = setOperand(result, operands[1],operands[2]);
 
@@ -297,9 +271,6 @@ uint32_t ASMcmp(char* operands[]) {
   result = setDataIntrBits(result, 1, CMP, numFromStr(operands[0]),0);
 //    printf("%u\n",result);
  
-  int32_t isshift = 0; // have to implement the logic for this
-  result |= (isshift) << 25; // += I * 2^25
-
   result = setOperand(result, operands[1],operands[2]);
        
   return (unsigned) result;
@@ -430,25 +401,27 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  operand2 = numFromStr(str);
  setBits(&result, 0, &operand2, 0, 4);
 
-// printf("%u\n",result);
+ //printf("before shift type %u\n",result);
 
  if (shift != NULL){
  // shifting by some value
  char type[3];
  strncpy(type,shift,3);
- if(strcmp(type,"lsr")){
+ if(!strcmp(type,"lsr")){
   setBit(&result, 1, 5);
   setBit(&result, 0, 6);
- } else if (strcmp(type,"lsl")){
+ } else if (!strcmp(type,"lsl")){
   setBit(&result, 0, 5);
   setBit(&result, 0, 6);
- } else if (strcmp(type,"asr")){
+ } else if (!strcmp(type,"asr")){
   setBit(&result, 0, 5);
   setBit(&result, 1, 6);
- } else if (strcmp(type,"ror")){
+ } else if (!strcmp(type,"ror")){
   setBit(&result, 1, 5);
   setBit(&result, 1, 6);
  }
+
+ //printf(" shifted %u\n",result);
 
  if (shift[4] == '#'){
   // shift is a expression
@@ -468,7 +441,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  }
 } 
 
-// printf("%u\n",result);
+//printf("%u\n",result);
  return result;
 }
 
