@@ -466,8 +466,8 @@ uint32_t ASMldr(char * operands[]) {
 
 
   //if argument is not greater than 0xFF, it is redirected to mov
-  //if(!(strncmp(operands[1], "=0xFF", 32) > 0)) {
-  if(!(numFromStr(operands[1]) > (numFromStr("0xFF")))) {
+  if(!(strncmp(operands[1], "=0xFF", 32) > 0)) {
+  //if(!(numFromStr(operands[1]) > (numFromStr("0xFF")))) {
     puts("going to mov");
     return ASMmov(operands);
   }
