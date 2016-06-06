@@ -29,6 +29,7 @@ void free_symbol_table();
 extern int label_count;
 extern int is_label(char* token);
 uint32_t *bin_instr;
+uint32_t bin_instr_curr[MAX_LINES];
 int num_of_lines;
 int line_num;
 int extra_data;
@@ -173,17 +174,17 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
   
   char* current_instruction;
   tokenised token_line;
-  static uint32_t bin_instr[MAX_LINES];
   extra_data = 0;
   int bin_instr_num = 0;
   for (line_num = 1; line_num <= length_in_lines; line_num++) {
     current_instruction = assem_instr[line_num - 1];
     token_line = tokeniser(current_instruction, line_num);
+
     // We check if the line is only a label.
     if (is_label(token_line.operands[0])) {
       continue;
     }
-    bin_instr[bin_instr_num] = command_processor(token_line);
+    bin_instr_curr[bin_instr_num] = command_processor(token_line);
     bin_instr_num++;
   }
 
@@ -191,7 +192,7 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
   // of valid output lines as num_of_lines variable
   num_of_lines -= label_count;
   
-  return bin_instr;
+  return bin_instr_curr;
 
 }
 
