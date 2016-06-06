@@ -78,6 +78,8 @@ void resPrePostAddressing(int *result, char** operands){
 
     } else {
 
+      puts("this should be called");
+
       //set P bit to 1 due to Post-indexing
       setBit(result, 0, 24);
 
@@ -87,12 +89,7 @@ void resPrePostAddressing(int *result, char** operands){
 
       int32_t offset = numFromStr(operands[2]);
 
-      //checking if offset fits
-      //if(offset < 0xfffff800 || offset > 0x7ff) {
-      //  printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
-      //           ,offset);
-      //  exit(EXIT_FAILURE);
-      //}
+      printf("%i\n", offset);
 
       //checking for sign using sign bit 31
       int isNegative = getBit(&offset, 31);
@@ -110,6 +107,9 @@ void resPrePostAddressing(int *result, char** operands){
 
       //setting bits 0-11 for offset
       setBits(result, 0, &offset, 0, 11);
+
+      //setting I bit (bit 25)
+      setBit(result, 1, 25);
 
       operands[1]++;
       int rn_num = numFromStr(operands[1]);
@@ -523,6 +523,7 @@ uint32_t ASMldr(char * operands[]) {
 uint32_t ASMstr(char * operands[]) {
 //instruction has syntax str Rd, <address>  
 // (address) := Rd
+// str r1,[r2],r4
 
   //setting all known bits in register
   int32_t result = 0;
