@@ -67,13 +67,11 @@ void resPrePostAddressing(int *result, char** operands){
 
   if(closeBracketInOp0 != NULL) { 
   //if operand0 has a ']' in it
-  puts("This should be called");
     
     if(operands[2] == NULL) {
 
       //if there is no second operand set P bit to 1 due to Pre-indexing
       operands[1]++;
-      puts(operands[1]);
       int rn_num = numFromStr(operands[1]);
       setBits(result, 16, &rn_num, 0, 4);
       setBit(result, 1, 24);
@@ -87,7 +85,7 @@ void resPrePostAddressing(int *result, char** operands){
 			//[Rn], #expression
 			//(Opt) [Rn], {+/-}Rm{, <shift>}
 
-      int offset = numFromStr(operands[2]);
+      int32_t offset = numFromStr(operands[2]);
 
       //checking if offset fits
       //if(offset < 0xfffff800 || offset > 0x7ff) {
@@ -107,9 +105,15 @@ void resPrePostAddressing(int *result, char** operands){
       if(isNegative) {
         offset = -offset;
       }
+  
+      offset = (uint32_t) offset;
 
       //setting bits 0-11 for offset
       setBits(result, 0, &offset, 0, 11);
+
+      operands[1]++;
+      int rn_num = numFromStr(operands[1]);
+      setBits(result, 16, &rn_num, 0, 4);
 
     }
 
@@ -126,9 +130,9 @@ void resPrePostAddressing(int *result, char** operands){
     
     //remove the char ']' from operand2 "#expr]"
     //operands[2] = blah(operands[2]);
-      
 
-    strncpy(operands[2], operands[2], strlen(operands[2]) - 1);
+    //removing ']' from second operand
+    *(operands[2] + strlen(operands[2]) - 1) = '\0';
 
     int offset = numFromStr(operands[2]);
 
@@ -151,8 +155,14 @@ void resPrePostAddressing(int *result, char** operands){
       offset = -offset;
     }
 
+    offset = (uint32_t) offset;
+
     //setting bits 0-11 for offset
-    setBits(result, 0, &offset, 0, 11);
+    setBits(result, 0, &offset, 0, 12);
+
+    operands[1]++;
+    int rn_num = numFromStr(operands[1]);
+    setBits(result, 16, &rn_num, 0, 4);
 
   }  
 }
@@ -474,8 +484,6 @@ uint32_t ASMldr(char * operands[]) {
   if(!(numFromStr(operands[1]) > 255) && (*(operands[1])) != '[') {
 
     //TODO: testing
-    puts(operands[0]);
-    puts(operands[1]);
     puts("going to mov");
 
     *(operands[1]) = '#';
