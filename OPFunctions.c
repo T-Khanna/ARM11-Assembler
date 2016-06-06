@@ -78,8 +78,6 @@ void resPrePostAddressing(int *result, char** operands){
 
     } else {
 
-      puts("this should be called");
-
       //set P bit to 1 due to Post-indexing
       setBit(result, 0, 24);
 
@@ -88,8 +86,6 @@ void resPrePostAddressing(int *result, char** operands){
 			//(Opt) [Rn], {+/-}Rm{, <shift>}
 
       int32_t offset = numFromStr(operands[2]);
-
-      printf("%i\n", offset);
 
       //checking for sign using sign bit 31
       int isNegative = getBit(&offset, 31);
@@ -159,6 +155,9 @@ void resPrePostAddressing(int *result, char** operands){
 
     //setting bits 0-11 for offset
     setBits(result, 0, &offset, 0, 12);
+
+    //setting I bit (bit 25)
+    setBit(result, 1, 25);
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
