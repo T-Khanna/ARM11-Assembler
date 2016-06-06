@@ -84,11 +84,11 @@ void resPrePostAddressing(int *result, char** operands){
       int offset = numFromStr(operands[2]);
 
       //checking if offset fits
-      if(offset < 0xfffff800 || offset > 0x7ff) {
-        printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
-                 ,offset);
-        exit(EXIT_FAILURE);
-      }
+      //if(offset < 0xfffff800 || offset > 0x7ff) {
+      //  printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
+      //           ,offset);
+      //  exit(EXIT_FAILURE);
+      //}
 
       //checking for sign using sign bit 31
       int isNegative = getBit(&offset, 31);
@@ -127,11 +127,11 @@ void resPrePostAddressing(int *result, char** operands){
     int offset = numFromStr(operands[2]);
 
     //checking if offset fits
-    if(offset < 0xfffff800 || offset > 0x7ff) {
-      printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
-               ,offset);
-      exit(EXIT_FAILURE);
-    }
+    //if(offset < 0xfffff800 || offset > 0x7ff) {
+    //  printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
+    //           ,offset);
+    //  exit(EXIT_FAILURE);
+    //}
 
     //checking for sign using sign bit 31
     int isNegative = getBit(&offset, 31);
