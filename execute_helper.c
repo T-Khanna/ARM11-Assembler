@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // ARM Group Project - Year 1 (Group 40)
 // _____________________________________________________________________________
-// 
+//
 // File: execute_helper.c
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ////////////////////////////////////////////////////////////////////////////////
 
 
 //---------------------------- EXECUTE HELPER ----------------------------------
-// Contains the helper functions that perform the execution operations on the 
+// Contains the helper functions that perform the execution operations on the
 // depending on the instructionsinstruction.
 
 #include <stdint.h>
@@ -26,15 +26,15 @@ int getOperand2(int32_t* instr,current_state* curr_state, int i);
 int getImmVal(int32_t* instr);
 int getRegVal(int32_t* instr,current_state* curr_state);
 int32_t readMemory(int mem_address, current_state* curr_state);
-void writeMemory(int mem_address,int source,current_state* curr_state); 
+void writeMemory(int mem_address,int source,current_state* curr_state);
 
 
 //-- FUNCTION DEFINITIONS ------------------------------------------------------
 
-// BRANCH 
+// BRANCH
 // Jumps to required branch (pc) of the code
 // offset = bit 0 to 23
-// offsetn is shifted left 2 and extended to 32 bit 
+// offsetn is shifted left 2 and extended to 32 bit
 // and added back to PC
 
 void branch(int32_t* instr, current_state* curr_state){
@@ -42,7 +42,7 @@ void branch(int32_t* instr, current_state* curr_state){
   //getting the offset
   int offset = getBits(instr,0,23);
 
-  //shifting it by 2 
+  //shifting it by 2
   offset = offset << 2;
 
   //if signed bits the signed extend the offset
@@ -55,7 +55,6 @@ void branch(int32_t* instr, current_state* curr_state){
 
   //setting pc for pipeline structure
   curr_state->PC += 1;
-
 }
 
 
@@ -75,11 +74,11 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
   int i      = getBit(instr, 25);
   int opcode = getBits(instr, 21, 4);
   int s      = getBit(instr, 20);
-  int rn     = getBits(instr, 16, 4); 
+  int rn     = getBits(instr, 16, 4);
   int rd     = getBits(instr, 12, 4);
   int op2    = getOperand2(instr,curr_state,i);
 
-  //temp variable that stores the 
+  //temp variable that stores the
   int result = 0;
   switch(opcode){
 
@@ -93,7 +92,6 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
               setBit((&curr_state->CPSR),
                   getBit(&curr_state->registers[rd],31),31);
-
             }
             break;
 
@@ -107,7 +105,6 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
               setBit((&curr_state->CPSR),
                   getBit(&curr_state->registers[rd],31),31);
-
             }
             break;
 
@@ -124,7 +121,6 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
               setBit((&curr_state->CPSR),
                   curr_state->registers[rd] >= op2,29);
-
             }
             break;
 
@@ -141,11 +137,10 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
               setBit((&curr_state->CPSR),
                   curr_state->registers[rd] <= op2,29);
-
             }
-            break; 
+            break;
 
-    // add : rd = rn + op2 
+    // add : rd = rn + op2
     case 4: curr_state->registers[rd] = curr_state->registers[rn] + op2;
 
             if(s){
@@ -157,12 +152,11 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
                   getBit(&curr_state->registers[rd],31),31);
 
               int n1 = getBit(&curr_state->registers[rn],31);
-              int n2 = getBit(&op2,31); 
+              int n2 = getBit(&op2,31);
               int r  = getBit(&curr_state->registers[rd],31);
 
               setBit((&curr_state->CPSR),
                   (!n1 & !n2 & r)|(n1 & n2 & !r),29);
-
             }
             break;
 
@@ -176,7 +170,6 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
               setBit((&curr_state->CPSR),
                   getBit(&result,31),31);
-
             }
             break;
 
@@ -190,7 +183,6 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
               setBit((&curr_state->CPSR),
                   getBit(&result,31),31);
-
             }
             break;
 
@@ -207,9 +199,8 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
                setBit((&curr_state->CPSR),
                    curr_state->registers[rn] >= op2,29);
-
              }
-             break; 
+             break;
 
     // orr : rd = rn | op2
     case 12: curr_state->registers[rd] = curr_state->registers[rn] | op2;
@@ -235,14 +226,12 @@ void dataProcessing(int32_t* instr, current_state* curr_state){
 
                setBit((&curr_state->CPSR),
                    getBit(&curr_state->registers[rd],31),31);
-
              }
              break;
   }
+}
 
-} 
-
-//calculates operand2 
+//calculates operand2
 int getOperand2(int32_t* instr, current_state* curr_state,int i){
 
   if(i == 1){
@@ -250,30 +239,28 @@ int getOperand2(int32_t* instr, current_state* curr_state,int i){
   }
 
   return getRegVal(instr, curr_state);
-
 }
 
-//if operand2 is detected to represent an immmediate value, do the appropriate 
+//if operand2 is detected to represent an immmediate value, do the appropriate
 //operations to obtain the true value of operand2
 int getImmVal(int32_t* instr){
 
-  //get value 
+  //get value
   int value   = getBits(instr, 0, 8);
 
   //get number of rotations to be done
   int rot_num = getBits(instr, 8, 4) * 2;
 
   return rotateRight(value,(unsigned int)rot_num);
-
 }
 
-//if operand2 is detected to represent an shifted register, do the appropriate 
+//if operand2 is detected to represent an shifted register, do the appropriate
 //operations to obtain the true value of operand2
 int getRegVal(int32_t* instr, current_state* curr_state){
 
   int result = 0;
 
-  //get register 
+  //get register
   int rm    = getBits(instr, 0, 4);
 
   //get the value of register
@@ -290,9 +277,8 @@ int getRegVal(int32_t* instr, current_state* curr_state){
   } else{
 
     // amount given by last byte of rs
-    int rs = getBits(instr, 8, 4); 
+    int rs = getBits(instr, 8, 4);
     amount = (unsigned int)(curr_state->registers[rs] & 0xff);
-
   }
 
   int select_shift = getBits(instr, 5, 2);
@@ -309,25 +295,23 @@ int getRegVal(int32_t* instr, current_state* curr_state){
               }
 
               setBit(&(curr_state->CPSR),flag_value,29);
-
             }
             return result;
 
     case 1: result = (unsigned int)value >> (amount);
             break;
 
-            // for preserving first int shift without (unsigned) 
+            // for preserving first int shift without (unsigned)
     case 2: result = value >> amount;
             break;
 
     case 3: result = rotateRight(value,amount);
             break;
-
   }
 
   if(getBit(instr,20)){
 
-    if(amount != 0){   
+    if(amount != 0){
       getBit(&value,amount-1);
     }
 
@@ -336,12 +320,11 @@ int getRegVal(int32_t* instr, current_state* curr_state){
   }
 
   return result;
-
 }
 
 
 
-// SINGLE DATA TRANSFER 
+// SINGLE DATA TRANSFER
 // Help to load and store from and to memory
 // Imm offset:     i = bit 25
 // pre/post index  p = bit 24
@@ -374,7 +357,6 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
   } else {
 
     offset = getBits(instr, 0,12);
-
   }
 
   int mem_address = curr_state->registers[rn];
@@ -386,15 +368,14 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
 
   if(p){
 
-    //value of base register not changed 
+    //value of base register not changed
     (u) ? (mem_address += offset) : (mem_address -= offset);
 
   } else{
 
     //updating value of rn
-    (u) ? (curr_state->registers[rn] += offset) : 
-      (curr_state->registers[rn] -= offset); 
-
+    (u) ? (curr_state->registers[rn] += offset) :
+      (curr_state->registers[rn] -= offset);
   }
 
   //checking for mem_address accessing a GPIO pin address in memory
@@ -405,11 +386,10 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
   //checking for mem_address being out of bounds in memory
   if(mem_address >= 65536){
 
-    printf("Error: Out of bounds memory access at address 0x%08x\n", 
+    printf("Error: Out of bounds memory access at address 0x%08x\n",
         mem_address);
 
     return;
-
   }
 
   if(l){
@@ -420,22 +400,20 @@ void singleDataTransfer(int32_t* instr, current_state* curr_state){
 
     //store
     writeMemory(mem_address,curr_state->registers[rd], curr_state);
-
   }
-
 }
 
 
 
 // MULTIPLY
-// Multiply and store value in a register according to given 
+// Multiply and store value in a register according to given
 // given values in instruction
 // Accumulator:   a = bit 21
 // Set condition: s = bit 20
 // Destination    rd = bit 16 to 19
-// Operator reg   rn = bit 12 to 15 
+// Operator reg   rn = bit 12 to 15
 //                rs = bit 8 to 11
-//                rm = bit 0 to 3 
+//                rm = bit 0 to 3
 
 void multiply(int32_t* instr, current_state* curr_state){
 
@@ -450,14 +428,14 @@ void multiply(int32_t* instr, current_state* curr_state){
   if(a){
 
     //rd = rm * rs + rn
-    curr_state->registers[rd] = 
+    curr_state->registers[rd] =
       curr_state->registers[rm] * curr_state->registers[rs]
       + curr_state->registers[rn];
 
   } else{
 
     //rd = rm * rs
-    curr_state->registers[rd] = 
+    curr_state->registers[rd] =
       curr_state->registers[rm] * curr_state->registers[rs];
 
   }
@@ -476,7 +454,7 @@ void multiply(int32_t* instr, current_state* curr_state){
 }
 
 
-// READING AND WRITING MEMORY 
+// READING AND WRITING MEMORY
 
 int32_t readMemory(int mem_address, current_state* curr_state){
 
@@ -489,7 +467,7 @@ int32_t readMemory(int mem_address, current_state* curr_state){
 
     return result;
 
-  }  
+  }
 
   if(mem_address/4 == MEMORY_CAPACITY -1){
 
@@ -504,7 +482,7 @@ int32_t readMemory(int mem_address, current_state* curr_state){
 
   }
 
-} 
+}
 
 
 void writeMemory(int mem_address,int source,current_state* curr_state){
@@ -521,10 +499,9 @@ void writeMemory(int mem_address,int source,current_state* curr_state){
     return;
   } else{
 
-    setBits(&(curr_state->memory[mem_address/4 + 1]),0, 
-        &source,(4-index)*8,index*8); 
+    setBits(&(curr_state->memory[mem_address/4 + 1]),0,
+        &source,(4-index)*8,index*8);
 
   }
 
 }
-

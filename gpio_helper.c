@@ -8,7 +8,7 @@
 
 
 //----------------------------- GPIO HELPER  -----------------------------------
-// Contains the function definitions for emulate.c, the execute function in 
+// Contains the function definitions for emulate.c, the execute function in
 // particular to carry out the four instructions specified.
 
 #include <stdio.h>
@@ -30,11 +30,10 @@
 
 //sets addresses as the values of the GPIO pins in memory
 void setGPIOAddr(current_state* cur_state) {
-  
+
 	cur_state->memory[MEMORY_CAPACITY - 3] = GPIO_ADDR_0_9;
 	cur_state->memory[MEMORY_CAPACITY - 2] = GPIO_ADDR_10_19;
 	cur_state->memory[MEMORY_CAPACITY - 1] = GPIO_ADDR_20_29;
-
 }
 
 //clears addresses of the GPIO pins in memory
@@ -43,7 +42,6 @@ void clearGPIOAddr(current_state* cur_state) {
 	cur_state->memory[MEMORY_CAPACITY - 3] = 0;
 	cur_state->memory[MEMORY_CAPACITY - 2] = 0;
 	cur_state->memory[MEMORY_CAPACITY - 1] = 0;
-
 }
 
 //finds the address of GPIO pins that have been accessed
@@ -70,7 +68,7 @@ int findGPIOAddr(int* addr) {
 		case GPIO_ADDR_10_19:
 			printf("One GPIO pin from 10 to 19 has been accessed\n");
 			break;
-    
+
 		//GPIO ports 20-29 accesssed
 		case GPIO_ADDR_20_29:
     	printf("One GPIO pin from 20 to 29 has been accessed\n");
@@ -78,12 +76,8 @@ int findGPIOAddr(int* addr) {
 
 		default:
 			return 0;
-
 	}
 
 	*addr = ((MEMORY_CAPACITY - ((*addr - GPIO_ADDR_0_9) / 4)) - 1) * 4;
 	return 0;
-
 }
-
-

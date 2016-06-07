@@ -28,49 +28,25 @@
 
 enum mnemonic_code {
 
-  AND,
-  EOR,
-  SUB,
-  RSB,
-  ADD,
-  LDR,
-  STR,
-  TST = 8,
-  TEQ,
-  CMP,
-  ORR = 12,
-  MOV,
-  MUL,
-  MLA,
-  BEQ,
-  BNE,
-  LSL,
-  ANDEQ,
-  BGE = 26,
-  BLT,
-  BGT,
-  BLE,
-  B,
-   
+  AND,EOR,SUB,RSB,ADD,LDR,STR,
+  TST = 8,TEQ,CMP,ORR = 12,MOV,
+  MUL,MLA,BEQ,BNE,LSL,ANDEQ,
+  BGE = 26,BLT,BGT,BLE,B,
 };
 
 //-- SYMBOL TABLE --------------------------------------------------------------
 
 struct symbol_table {
-
   char* label;
   int position;
-
 };
 
 
 //-- TOKENISED -----------------------------------------------------------------
 
 typedef struct tokenised {
-
   uint32_t (*func_pointer)(char* operands[]);
   char* operands[OPERAND_SIZE];
-
 } tokenised;
 
 typedef struct mnemonic_code_mapping {
@@ -84,51 +60,37 @@ struct symbol_table symb_table[MAX_LABELS];
 
 //-- OPFUNCTION DECLARATIONS ---------------------------------------------------
 
+//DATA PROCESSING
 uint32_t ASMadd(char* operands[]);
-
 uint32_t ASMsub(char* operands[]);
-
 uint32_t ASMrsb(char* operands[]);
-
 uint32_t ASMand(char* operands[]);
-
 uint32_t ASMeor(char* operands[]);
-
 uint32_t ASMorr(char* operands[]);
-
 uint32_t ASMmov(char* operands[]);
-
 uint32_t ASMtst(char* operands[]);
-
 uint32_t ASMteq(char* operands[]);
-
 uint32_t ASMcmp(char* operands[]);
 
+//MULTIPLY
 uint32_t ASMmul(char* operands[]);
-
 uint32_t ASMmla(char* operands[]);
 
+//SINGLE DATA TRANSFER
 uint32_t ASMldr(char* operands[]);
-
 uint32_t ASMstr(char* operands[]);
 
+//BRANCHING
 uint32_t ASMbeq(char* operands[]);
-
 uint32_t ASMbne(char* operands[]);
-
 uint32_t ASMbge(char* operands[]);
-
 uint32_t ASMblt(char* operands[]);
-
-
 uint32_t ASMbgt(char* operands[]);
-
 uint32_t ASMble(char* operands[]);
-
 uint32_t ASMb(char* operands[]);
 
+//SPECIAL
 uint32_t ASMlsl(char* operands[]);
-
 uint32_t ASMandeq(char* operands[]);
 
 #endif

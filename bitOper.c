@@ -8,7 +8,7 @@
 
 
 //-------------------------- BITWISE OPERATIONS --------------------------------
-// Contains the helper functions that perform bitwise operations on the 
+// Contains the helper functions that perform bitwise operations on the
 // instruction.
 
 #include "bitOper.h"
@@ -26,8 +26,8 @@
 
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
 
-//gets values of multiple bits of given size and position from right using 
-//the specified pointer. Returns the bits needed to the right of the int. 
+//gets values of multiple bits of given size and position from right using
+//the specified pointer. Returns the bits needed to the right of the int.
 //Unwanted bits are 0 when returned
 int getBits(int* num, int index, int size) {
   assert((index >= 0) && (index < WORD_SIZE) &&
@@ -37,17 +37,16 @@ int getBits(int* num, int index, int size) {
   int result = 0;
   for(int i = 0; i < size; i++){
     result = result | (1 << (index + i)); //SC
-  } 
+  }
 
   //saving result in result variable after obtaining bits
   result = result & (*num);
   return ((unsigned int) result >> index);
-
 }
 
 
 //sets the bits from a given binary number at given positions and of given size
-void setBits(int* target, int index_target, 
+void setBits(int* target, int index_target,
              int* source, int index_source, int size) {
 
   //getting bits that need to be set from source in the form of a mask
@@ -64,7 +63,6 @@ void setBits(int* target, int index_target,
 
   //setting the target bits to source bits using | on 0s that we set earlier
   *target = (*target | source_bits);
-
 }
 
 
@@ -75,9 +73,7 @@ int getBit(int* num, int index) {
   int maskedBit = 1 << index;
   int bit = ((unsigned int) (*num & maskedBit)) >> index;
   return (int32_t) bit;
-
 }
-
 
 
 // Set the bit value at given index of a given binary number pointer
@@ -86,11 +82,10 @@ void setBit(int* num, int givenBit, int index) {
   assert((index >= 0) && (index < WORD_SIZE) &&
       (givenBit == 0 || givenBit == 1));
 
-  // first making target int 0, by inverting using two's complement then 
+  // first making target int 0, by inverting using two's complement then
   // using | to replace old bit at index by givenBit
   int twoComp = ~(1 << index);
   *num = ((*num & twoComp) | (givenBit << index));
-
 }
 
 //rotates given num rot_num times to the right
@@ -103,24 +98,4 @@ int rotateRight(int num, unsigned int rot_num) {
   unsigned int left = (unsigned int)num << (WORD_SIZE - rot_num);
 
   return (int)(right | left);
-
 }
-
-int decToBin(unsigned int num){
-
-    int bin = 0;
-    int i = 1;
-    int rem = 0;
-
-    while(num != 0){
-      rem = num % 2;
-      num = num / 2;
-      bin += (rem * i);
-      i *= 10;
-    }
-
-    return bin;
-
-}
-
-

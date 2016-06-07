@@ -40,7 +40,7 @@ uint32_t (*func_table[32]) (char* operands[]) = {
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
   &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
   NULL, &ASMbge, &ASMblt, &ASMbgt, &ASMble, &ASMb, NULL
-}; 
+};
 
 mnemonic_code_mapping table[23] = {
   // Data Processing
@@ -58,20 +58,20 @@ mnemonic_code_mapping table[23] = {
   // Multiply
   {"mul", MUL},
   {"mla", MLA},
- 
+
   // Single Data Transfer
   {"ldr", LDR},
   {"str", STR},
- 
-  // Branch 
-  {"beq", BEQ}, 
-  {"bne", BNE}, 
-  {"bge", BGE}, 
-  {"blt", BLT}, 
-  {"bgt", BGT}, 
-  {"ble", BLE}, 
-  {"b", B},  
-  
+
+  // Branch
+  {"beq", BEQ},
+  {"bne", BNE},
+  {"bge", BGE},
+  {"blt", BLT},
+  {"bgt", BGT},
+  {"ble", BLE},
+  {"b", B},
+
   // Special
   {"lsl", LSL},
   {"andeq", ANDEQ}
@@ -98,17 +98,17 @@ int main(int argc, char **argv) {
   num_of_lines = get_instrs(argv[1], instrs);
 
   // Storing the label locations in the symbol table
-  store_labels(instrs, num_of_lines);  
+  store_labels(instrs, num_of_lines);
 
   //performing the pass over the file to decode into binary that will be written
   bin_instr = translate_instr(instrs, num_of_lines);
-  
+
   //creating output binary file
   write_bin(argv[2], bin_instr, num_of_lines);
- 
+
   // Free memory used in symbol_table
-  free_symbol_table();  
- 
+  free_symbol_table();
+
   return EXIT_SUCCESS;
 
 }
@@ -139,7 +139,7 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
   int lines_in_file = 0;
 
   //Loads each line into the array of instructions specified
-  // enters loop if current line exists and reading it is succesful. 
+  // enters loop if current line exists and reading it is succesful.
   // breaks loop when we reach the end of the file.
   while (fgets(instrs[lines_in_file], CHAR_LIMIT, fptr)) {
 
@@ -161,17 +161,16 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
     lines_in_file++;
 
   }
- 
+
   fclose(fptr);
   return lines_in_file;
-
 }
 
 
 //return an array of 32 bit words to be written into binary file
-uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], 
+uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
                          int length_in_lines) {
-  
+
   char* current_instruction;
   tokenised token_line;
   extra_data = 0;
@@ -190,11 +189,10 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
 
   // subract number of labels lines from total lines to store only the number
   // of valid output lines as num_of_lines variable
-  
-  num_of_lines = num_of_lines - label_count;
-  
-  return bin_instr_curr;
 
+  num_of_lines = num_of_lines - label_count;
+
+  return bin_instr_curr;
 }
 
 uint32_t command_processor(tokenised input) {
@@ -202,18 +200,17 @@ uint32_t command_processor(tokenised input) {
 }
 
 
-//writes the array of 32 bit words (instructions) into the binary file 
+//writes the array of 32 bit words (instructions) into the binary file
 //specified
 void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
 
   // Creating output binary file
   FILE *fptr = fopen(path, "wb");
- 
+
   fwrite(bin_instr, INSTRUCTION_BYTE_SIZE, lines_in_file, fptr);
 
   //closing file
   fclose(fptr);
-  
 }
 
 void free_symbol_table() {
@@ -221,4 +218,3 @@ void free_symbol_table() {
     free(symb_table[i].label);
   }
 }
-

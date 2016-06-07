@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // ARM Group Project - Year 1 (Group 40)
 // _____________________________________________________________________________
-// 
+//
 // File: emulate.c
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ////////////////////////////////////////////////////////////////////////////////
 
 
 //-------------------------------- EMULATE -------------------------------------
-// Holds the program that simulates the execution of an ARM binary ﬁle 
+// Holds the program that simulates the execution of an ARM binary ﬁle
 // on a Raspberry Pi.
 
 #include <stdint.h>
@@ -67,7 +67,7 @@ int32_t main(int argc, char *argv[]) {
     //decode
     if(goAhead){
 
-      //decode current fetched instruction in pipeline and store as the 
+      //decode current fetched instruction in pipeline and store as the
       //decoded instruction in the pipeline.
       curr_state.pipeline.decoded = decode(&curr_state.pipeline.fetched);
 
@@ -89,11 +89,8 @@ int32_t main(int argc, char *argv[]) {
         case Branch:
           branch(&curr_state.pipeline.fetched,&curr_state);
           break;
-
       }
-
     }
-
   } while(curr_state.pipeline.fetched != 0); //fetch, decode, execute cycle
 
   //clear GPIO addresses
@@ -103,12 +100,11 @@ int32_t main(int argc, char *argv[]) {
   printOutput();
 
   return EXIT_SUCCESS;
-
 }
 
 
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
-//supporting functions 
+//supporting functions
 
 //initialises registers and memory by setting them to 0.
 void regInit(char* file) {
@@ -125,7 +121,7 @@ void regInit(char* file) {
   //setting all memory to 0
   for(int i = 0; i < MEMORY_CAPACITY; i++){
     curr_state.memory[i] = 0;
-  } 
+  }
 
   //moving instructions into memory
   FILE *fptr = fopen(file,"rb");
@@ -137,13 +133,13 @@ void regInit(char* file) {
   }
 
   //setting file point32_ter to the end of the file
-  fseek(fptr, 0, SEEK_END);         
+  fseek(fptr, 0, SEEK_END);
 
   //ftell returns the pos of the file point32_ter
-  int file_size = ftell(fptr);	
-  rewind(fptr); 
+  int file_size = ftell(fptr);
+  rewind(fptr);
 
-  //coverting bytes to word   
+  //coverting bytes to word
   file_size /= 4;
 
   //saving the file data in memory
@@ -153,7 +149,6 @@ void regInit(char* file) {
 
   //closing the binary input file
   fclose(fptr);
-
 }
 
 //converts instruction from one Endian to the other
@@ -161,8 +156,8 @@ int convEndian(int num) {
 
   int result = 0;
 
-  //for each byte in the instruction, obtains bits and places them in the 
-  //rightmost byte position. Then left shifts them the appropriate number 
+  //for each byte in the instruction, obtains bits and places them in the
+  //rightmost byte position. Then left shifts them the appropriate number
   //of times and stores them in the result to change endianness
   for(int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
     result = result | (getBits(&num, i * BYTE_SIZE, BYTE_SIZE) //gets a byte
@@ -170,7 +165,6 @@ int convEndian(int num) {
   }
 
   return result;
-
 }
 
 
@@ -184,7 +178,6 @@ void printOutput() {
 
     int reg_value = curr_state.registers[i];
     printf("$%-3d: %10d (0x%08x)\n", i, reg_value, reg_value);
-
   }
 
   //printing state of PC and CPSR registers
@@ -197,20 +190,18 @@ void printOutput() {
 
   for(int i = 0; i < MEMORY_CAPACITY; i++){
 
-    //converting instructions from little endian to big endian 
+    //converting instructions from little endian to big endian
     int32_t memWord = convEndian(curr_state.memory[i]);
 
     if(!(memWord == 0)){  //checking for non-zero memory
       printf("0x%08x: ", INSTRUCTION_BYTE_SIZE*i);
       printf("0x%08x\n",  memWord);
-    }       
-
+    }
   }
-
 }
 
 
-//checks condition (COND) to decode and execute the instructions 
+//checks condition (COND) to decode and execute the instructions
 //locations of flags: Nflag = 31, Zflag = 30, Cflag = 29, Vflag = 28
 int checkCondition(int32_t* instr) {
 
@@ -222,14 +213,14 @@ int checkCondition(int32_t* instr) {
     case 0:  return getBit(&curr_state.CPSR,30);
 
              //check z flag is clear
-    case 1:  if(getBit(&curr_state.CPSR,30) == 0){         
+    case 1:  if(getBit(&curr_state.CPSR,30) == 0){
                return 1;
              } else {return 0;}
 
              //check n equal to v
     case 10: if(getBit(&curr_state.CPSR,31) == getBit(&curr_state.CPSR,28)){
                return 1;
-             } else {return 0;} 
+             } else {return 0;}
 
              //n not equal to v
     case 11: if(getBit(&curr_state.CPSR,31) != getBit(&curr_state.CPSR,28)){
@@ -237,14 +228,14 @@ int checkCondition(int32_t* instr) {
              } else {return 0;}
 
              //check z clear and n equal to v
-    case 12: if((getBit(&curr_state.CPSR,31) 
+    case 12: if((getBit(&curr_state.CPSR,31)
                    == getBit(&curr_state.CPSR,28))
                  && getBit(&curr_state.CPSR,30) == 0){
                return 1;
              } else {return 0;}
 
              //check z or (n not equal to v)
-    case 13: if((getBit(&curr_state.CPSR,30)==1) 
+    case 13: if((getBit(&curr_state.CPSR,30)==1)
                  || (getBit(&curr_state.CPSR,31)
                    != getBit(&curr_state.CPSR,28))){
                return 1;
@@ -254,24 +245,23 @@ int checkCondition(int32_t* instr) {
     case 14: return 1;
 
     default: return 0;
-
   }
 }
 
 
-//decodes the instruction and returns it as a decoded integer, depending upon 
+//decodes the instruction and returns it as a decoded integer, depending upon
 //the given conditions for the appropriate bits.
 int32_t decode(int32_t* instr) {
 
   //fetching bits 26 and 27
   int bit26 = getBit(instr,26);
-  int bit27 = getBit(instr,27);  
+  int bit27 = getBit(instr,27);
 
-  //if bit 26 and 27 are 0 then the instruction can be Multiply or 
+  //if bit 26 and 27 are 0 then the instruction can be Multiply or
   //Data Processing
   if((bit26==0) && (bit27==0)){
 
-    //if I = 1 then the instruction is Data Processing 
+    //if I = 1 then the instruction is Data Processing
     if(getBit(instr,25)){
       return Data_processing;
     }
@@ -282,15 +272,13 @@ int32_t decode(int32_t* instr) {
       if(getBit(instr,7)){
         return Multiply;
       }
-
     }
 
     //otherwise, it is Data Processing
     return Data_processing;
-
   }
 
-  //if bit 26 is 1. then the instruction is Single Data Transfer 
+  //if bit 26 is 1. then the instruction is Single Data Transfer
   else if((bit26==1) && (bit27==0)){
     return Single_data_transfer;
   }
@@ -299,7 +287,4 @@ int32_t decode(int32_t* instr) {
   else {
     return Branch;
   }
-
 }
-
-
