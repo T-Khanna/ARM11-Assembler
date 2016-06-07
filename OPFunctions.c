@@ -528,11 +528,11 @@ uint32_t ASMldr(char * operands[]) {
 
     //curr has to be amended form current line_num due to PC being off by 
     //8-bytes. Which is 2 instruction lines
-    int curr = line_num + 2;
+    //int curr = line_num + 2;
+    int curr = line_num + 1;
 
     //calculating offset (in bytes) from where the arg was placed to curr
-    printf("%i\n", label_count);
-    int offset = (num_of_lines - curr - 1) * INSTRUCTION_BYTE_SIZE; 
+    int offset = (num_of_lines - label_count - 1 - curr) * INSTRUCTION_BYTE_SIZE; 
 
     //setting offset to bits 0-12
     setBits(&result, 0, &offset, 0, 12);
