@@ -83,7 +83,6 @@ void resPrePostAddressing(int *result, char** operands){
         //set P bit to 1 due to Post-indexing
         setBit(result, 0, 24);
 
-
         int32_t offset = numFromStr(operands[2]);
 
         //checking for sign using sign bit 31
@@ -139,6 +138,7 @@ void resPrePostAddressing(int *result, char** operands){
     char *hashInOp3 = strchr(operands[2], '#');
     if(hashInOp3 != NULL){
       
+        puts("Hello world");
       //remove the char ']' from operand2 "#expr]"
       //operands[2] = blah(operands[2]);
 
@@ -159,8 +159,7 @@ void resPrePostAddressing(int *result, char** operands){
 
       //setting bit for U (bit 23) depending on if offset is negative or not
       //determines if offset should be added or subtracted.
-      //setBit(result, isNegative == 0, 23);
-      setBit(result, 1, 23);
+      setBit(result, isNegative == 0, 23);
 
       //amending offset based on sign
       if(isNegative) {
