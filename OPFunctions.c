@@ -531,7 +531,8 @@ uint32_t ASMldr(char * operands[]) {
     int curr = line_num + 2;
 
     //calculating offset (in bytes) from where the arg was placed to curr
-    int offset = (num_of_lines - label_count - curr) * INSTRUCTION_BYTE_SIZE; 
+    printf("%i\n", label_count);
+    int offset = (num_of_lines - curr - 1) * INSTRUCTION_BYTE_SIZE; 
 
     //setting offset to bits 0-12
     setBits(&result, 0, &offset, 0, 12);
