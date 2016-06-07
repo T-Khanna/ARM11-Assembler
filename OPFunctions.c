@@ -177,22 +177,27 @@ void resPrePostAddressing(int *result, char** operands){
       }
 
     } else {
+
         //setting I bit (bit 25)
         setBit(result, 1, 25);
 
-        for(int i = 0; i < 4; i ++){
+
+        if(operands[3] != NULL){
+          *(operands[3] + strlen(operands[3]) - 1) = '\0';      
+        } else {
+          *(operands[2] + strlen(operands[2]) - 1) = '\0';      
+        }
+
+        for(int i = 0; i < 5; i ++){
           if(operands[i] != NULL){
             printf("operand: %i\n", i);
             puts(operands[i]);
           }
         }
 
-        *(operands[2] + strlen(operands[2]) - 1) = '\0';      
         *result = setOperand(*result, operands[2], operands[3]);
-        
 
     }
-
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
