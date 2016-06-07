@@ -52,8 +52,9 @@ void resPrePostAddressing(int *result, char** operands){
   char* rn_str = operands[0];
   //rn_str++; //ommitting the '[' in "[rn"
   int rn_num = numFromStr(rn_str);
-  printf("rn = %u\n",rn_num);
+  //printf("rn = %u\n",rn_num);
   setBits(result, 16, &rn_num, 0, 4);
+  //printf("setted rn = %u\n",*result);
 
   //identifying [Rn] from [Rn
   //returns NULL if not found. index pointer if found
@@ -403,7 +404,7 @@ int32_t setDataIntrBits(int32_t result,int s,
 
 int32_t setOperand(int32_t result, char* str ,char* shift){
 
-printf("input %u\n",result);
+//printf("input %u\n",result);
  
  int operand2 =0;
 
@@ -457,7 +458,7 @@ printf("input %u\n",result);
   setBit(&result, 1, 6);
  }
 
- printf(" shifted %u\n",result);
+ //printf(" shifted %u\n",result);
 
  if (shift[4] == '#'){
   // shift is a expression
@@ -477,7 +478,7 @@ printf("input %u\n",result);
  }
 } 
 
-printf("%u\n",result);
+//printf("%u\n",result);
  return result;
 }
 
