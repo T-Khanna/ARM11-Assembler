@@ -93,7 +93,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
         // have no effect on the offset, so we need to add the number
         // of labels in between the label position and line number.
         line_diff += get_labels_in_between(symb_table[i].position, line_num);
-        printf(line_diff_val, "%d", line_diff);
+        sprintf(line_diff_val, "%d", line_diff);
         tokenised_str.operands[0] = line_diff_val;
         return tokenised_str;
       }
