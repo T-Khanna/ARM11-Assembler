@@ -109,20 +109,10 @@ void resPrePostAddressing(int *result, char** operands){
 
       } else {
         
-<<<<<<< HEAD
-        //setOperand(result, );
-        
-        for(int i = 0; i < 4; i ++){
-          if(operands[i] != NULL){
-            puts(operands[i]);
-          }
-        }
-=======
         *result = setOperand(*result, operands[2], operands[3]);
         
         //setting I bit (bit 25) //TODO
         setBit(result, 1, 25);
->>>>>>> tarun
 
       }
 
@@ -188,20 +178,7 @@ void resPrePostAddressing(int *result, char** operands){
       }
 
     } else {
-<<<<<<< HEAD
       
-        *(operands[3] + strlen(operands[3]) - 1) = '\0';      
-        puts(operands[2]);
-        puts(operands[3]);
-        *result = setOperand(*result, operands[2], operands[3]);
-        
-        //for(int i = 0; i < 4; i ++){
-        //  if(operands[i] != NULL){
-        //    puts(operands[i]);
-        //  }
-        //}
-=======
-
         //setting I bit (bit 25)
         setBit(result, 1, 25);
 
@@ -211,14 +188,6 @@ void resPrePostAddressing(int *result, char** operands){
         } else {
           *(operands[2] + strlen(operands[2]) - 1) = '\0';      
         }
-
-        for(int i = 0; i < 5; i ++){
-          if(operands[i] != NULL){
-            printf("operand: %i\n", i);
-            puts(operands[i]);
-          }
-        }
->>>>>>> tarun
 
         *result = setOperand(*result, operands[2], operands[3]);
 
