@@ -156,7 +156,8 @@ void resPrePostAddressing(int *result, char** operands){
 
       //setting bit for U (bit 23) depending on if offset is negative or not
       //determines if offset should be added or subtracted.
-      setBit(result, isNegative == 0, 23);
+      //setBit(result, isNegative == 0, 23);
+      setBit(result, 1, 23);
 
       //amending offset based on sign
       if(isNegative) {
@@ -168,15 +169,16 @@ void resPrePostAddressing(int *result, char** operands){
       //setting bits 0-11 for offset
       setBits(result, 0, &offset, 0, 12);
 
+      puts(operands[2]);
+
       if(*(operands[2]) == 'r'){
         //setting I bit (bit 25)
-        setBit(result, 0, 25);
+        setBit(result, 1, 25);
       }
 
     } else {
         //setting I bit (bit 25)
         setBit(result, 1, 25);
-        puts("yo");
 
         *(operands[3] + strlen(operands[3]) - 1) = '\0';      
         puts(operands[2]);
@@ -195,7 +197,6 @@ void resPrePostAddressing(int *result, char** operands){
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
-    rn_num = 0;
     setBits(result, 16, &rn_num, 0, 4);
 
   }  
