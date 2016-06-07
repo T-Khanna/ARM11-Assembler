@@ -109,15 +109,16 @@ void resPrePostAddressing(int *result, char** operands){
 
       } else {
         
-        //setOperand(result, );
-        
-        for(int i = 0; i < 4; i ++){
-          if(operands[i] != NULL){
-            puts(operands[i]);
-          }
-        }
+        *(operands[3] + strlen(operands[3]) - 1) = '\0';      
+        puts(operands[2]);
+        puts(operands[3]);
+        *result = setOperand(*result, operands[2], operands[3]);
+
+        //setting I bit (bit 25)
+        setBit(result, 0, 25);
 
       }
+
 
       operands[1]++;
       int rn_num = numFromStr(operands[1]);
