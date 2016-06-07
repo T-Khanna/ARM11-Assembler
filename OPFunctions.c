@@ -401,6 +401,8 @@ int32_t setDataIntrBits(int32_t result,int s,
 }
 
 int32_t setOperand(int32_t result, char* str ,char* shift){
+
+printf("input %u\n",result);
  
  int operand2 =0;
 
@@ -438,7 +440,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
 
  if (shift != NULL){
  // shifting by some value
- char type[3];
+ char type[] = "lsr";
  strncpy(type,shift,3);
  if(!strcmp(type,"lsr")){
   setBit(&result, 1, 5);
@@ -454,7 +456,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
   setBit(&result, 1, 6);
  }
 
- //printf(" shifted %u\n",result);
+ printf(" shifted %u\n",result);
 
  if (shift[4] == '#'){
   // shift is a expression
@@ -474,7 +476,7 @@ int32_t setOperand(int32_t result, char* str ,char* shift){
  }
 } 
 
-//printf("%u\n",result);
+printf("%u\n",result);
  return result;
 }
 
