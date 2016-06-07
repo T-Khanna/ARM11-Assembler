@@ -15,22 +15,31 @@
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
+void symbol_table_init();
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
+void store_labels(char assem_instr[MAX_LINES][CHAR_LIMIT], int num_of_lines);
 uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
 void write_bin(char* path, uint32_t* bin_instr, int lines_in_file);
 tokenised tokeniser(char *line, int line_num);
 uint32_t command_processor(tokenised input);
+void free_symbol_table();
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
 extern int label_count;
+extern int is_label(char* token);
+uint32_t *bin_instr;
+uint32_t bin_instr_curr[MAX_LINES];
+int num_of_lines;
+int line_num;
+int extra_data;
 
 //TODO: ADD FUNC POINTER DATABASE
 uint32_t (*func_table[32]) (char* operands[]) = {
   &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
   &ASMbeq, &ASMbne, &ASMlsl, &ASMandeq, NULL, NULL, NULL, NULL, NULL,
-  NULL, &ASMbge, &ASMblt, &ASMble, &ASMb, NULL
+  NULL, &ASMbge, &ASMblt, &ASMbgt, &ASMble, &ASMb, NULL
 }; 
 
 mnemonic_code_mapping table[23] = {
@@ -80,27 +89,39 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
+  // Initialise symbol table
+  symbol_table_init();
+
   //getting the instruction from source file into an array of 32-bit
   //instructions that will be translated.
   char instrs[MAX_LINES][CHAR_LIMIT];
-  int num_of_lines = get_instrs(argv[1], instrs);
-  
-  for (int i = 0; i < num_of_lines; i++) {
-    puts(instrs[i]);
-  }
+  num_of_lines = get_instrs(argv[1], instrs);
+
+  // Storing the label locations in the symbol table
+  store_labels(instrs, num_of_lines);  
 
   //performing the pass over the file to decode into binary that will be written
-  uint32_t* bin_instr = translate_instr(instrs, num_of_lines);
+  bin_instr = translate_instr(instrs, num_of_lines);
   
   //creating output binary file
   write_bin(argv[2], bin_instr, num_of_lines);
-  
+ 
+  // Free memory used in symbol_table
+  free_symbol_table();  
+ 
   return EXIT_SUCCESS;
 
 }
 
 
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
+
+// Initialised symbol table
+void symbol_table_init() {
+  for (int i = 0; i < MAX_LABELS; i++) {
+    symb_table[i].label = malloc(CHAR_LIMIT * sizeof(char));
+  }
+}
 
 //gets instructions from source file into an array of 32-bit instructions
 // Also returns the number of lines to preven segmentation fault
@@ -121,6 +142,11 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
   // enters loop if current line exists and reading it is succesful. 
   // breaks loop when we reach the end of the file.
   while (fgets(instrs[lines_in_file], CHAR_LIMIT, fptr)) {
+
+    // Check if line is empty
+    if (*instrs[lines_in_file] == '\n') {
+      continue;
+    }
 
     //having loaded current line into the array of instructions specified, we
     //need to replace the '\n' at the end of each line to '\0'
@@ -143,25 +169,36 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
 
 //return an array of 32 bit words to be written into binary file
-uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length) {
+uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], 
+                         int length_in_lines) {
   
   char* current_instruction;
   tokenised token_line;
-  static uint32_t bin_instr[MAX_LINES];
-
-  for (int line_num = 0; line_num < length; line_num++) {
-    current_instruction = assem_instr[line_num];
+  extra_data = 0;
+  int bin_instr_num = 0;
+  for (line_num = 1; line_num <= length_in_lines; line_num++) {
+    current_instruction = assem_instr[line_num - 1];
     token_line = tokeniser(current_instruction, line_num);
-    bin_instr[line_num] = command_processor(token_line);
+
+    // We check if the line is only a label.
+    if (is_label(token_line.operands[0])) {
+      continue;
+    }
+    bin_instr_curr[bin_instr_num] = command_processor(token_line);
+    bin_instr_num++;
   }
 
+  // subract number of labels lines from total lines to store only the number
+  // of valid output lines as num_of_lines variable
   
-  return bin_instr;
+  num_of_lines = num_of_lines - label_count;
+  
+  return bin_instr_curr;
 
 }
 
 uint32_t command_processor(tokenised input) {
-   return (*input.func_pointer)(input.operands);
+  return (*input.func_pointer)(input.operands);
 }
 
 
@@ -170,28 +207,18 @@ uint32_t command_processor(tokenised input) {
 void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
 
   // Creating output binary file
-  FILE *fptr = fopen(path, "w+");
+  FILE *fptr = fopen(path, "wb");
  
-  // subract number of labels lines from total lines
-  lines_in_file -= label_count;
-
-  for(int line = 0; line < lines_in_file; line++){
-    uint32_t num = bin_instr[line];
-    uint32_t result = 0;
-    for(int i = 0; i < INSTRUCTION_BYTE_SIZE; i++){
-      result = result | (getBits((int32_t*)&num, i * BYTE_SIZE, BYTE_SIZE) //gets a byte
-               << ((INSTRUCTION_BYTE_SIZE -1 - i) * BYTE_SIZE));
-    }
-    bin_instr[line] = result;
-  }
-
   fwrite(bin_instr, INSTRUCTION_BYTE_SIZE, lines_in_file, fptr);
 
   //closing file
   fclose(fptr);
-
   
 }
 
-
+void free_symbol_table() {
+  for (int i = 0; i < MAX_LABELS; i++) {
+    free(symb_table[i].label);
+  }
+}
 

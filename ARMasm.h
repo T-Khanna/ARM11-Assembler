@@ -68,8 +68,6 @@ struct symbol_table {
 
 typedef struct tokenised {
 
-  char* label;
-  int label_pos;
   uint32_t (*func_pointer)(char* operands[]);
   char* operands[OPERAND_SIZE];
 
@@ -78,7 +76,6 @@ typedef struct tokenised {
 typedef struct mnemonic_code_mapping {
   char *mnemonic; 
   enum mnemonic_code opcode;
-  //int32_t (*op_func_pointer)(int32_t[]);
 } mnemonic_code_mapping;
 
 //-- GLOBAL VARIABLES ----------------------------------------------------------

@@ -7,8 +7,7 @@ CFLAGS  = -Wall -g -D_BSD_SOURCE -std=gnu99 -Werror -pedantic
 
 all: assemble emulate
 
-assemble: assemble.o OPFunctions.o bitOper.o tokeniser.o
-
+assemble: assemble.o labeliser.o tokeniser.o bitOper.o OPFunctions.o  
 emulate: emulate.o bitOper.o execute_helper.o gpio_helper.o
 
 clean:
