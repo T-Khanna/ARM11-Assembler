@@ -104,13 +104,16 @@ void resPrePostAddressing(int *result, char** operands){
         setBits(result, 0, &offset, 0, 11);
 
         //setting I bit (bit 25)
-        setBit(result, 1, 25);
+        setBit(result, 0, 25);
 
       } else {
         
         puts(operands[2]);
         puts(operands[3]);
         *result = setOperand(*result, operands[2], operands[3]);
+        
+        ////setting I bit (bit 25)
+        //setBit(result, 1, 25);
 
       }
 
