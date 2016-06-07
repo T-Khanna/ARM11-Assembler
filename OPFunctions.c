@@ -181,8 +181,6 @@ void resPrePostAddressing(int *result, char** operands){
         setBit(result, 1, 25);
 
         *(operands[3] + strlen(operands[3]) - 1) = '\0';      
-        puts(operands[2]);
-        puts(operands[3]);
         *result = setOperand(*result, operands[2], operands[3]);
         
         //for(int i = 0; i < 4; i ++){
