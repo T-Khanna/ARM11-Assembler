@@ -107,8 +107,6 @@ void resPrePostAddressing(int *result, char** operands){
 
       } else {
         
-        puts(operands[2]);
-        puts(operands[3]);
         *result = setOperand(*result, operands[2], operands[3]);
         
         ////setting I bit (bit 25)
