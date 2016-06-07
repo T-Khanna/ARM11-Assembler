@@ -71,9 +71,6 @@ void resPrePostAddressing(int *result, char** operands){
       //if there is no second operand set P bit to 1 due to Pre-indexing
       setBit(result, 1, 24);
 
-      ////setting I bit (bit 25)
-      //setBit(result, 1, 25);
-
     } else {
 
       //set P bit to 1 due to Post-indexing
@@ -119,19 +116,9 @@ void resPrePostAddressing(int *result, char** operands){
 		//(Opt) [Rn, {+/-}Rm{, <shift>}]
     
     //remove the char ']' from operand2 "#expr]"
-    //operands[2] = blah(operands[2]);
-
-    //removing ']' from second operand
     *(operands[2] + strlen(operands[2]) - 1) = '\0';
 
     int offset = numFromStr(operands[2]);
-
-    //checking if offset fits
-    //if(offset < 0xfffff800 || offset > 0x7ff) {
-    //  printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
-    //           ,offset);
-    //  exit(EXIT_FAILURE);
-    //}
 
     //checking for sign using sign bit 31
     int isNegative = getBit(&offset, 31);
