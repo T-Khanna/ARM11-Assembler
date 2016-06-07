@@ -7,6 +7,7 @@
 extern mnemonic_code_mapping table[23];
 extern uint32_t (*func_table[32]) (char* []);
 extern int is_label(char* token);
+extern int label_count;
  
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
@@ -39,6 +40,31 @@ void tokenise_init(tokenised* tokenised_str) {
   }
 }
 
+// Checks if pos is between pos1 and pos2
+int in_range(int pos, int pos1, int pos2) {
+  return (pos >= pos1 && pos <= pos2) || (pos >= pos2 && pos <= pos1);
+}
+
+int get_labels_in_between(int label_pos, int line_num) {
+  int labels_in_between = 0;
+  // Counts how many labels are between the label_pos and line_num
+  // Note: This includes the original label at label_pos.
+  for (int i = 0; i < label_count; i++) {
+    if (in_range(symb_table[i].position, label_pos, line_num)) {
+      labels_in_between++;
+    }
+  }
+  // Checks if there is a forward reference. If it's a backward reference 
+  // we are passing through the label twice (once at the start, second by
+  // the jump back to the label). If it's not, we are only passing through
+  // the label once, hence we have to decrement the number of labels in
+  // between the range.
+  if (label_pos > line_num) {
+    labels_in_between--;
+  }
+  return labels_in_between;
+}
+
 tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
                               int num_of_tokens, int line_num) {
   tokenised tokenised_str;
@@ -59,11 +85,15 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
     int i = 0;
     while (symb_table[i].label) {
       if (strcmp(symb_table[i].label, tokens[1]) == 0) {
-        char offset_val[10];
-        int offset = (symb_table[i].position - line_num) 
-                        * INSTRUCTION_BYTE_SIZE - PIPELINE_OFFSET;
-        sprintf(offset_val, "%d", offset);
-        tokenised_str.operands[0] = offset_val;
+        char line_diff_val[10];
+        int line_diff = symb_table[i].position - line_num;
+        // Because we are subtracting by the line number, we could be 
+        // subtracting lines which only have labels. Lines with labels 
+        // have no effect on the offset, so we need to add the number
+        // of labels in between the label position and line number.
+        line_diff += get_labels_in_between(symb_table[i].position, line_num);
+        sprintf(line_diff_val, "%d", line_diff);
+        tokenised_str.operands[0] = line_diff_val;
         return tokenised_str;
       }
       i++;
