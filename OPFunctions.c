@@ -50,8 +50,9 @@ void resPrePostAddressing(int *result, char** operands){
   
   //setting base register Rn to bits 16-19 in result
   char* rn_str = operands[0];
-  rn_str++; //ommitting the '[' in "[rn"
+  //rn_str++; //ommitting the '[' in "[rn"
   int rn_num = numFromStr(rn_str);
+  printf("rn = %u\n",rn_num);
   setBits(result, 16, &rn_num, 0, 4);
 
   //identifying [Rn] from [Rn
@@ -109,12 +110,15 @@ void resPrePostAddressing(int *result, char** operands){
 
       } else {
         
-        puts(operands[2]);
-        puts(operands[3]);
-        *result = setOperand(*result, operands[2], operands[3]);
+        //setOperand(result, );
+        
+        for(int i = 0; i < 4; i ++){
+          if(operands[i] != NULL){
+            puts(operands[i]);
+          }
+        }
 
       }
-
 
       operands[1]++;
       int rn_num = numFromStr(operands[1]);
@@ -175,28 +179,23 @@ void resPrePostAddressing(int *result, char** operands){
       }
 
     } else {
-        //setting I bit (bit 25)
-        setBit(result, 1, 25);
-        puts("yo");
-
+      
         *(operands[3] + strlen(operands[3]) - 1) = '\0';      
         puts(operands[2]);
         puts(operands[3]);
         *result = setOperand(*result, operands[2], operands[3]);
         
-        for(int i = 0; i < 4; i ++){
-          if(operands[i] != NULL){
-            printf("operand: %i\n", i);
-            puts(operands[i]);
-          }
-        }
+        //for(int i = 0; i < 4; i ++){
+        //  if(operands[i] != NULL){
+        //    puts(operands[i]);
+        //  }
+        //}
 
     }
 
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
-    rn_num = 0;
     setBits(result, 16, &rn_num, 0, 4);
 
   }  
