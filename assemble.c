@@ -186,14 +186,12 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
     }
     bin_instr_curr[bin_instr_num] = command_processor(token_line);
     bin_instr_num++;
-    //printf("%x\n", bin_instr_curr[num_of_lines - 1]);
   }
 
   // subract number of labels lines from total lines to store only the number
   // of valid output lines as num_of_lines variable
   
-  num_of_lines += extra_data;
-  num_of_lines -= label_count;
+  num_of_lines = num_of_lines - label_count;
   
   return bin_instr_curr;
 

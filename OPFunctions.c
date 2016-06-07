@@ -76,16 +76,14 @@ void resPrePostAddressing(int *result, char** operands){
 
     } else {
 
+      //two possibilities
+      //[Rn], #expression
+      //(Opt) [Rn], {+/-}Rm{, <shift>}
       
       char *hashInOp3 = strchr(operands[2], '#');
       if(hashInOp3 != NULL){
-        
         //set P bit to 1 due to Post-indexing
         setBit(result, 0, 24);
-
-        //two possibilities
-        //[Rn], #expression
-        //(Opt) [Rn], {+/-}Rm{, <shift>}
 
         int32_t offset = numFromStr(operands[2]);
 
@@ -107,10 +105,11 @@ void resPrePostAddressing(int *result, char** operands){
         setBits(result, 0, &offset, 0, 11);
 
         //setting I bit (bit 25)
-        setBit(result, 1, 25);
+        setBit(result, 0, 25);
 
       } else {
         
+<<<<<<< HEAD
         //setOperand(result, );
         
         for(int i = 0; i < 4; i ++){
@@ -118,6 +117,12 @@ void resPrePostAddressing(int *result, char** operands){
             puts(operands[i]);
           }
         }
+=======
+        *result = setOperand(*result, operands[2], operands[3]);
+        
+        //setting I bit (bit 25) //TODO
+        setBit(result, 1, 25);
+>>>>>>> tarun
 
       }
 
@@ -142,6 +147,7 @@ void resPrePostAddressing(int *result, char** operands){
     char *hashInOp3 = strchr(operands[2], '#');
     if(hashInOp3 != NULL){
       
+        puts("Hello world");
       //remove the char ']' from operand2 "#expr]"
       //operands[2] = blah(operands[2]);
 
@@ -174,12 +180,15 @@ void resPrePostAddressing(int *result, char** operands){
       //setting bits 0-11 for offset
       setBits(result, 0, &offset, 0, 12);
 
+      puts(operands[2]);
+
       if(*(operands[2]) == 'r'){
         //setting I bit (bit 25)
         setBit(result, 1, 25);
       }
 
     } else {
+<<<<<<< HEAD
       
         *(operands[3] + strlen(operands[3]) - 1) = '\0';      
         puts(operands[2]);
@@ -191,9 +200,29 @@ void resPrePostAddressing(int *result, char** operands){
         //    puts(operands[i]);
         //  }
         //}
+=======
+
+        //setting I bit (bit 25)
+        setBit(result, 1, 25);
+
+
+        if(operands[3] != NULL){
+          *(operands[3] + strlen(operands[3]) - 1) = '\0';      
+        } else {
+          *(operands[2] + strlen(operands[2]) - 1) = '\0';      
+        }
+
+        for(int i = 0; i < 5; i ++){
+          if(operands[i] != NULL){
+            printf("operand: %i\n", i);
+            puts(operands[i]);
+          }
+        }
+>>>>>>> tarun
+
+        *result = setOperand(*result, operands[2], operands[3]);
 
     }
-
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
@@ -527,14 +556,15 @@ uint32_t ASMldr(char * operands[]) {
     //incrementing num_of_lines in the file and extra_data before storing arg
     num_of_lines++;
     extra_data++;
-    bin_instr_curr[num_of_lines - 1] = arg;
+    bin_instr_curr[num_of_lines - label_count - 1] = arg;
 
     //curr has to be amended form current line_num due to PC being off by 
     //8-bytes. Which is 2 instruction lines
-    int curr = line_num + 2;
+    //int curr = line_num + 2;
+    int curr = line_num + 1;
 
     //calculating offset (in bytes) from where the arg was placed to curr
-    int offset = (num_of_lines - curr) * INSTRUCTION_BYTE_SIZE; 
+    int offset = (num_of_lines - label_count - 1 - curr) * INSTRUCTION_BYTE_SIZE; 
 
     //setting offset to bits 0-12
     setBits(&result, 0, &offset, 0, 12);
@@ -588,8 +618,6 @@ uint32_t ASMlsl(char * operands[]) {
 //a register, shifted by a constant amount.  
 
   //finding out suitable operands to call mov from operands specified
-  puts(operands[1]);
-  puts(operands[0]);
   char lsl[12]; // how big can this be?
   strcpy(lsl, "lsl ");
   char* lsl_expr = strcat(lsl, operands[1]);
