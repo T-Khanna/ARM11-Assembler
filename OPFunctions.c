@@ -170,7 +170,7 @@ void resPrePostAddressing(int *result, char** operands){
 
       if(*(operands[2]) == 'r'){
         //setting I bit (bit 25)
-        setBit(result, 1, 25);
+        setBit(result, 0, 25);
       }
 
     } else {
