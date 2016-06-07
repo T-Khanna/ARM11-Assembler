@@ -1,8 +1,15 @@
+///////////////////////////////////////////////////////////////////////////////
+// ARM Group Project - Year 1 (Group 40)
+// ____________________________________________________________________________
+//
+// File: tokeniser.c
+// Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
+///////////////////////////////////////////////////////////////////////////////
+
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include "ARMasm.h"
-#include "double_Linked_List.c"
 
 extern mnemonic_code_mapping table[23];
 extern uint32_t (*func_table[32]) (char* []);

@@ -2,7 +2,7 @@
 // ARM Group Project - Year 1 (Group 40)
 // ____________________________________________________________________________
 //
-// File: assemble.c
+// File: OPFunctions.c
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ///////////////////////////////////////////////////////////////////////////////
 
