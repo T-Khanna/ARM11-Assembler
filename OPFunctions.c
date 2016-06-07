@@ -47,11 +47,6 @@ void resPrePostAddressing(int *result, char** operands){
   //{"r0", "[r1", "r2", "lsl #2]"}
 
 
-  //for(int i = 0; i < 6; i ++){
-  //  if(operands[i] != NULL){
-  //    puts(operands[i]);
-  //  }
-  //}
   
   //setting base register Rn to bits 16-19 in result
   char* rn_str = operands[0];
@@ -79,34 +74,50 @@ void resPrePostAddressing(int *result, char** operands){
 
     } else {
 
-      //set P bit to 1 due to Post-indexing
-      setBit(result, 0, 24);
+      
+      char *hashInOp3 = strchr(operands[2], '#');
+      if(hashInOp3 != NULL){
+        
+        //set P bit to 1 due to Post-indexing
+        setBit(result, 0, 24);
 
-			//two possibilities
-			//[Rn], #expression
-			//(Opt) [Rn], {+/-}Rm{, <shift>}
+        //two possibilities
+        //[Rn], #expression
+        //(Opt) [Rn], {+/-}Rm{, <shift>}
 
-      int32_t offset = numFromStr(operands[2]);
+        int32_t offset = numFromStr(operands[2]);
 
-      //checking for sign using sign bit 31
-      int isNegative = getBit(&offset, 31);
+        //checking for sign using sign bit 31
+        int isNegative = getBit(&offset, 31);
 
-      //setting bit for U (bit 23) depending on if offset is negative or not
-      //determines if offset should be added or subtracted.
-      setBit(result, isNegative == 0, 23);
+        //setting bit for U (bit 23) depending on if offset is negative or not
+        //determines if offset should be added or subtracted.
+        setBit(result, isNegative == 0, 23);
 
-      //amending offset based on sign
-      if(isNegative) {
-        offset = -offset;
+        //amending offset based on sign
+        if(isNegative) {
+          offset = -offset;
+        }
+    
+        offset = (uint32_t) offset;
+
+        //setting bits 0-11 for offset
+        setBits(result, 0, &offset, 0, 11);
+
+        //setting I bit (bit 25)
+        setBit(result, 1, 25);
+
+      } else {
+        
+        //setOperand(result, );
+        
+        for(int i = 0; i < 4; i ++){
+          if(operands[i] != NULL){
+            puts(operands[i]);
+          }
+        }
+
       }
-  
-      offset = (uint32_t) offset;
-
-      //setting bits 0-11 for offset
-      setBits(result, 0, &offset, 0, 11);
-
-      //setting I bit (bit 25)
-      setBit(result, 1, 25);
 
       operands[1]++;
       int rn_num = numFromStr(operands[1]);
@@ -125,42 +136,62 @@ void resPrePostAddressing(int *result, char** operands){
 		//[Rn, #expression]
 		//(Opt) [Rn, {+/-}Rm{, <shift>}]
     
-    //remove the char ']' from operand2 "#expr]"
-    //operands[2] = blah(operands[2]);
 
-    //removing ']' from second operand
-    *(operands[2] + strlen(operands[2]) - 1) = '\0';
+    char *hashInOp3 = strchr(operands[2], '#');
+    if(hashInOp3 != NULL){
+      
+      //remove the char ']' from operand2 "#expr]"
+      //operands[2] = blah(operands[2]);
 
-    int offset = numFromStr(operands[2]);
+      //removing ']' from second operand
+      *(operands[2] + strlen(operands[2]) - 1) = '\0';
 
-    //checking if offset fits
-    //if(offset < 0xfffff800 || offset > 0x7ff) {
-    //  printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
-    //           ,offset);
-    //  exit(EXIT_FAILURE);
-    //}
+      int offset = numFromStr(operands[2]);
 
-    //checking for sign using sign bit 31
-    int isNegative = getBit(&offset, 31);
+      //checking if offset fits
+      //if(offset < 0xfffff800 || offset > 0x7ff) {
+      //  printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
+      //           ,offset);
+      //  exit(EXIT_FAILURE);
+      //}
 
-    //setting bit for U (bit 23) depending on if offset is negative or not
-    //determines if offset should be added or subtracted.
-    setBit(result, isNegative == 0, 23);
+      //checking for sign using sign bit 31
+      int isNegative = getBit(&offset, 31);
 
-    //amending offset based on sign
-    if(isNegative) {
-      offset = -offset;
+      //setting bit for U (bit 23) depending on if offset is negative or not
+      //determines if offset should be added or subtracted.
+      setBit(result, isNegative == 0, 23);
+
+      //amending offset based on sign
+      if(isNegative) {
+        offset = -offset;
+      }
+
+      offset = (uint32_t) offset;
+
+      //setting bits 0-11 for offset
+      setBits(result, 0, &offset, 0, 12);
+
+      if(*(operands[2]) == 'r'){
+        //setting I bit (bit 25)
+        setBit(result, 1, 25);
+      }
+
+    } else {
+      
+        *(operands[3] + strlen(operands[3]) - 1) = '\0';      
+        puts(operands[2]);
+        puts(operands[3]);
+        *result = setOperand(*result, operands[2], operands[3]);
+        
+        //for(int i = 0; i < 4; i ++){
+        //  if(operands[i] != NULL){
+        //    puts(operands[i]);
+        //  }
+        //}
+
     }
 
-    offset = (uint32_t) offset;
-
-    //setting bits 0-11 for offset
-    setBits(result, 0, &offset, 0, 12);
-
-    if(*(operands[2]) == 'r'){
-      //setting I bit (bit 25)
-      setBit(result, 1, 25);
-    }
 
     operands[1]++;
     int rn_num = numFromStr(operands[1]);
