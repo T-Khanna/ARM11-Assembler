@@ -22,8 +22,8 @@ extern int label_count;
 //int get_operands(char* operand, int size);
 void set_pointer(char* code, tokenised* token_line);
 tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
-                              int num_of_tokens, int line_num);
-tokenised tokeniser(char* line, int line_num);
+                              int num_of_tokens, int line_n);
+tokenised tokeniser(char* line, int line_n);
 
 //-- TOKENISER ----------------------------------------------------------------
 
@@ -53,12 +53,12 @@ int in_range(int pos, int pos1, int pos2) {
   return (pos >= pos1 && pos <= pos2) || (pos >= pos2 && pos <= pos1);
 }
 
-int get_labels_in_between(int label_pos, int line_num) {
+int get_labels_in_between(int label_pos, int line_n) {
   int labels_in_between = 0;
-  // Counts how many labels are between the label_pos and line_num
+  // Counts how many labels are between the label_pos and line_n
   // Note: This includes the original label at label_pos.
   for (int i = 0; i < label_count; i++) {
-    if (in_range(symb_table[i].position, label_pos, line_num)) {
+    if (in_range(symb_table[i].position, label_pos, line_n)) {
       labels_in_between++;
     }
   }
@@ -67,14 +67,14 @@ int get_labels_in_between(int label_pos, int line_num) {
   // the jump back to the label). If it's not, we are only passing through
   // the label once, hence we have to decrement the number of labels in
   // between the range.
-  if (label_pos > line_num) {
+  if (label_pos > line_n) {
     labels_in_between--;
   }
   return labels_in_between;
 }
 
 tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
-                              int num_of_tokens, int line_num) {
+                              int num_of_tokens, int line_n) {
   tokenised tokenised_str;
 
   // Initialise tokenised_str values.
@@ -94,12 +94,12 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
     while (symb_table[i].label) {
       if (strcmp(symb_table[i].label, tokens[1]) == 0) {
         char line_diff_val[10];
-        int line_diff = symb_table[i].position - line_num;
+        int line_diff = symb_table[i].position - line_n;
         // Because we are subtracting by the line number, we could be 
         // subtracting lines which only have labels. Lines with labels 
         // have no effect on the offset, so we need to add the number
         // of labels in between the label position and line number.
-        line_diff += get_labels_in_between(symb_table[i].position, line_num);
+        line_diff += get_labels_in_between(symb_table[i].position, line_n);
         sprintf(line_diff_val, "%d", line_diff);
         tokenised_str.operands[0] = line_diff_val;
         return tokenised_str;
@@ -116,7 +116,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
   return tokenised_str;
 }
 
-tokenised tokeniser(char *line, int line_num) {
+tokenised tokeniser(char *line, int line_n) {
   // Declare deliminator characters
   char delim1[] = ",", delim2[] = " ";
   
@@ -135,5 +135,5 @@ tokenised tokeniser(char *line, int line_num) {
     num_of_tokens++;
   }
 
-  return get_tokenised(tokens, num_of_tokens, line_num);
+  return get_tokenised(tokens, num_of_tokens, line_n);
 }

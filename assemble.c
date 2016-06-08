@@ -20,7 +20,7 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
 void store_labels(char assem_instr[MAX_LINES][CHAR_LIMIT], int num_of_lines);
 uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
 void write_bin(char* path, uint32_t* bin_instr, int lines_in_file);
-tokenised tokeniser(char *line, int line_num);
+tokenised tokeniser(char *line, int line_n);
 uint32_t command_processor(tokenised input);
 void free_symbol_table();
 
