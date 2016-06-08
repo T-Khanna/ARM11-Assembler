@@ -20,7 +20,7 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]);
 void store_labels(char assem_instr[MAX_LINES][CHAR_LIMIT], int num_of_lines);
 uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT], int length);
 void write_bin(char* path, uint32_t* bin_instr, int lines_in_file);
-tokenised tokeniser(char *line, int line_num);
+tokenised tokeniser(char *line, int line_n);
 uint32_t command_processor(tokenised input);
 void free_symbol_table();
 
@@ -32,6 +32,7 @@ uint32_t *bin_instr;
 uint32_t bin_instr_curr[MAX_LINES];
 int num_of_lines;
 int line_num;
+int valid_line_num;
 int extra_data;
 
 //TODO: ADD FUNC POINTER DATABASE
@@ -175,6 +176,7 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
   tokenised token_line;
   extra_data = 0;
   int bin_instr_num = 0;
+  valid_line_num = 1;
   for (line_num = 1; line_num <= length_in_lines; line_num++) {
     current_instruction = assem_instr[line_num - 1];
     token_line = tokeniser(current_instruction, line_num);
@@ -185,6 +187,7 @@ uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
     }
     bin_instr_curr[bin_instr_num] = command_processor(token_line);
     bin_instr_num++;
+    valid_line_num++;
   }
 
   // subract number of labels lines from total lines to store only the number

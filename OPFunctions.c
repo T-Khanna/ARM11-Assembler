@@ -20,6 +20,7 @@ extern int label_count;
 extern uint32_t bin_instr_curr[MAX_LINES];
 extern int num_of_lines;
 extern int line_num;
+extern int valid_line_num;
 extern int extra_data;
 const uint32_t uncond_mask = (1<<31) + (1<<30) + (1<<29);
 
@@ -290,24 +291,21 @@ uint32_t ASMldr(char * operands[]) {
 
     //obtaining arg as int without the '=' using numFromStr which omits the
     //first character and returns the rest of the operand as an int
-    //int arg = numFromStr(operands[1]);
     uint32_t arg = numFromStr(operands[1]);
-    //char* argStr = operands[1];
-    //argStr++;
-    //int arg = atoi(argStr);
 
     //incrementing num_of_lines in the file and extra_data before storing arg
     num_of_lines++;
-    extra_data++;
-    bin_instr_curr[num_of_lines - label_count - 1] = arg;
+    //extra_data++;
+    int last_line_num = num_of_lines - label_count;
+    bin_instr_curr[last_line_num - 1] = arg;
 
     //curr has to be amended form current line_num due to PC being off by
     //8-bytes. Which is 2 instruction lines
     //int curr = line_num + 2;
-    int curr = line_num + 1;
+    //int32_t curr = line_num + 1;
 
     //calculating offset (in bytes) from where the arg was placed to curr
-    int offset = (num_of_lines - label_count - 1 - curr) * INSTRUCTION_BYTE_SIZE;
+    int offset = (last_line_num - valid_line_num - 2) * INSTRUCTION_BYTE_SIZE; 
 
     //setting offset to bits 0-12
     setBits(&result, 0, &offset, 0, 12);

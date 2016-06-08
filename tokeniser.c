@@ -22,8 +22,8 @@ extern int label_count;
 //int get_operands(char* operand, int size);
 void set_pointer(char* code, tokenised* token_line);
 tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
-                              int num_of_tokens, int line_num);
-tokenised tokeniser(char* line, int line_num);
+                              int num_of_tokens, int line_n);
+tokenised tokeniser(char* line, int line_n);
 
 //-- TOKENISER ----------------------------------------------------------------
 
@@ -53,12 +53,12 @@ int in_range(int pos, int pos1, int pos2) {
   return (pos >= pos1 && pos <= pos2) || (pos >= pos2 && pos <= pos1);
 }
 
-int get_labels_in_between(int label_pos, int line_num) {
+int get_labels_in_between(int label_pos, int line_n) {
   int labels_in_between = 0;
-  // Counts how many labels are between the label_pos and line_num
+  // Counts how many labels are between the label_pos and line_n
   // Note: This includes the original label at label_pos.
   for (int i = 0; i < label_count; i++) {
-    if (in_range(symb_table[i].position, label_pos, line_num)) {
+    if (in_range(symb_table[i].position, label_pos, line_n)) {
       labels_in_between++;
     }
   }
@@ -67,7 +67,7 @@ int get_labels_in_between(int label_pos, int line_num) {
   // the jump back to the label). If it's not, we are only passing through
   // the label once, hence we have to decrement the number of labels in
   // between the range.
-  if (label_pos > line_num) {
+  if (label_pos > line_n) {
     labels_in_between--;
   }
   return labels_in_between;
@@ -126,6 +126,7 @@ tokenised get_tokenised(char* tokens[TOKEN_LIMIT],
 */
 
 tokenised tokeniser(char *line, int line_num) {
+
   // Declare deliminator characters
   char delim1[] = ",", delim2[] = " ";
 
