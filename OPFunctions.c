@@ -523,7 +523,7 @@ uint32_t ASMldr(char * operands[]) {
     num_of_lines++;
     //extra_data++;
     int last_line_num = num_of_lines - label_count;
-    bin_instr_curr[last_line_num - 2] = arg;
+    bin_instr_curr[last_line_num - 1] = arg;
 
     //curr has to be amended form current line_num due to PC being off by 
     //8-bytes. Which is 2 instruction lines
