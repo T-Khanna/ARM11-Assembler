@@ -21,6 +21,7 @@ extern int label_count;
 extern uint32_t bin_instr_curr[MAX_LINES];
 extern int num_of_lines;
 extern int line_num;
+extern int valid_line_num;
 extern int extra_data;
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
@@ -522,7 +523,7 @@ uint32_t ASMldr(char * operands[]) {
     num_of_lines++;
     //extra_data++;
     int last_line_num = num_of_lines - label_count;
-    bin_instr_curr[last_line_num - 1] = arg;
+    bin_instr_curr[last_line_num - 2] = arg;
 
     //curr has to be amended form current line_num due to PC being off by 
     //8-bytes. Which is 2 instruction lines
@@ -530,10 +531,8 @@ uint32_t ASMldr(char * operands[]) {
     //int32_t curr = line_num + 1;
 
     //calculating offset (in bytes) from where the arg was placed to curr
-    int offset = (last_line_num - line_num - 2) * INSTRUCTION_BYTE_SIZE; 
+    int offset = (last_line_num - valid_line_num - 2) * INSTRUCTION_BYTE_SIZE; 
 
-    printf("current: %u\n", line_num);
-    printf("memory_size: %u\n", last_line_num);
     printf("offset: %u\n", offset);
 
     //setting offset to bits 0-12
