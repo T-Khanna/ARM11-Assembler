@@ -11,8 +11,6 @@
 // Contains the function definitions for emulate.c, the execute function in 
 // particular to carry out the four instructions specified.
 
-#include "ARMgen.h"
-
 
 
 //-- FUNCTION DECLARATIONS -----------------------------------------------------

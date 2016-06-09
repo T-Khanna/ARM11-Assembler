@@ -12,7 +12,7 @@
 // particular to carry out the four instructions specified.
 
 #include <stdio.h>
-#include "ARMgen.h"
+#include "ARMemu.h"
 #include "gpio_helper.h"
 
 
