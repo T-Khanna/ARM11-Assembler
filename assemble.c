@@ -124,6 +124,10 @@ void symbol_table_init() {
   }
 }
 
+int is_comment(char instr[CHAR_LIMIT]) {
+  return *instr == '/' && *(instr + 1) == '/';
+}
+
 //gets instructions from source file into an array of 32-bit instructions
 // Also returns the number of lines to preven segmentation fault
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
@@ -144,8 +148,8 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
   // breaks loop when we reach the end of the file.
   while (fgets(instrs[lines_in_file], CHAR_LIMIT, fptr)) {
 
-    // Check if line is empty
-    if (*instrs[lines_in_file] == '\n') {
+    // Check if line is empty or is a comment
+    if (*instrs[lines_in_file] == '\n' || is_comment(instrs[lines_in_file])) {
       continue;
     }
 
