@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "ARMasm.h"
-#include "bitOper.h"
+#include "../bitOpers/bitOper.h"
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 

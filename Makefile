@@ -7,10 +7,16 @@ CFLAGS  = -Wall -g -D_BSD_SOURCE -std=gnu99 -Werror -pedantic
 
 all: assemble emulate
 
-assemble: assemble.o labeliser.o tokeniser.o bitOper.o OPFunctions.o  
-emulate: emulate.o bitOper.o execute_helper.o gpio_helper.o
+assemble:
+	make assemble -C assembler/
+	cp assembler/assemble .
+
+emulate: 
+	make emulate -C emulator/
+	cp emulator/emulate .
 
 clean:
 	rm -f $(wildcard *.o)
-	rm -f assemble
-	rm -f emulate
+	rm -f assemble emulate
+	make clean -C assembler/
+	make clean -C emulator/

@@ -12,7 +12,6 @@
 // instruction.
 
 #include "bitOper.h"
-#include "ARMgen.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
