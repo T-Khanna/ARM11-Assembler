@@ -177,7 +177,7 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 }
 
 
-int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
+uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
                          int length_in_lines) {
 //return an array of 32 bit words to be written into binary file
 

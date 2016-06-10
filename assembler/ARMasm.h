@@ -31,11 +31,6 @@
 #define PIPELINE_OFFSET 8
 
 
-//-- GLOBAL VARIABLES ----------------------------------------------------------
-
-struct symbol_table symb_table[MAX_LABELS];
-
-
 //-- ENUM CODE MAPPING ---------------------------------------------------------
 
 enum mnemonic_code {
@@ -66,6 +61,11 @@ typedef struct mnemonic_code_mapping {
   char *mnemonic;
   enum mnemonic_code opcode;
 } mnemonic_code_mapping;
+
+
+//-- GLOBAL VARIABLES ----------------------------------------------------------
+
+struct symbol_table symb_table[MAX_LABELS];
 
 
 //-- OPFUNCTION DECLARATIONS ---------------------------------------------------
