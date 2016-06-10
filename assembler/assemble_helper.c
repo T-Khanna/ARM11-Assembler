@@ -1,10 +1,15 @@
-/////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // ARM Group Project - Year 1 (Group 40)
-// ____________________________________________________________________________
+// _____________________________________________________________________________
 //
 // File: assemble_helper.c
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+//-------------------------------- ASSEMBLE HELPER -----------------------------
+// Holds the helper functions used in OPFunctions to help with the processing
+// of the instructions.
 
 #include <string.h>
 #include <ctype.h>
@@ -13,6 +18,7 @@
 #include <math.h>
 #include "ARMasm.h"
 #include "../bitOpers/bitOper.h"
+
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -23,6 +29,7 @@ extern int line_num;
 extern int valid_line_num;
 extern int extra_data;
 const uint32_t uncond_mask = (1<<31) + (1<<30) + (1<<29);
+
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
@@ -52,6 +59,7 @@ int32_t setDataIntrBits(int32_t result,int s,
   setBits(&result,12,&rd,0,4);
 
   return result;
+
 }
 
 /*
@@ -176,9 +184,9 @@ void resPrePostAddressing(int *result, char** operands){
   char* rn_str = operands[0];
   //rn_str++; //ommitting the '[' in "[rn"
   int rn_num = numFromStr(rn_str);
-  //printf("rn = %u\n",rn_num);
+
   setBits(result, 16, &rn_num, 0, 4);
-  //printf("setted rn = %u\n",*result);
+
 
   //identifying [Rn] from [Rn
   //returns NULL if not found. index pointer if found
@@ -259,9 +267,9 @@ void resPrePostAddressing(int *result, char** operands){
 
 
     char *hashInOp3 = strchr(operands[2], '#');
+
     if(hashInOp3 != NULL){
 
-        puts("Hello world");
       //remove the char ']' from operand2 "#expr]"
       //operands[2] = blah(operands[2]);
 
@@ -269,13 +277,6 @@ void resPrePostAddressing(int *result, char** operands){
       *(operands[2] + strlen(operands[2]) - 1) = '\0';
 
       int offset = numFromStr(operands[2]);
-
-      //checking if offset fits
-      //if(offset < 0xfffff800 || offset > 0x7ff) {
-      //  printf("ERROR: Cannot fit offset value \"%d\" to 12 bits in ldr\n"
-      //           ,offset);
-      //  exit(EXIT_FAILURE);
-      //}
 
       //checking for sign using sign bit 31
       int isNegative = getBit(&offset, 31);
@@ -293,8 +294,6 @@ void resPrePostAddressing(int *result, char** operands){
 
       //setting bits 0-11 for offset
       setBits(result, 0, &offset, 0, 12);
-
-      puts(operands[2]);
 
       if(*(operands[2]) == 'r'){
         //setting I bit (bit 25)

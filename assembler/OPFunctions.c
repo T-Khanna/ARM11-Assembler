@@ -1,10 +1,16 @@
-/////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // ARM Group Project - Year 1 (Group 40)
-// ____________________________________________________________________________
+// _____________________________________________________________________________
 //
 // File: OPFunctions.c
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+//----------------------------- OPFunctions  -----------------------------------
+// Holds the helper functions used in OPFunctions to help with the processing
+// of the instructions.
+
 
 #include <string.h>
 #include <ctype.h>
@@ -13,6 +19,7 @@
 #include <math.h>
 #include "ARMasm.h"
 #include "../bitOpers/bitOper.h"
+
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -24,6 +31,7 @@ extern int valid_line_num;
 extern int extra_data;
 extern const uint32_t uncond_mask;
 
+
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
 int32_t setDataIntrBits(int32_t result,
@@ -31,6 +39,7 @@ int32_t setDataIntrBits(int32_t result,
 int32_t setOperand(int32_t result, char* str, char* shift);
 int numFromStr(char* operand);
 void resPrePostAddressing(int *result, char** operands);
+
 
 //-- FUNCTIONS -----------------------------------------------------------------
 
@@ -65,6 +74,7 @@ uint32_t ASMadd(char* operands[]) {
   result = setOperand(result, operands[2], operands[3]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMsub(char* operands[]) {
@@ -77,6 +87,7 @@ uint32_t ASMsub(char* operands[]) {
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMrsb(char* operands[]) {
@@ -89,6 +100,7 @@ uint32_t ASMrsb(char* operands[]) {
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMand(char* operands[]) {
@@ -101,6 +113,7 @@ uint32_t ASMand(char* operands[]) {
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMeor(char* operands[]) {
@@ -113,6 +126,7 @@ uint32_t ASMeor(char* operands[]) {
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMorr(char* operands[]) {
@@ -125,6 +139,7 @@ uint32_t ASMorr(char* operands[]) {
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMmov(char* operands[]) {
@@ -137,6 +152,7 @@ uint32_t ASMmov(char* operands[]) {
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMtst(char* operands[]) {
@@ -148,6 +164,7 @@ uint32_t ASMtst(char* operands[]) {
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMteq(char* operands[]) {
@@ -159,6 +176,7 @@ uint32_t ASMteq(char* operands[]) {
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
+
 }
 
 uint32_t ASMcmp(char* operands[]) {
@@ -170,6 +188,7 @@ uint32_t ASMcmp(char* operands[]) {
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
+
 }
 
 
@@ -210,7 +229,6 @@ uint32_t ASMmul(char * operands[]) {
 
   return result;
 
-  return 0;
 }
 
 uint32_t ASMmla(char * operands[]) {
@@ -250,7 +268,6 @@ uint32_t ASMmla(char * operands[]) {
 
   return (unsigned) result;
 
-  return 0;
 }
 
 //-- SINGLE DATA TRANSFER -------------------------//
@@ -264,8 +281,6 @@ uint32_t ASMldr(char * operands[]) {
 
   //if argument is not greater than 0xFF(255 in dec), it is redirected to mov
   if(!(numFromStr(operands[1]) > 255) && (*(operands[1])) != '[') {
-
-    puts("going to mov");
 
     *(operands[1]) = '#';
 
@@ -293,17 +308,13 @@ uint32_t ASMldr(char * operands[]) {
 
     //incrementing num_of_lines in the file and extra_data before storing arg
     num_of_lines++;
-    //extra_data++;
     int last_line_num = num_of_lines - label_count;
     bin_instr_curr[last_line_num - 1] = arg;
 
-    //curr has to be amended form current line_num due to PC being off by
+    //Has to be amended form current line_num due to PC being off by
     //8-bytes. Which is 2 instruction lines
-    //int curr = line_num + 2;
-    //int32_t curr = line_num + 1;
-
     //calculating offset (in bytes) from where the arg was placed to curr
-    int offset = (last_line_num - valid_line_num - 2) * INSTRUCTION_BYTE_SIZE; 
+    int offset = (last_line_num - valid_line_num - 2) * INSTRUCTION_BYTE_SIZE;
 
     //setting offset to bits 0-12
     setBits(&result, 0, &offset, 0, 12);
@@ -420,5 +431,3 @@ uint32_t ASMble(char * operands[]) {
 uint32_t ASMb(char * operands[]) {
   return calculate_branch(B, operands[0]);
 }
-
-
