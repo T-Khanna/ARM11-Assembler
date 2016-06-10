@@ -32,8 +32,7 @@ int32_t setOperand(int32_t result, char* str, char* shift);
 int numFromStr(char* operand);
 void resPrePostAddressing(int *result, char** operands);
 
-
-//-- FUNCTION -----------------------------------------------------------------
+//-- FUNCTIONS -----------------------------------------------------------------
 
 
 //-- DATA PROCESSING FUNCTIONS -------------------------//
@@ -62,7 +61,7 @@ uint32_t ASMadd(char* operands[]) {
   result = setDataIntrBits(result, 0, ADD, numFromStr(operands[1]),
                             numFromStr(operands[0]));
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[2], operands[3]);
 
   return (unsigned) result;
@@ -70,11 +69,11 @@ uint32_t ASMadd(char* operands[]) {
 
 uint32_t ASMsub(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn, Rd
+  //setting given intruction bits - S, opcode, Rn, Rd
   result = setDataIntrBits(result, 0, SUB, numFromStr(operands[1]),
                             numFromStr(operands[0]));
 
-	// calculating and seeting operand
+	//calculating and setting operand
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
@@ -82,11 +81,11 @@ uint32_t ASMsub(char* operands[]) {
 
 uint32_t ASMrsb(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn, Rd
+  //setting given intruction bits - S, opcode, Rn, Rd
   result = setDataIntrBits(result, 0, RSB, numFromStr(operands[1]),
                             numFromStr(operands[0]));
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
@@ -94,11 +93,11 @@ uint32_t ASMrsb(char* operands[]) {
 
 uint32_t ASMand(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn, Rd
+  //setting given intruction bits - S, opcode, Rn, Rd
   result = setDataIntrBits(result, 0, AND, numFromStr(operands[1]),
                             numFromStr(operands[0]));
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
@@ -106,11 +105,11 @@ uint32_t ASMand(char* operands[]) {
 
 uint32_t ASMeor(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn, Rd
+  //setting given intruction bits - S, opcode, Rn, Rd
   result = setDataIntrBits(result, 0, EOR, numFromStr(operands[1]),
                             numFromStr(operands[0]));
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
@@ -118,11 +117,11 @@ uint32_t ASMeor(char* operands[]) {
 
 uint32_t ASMorr(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn, Rd
+  //setting given intruction bits - S, opcode, Rn, Rd
   result = setDataIntrBits(result, 0, ORR, numFromStr(operands[1]),
                             numFromStr(operands[0]));
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[2],operands[3]);
 
   return (unsigned) result;
@@ -130,12 +129,11 @@ uint32_t ASMorr(char* operands[]) {
 
 uint32_t ASMmov(char* operands[]) {
 
-  // fix this
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rd
+  //setting given intruction bits - S, opcode, Rd
   result = setDataIntrBits(result, 0, MOV, 0, numFromStr(operands[0]));
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
@@ -143,10 +141,10 @@ uint32_t ASMmov(char* operands[]) {
 
 uint32_t ASMtst(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn
+  //setting given intruction bits - S, opcode, Rn
   result = setDataIntrBits(result, 1, TST, numFromStr(operands[0]),0);
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
@@ -154,10 +152,10 @@ uint32_t ASMtst(char* operands[]) {
 
 uint32_t ASMteq(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn
+  //setting given intruction bits - S, opcode, Rn
   result = setDataIntrBits(result, 1, TEQ, numFromStr(operands[0]),0);
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;
@@ -165,10 +163,10 @@ uint32_t ASMteq(char* operands[]) {
 
 uint32_t ASMcmp(char* operands[]) {
   int32_t result = 0;
-   //setting given intruction bits - S, opcode, Rn
+  //setting given intruction bits - S, opcode, Rn
   result = setDataIntrBits(result, 1, CMP, numFromStr(operands[0]),0);
 
-  // calculating and seeting operand
+  //calculating and setting operand
   result = setOperand(result, operands[1],operands[2]);
 
   return (unsigned) result;

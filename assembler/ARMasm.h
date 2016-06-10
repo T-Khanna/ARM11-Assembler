@@ -80,7 +80,7 @@ uint32_t ASMmla(char* operands[]);
 uint32_t ASMldr(char* operands[]);
 uint32_t ASMstr(char* operands[]);
 
-//BRANCHING
+//BRANCH
 uint32_t ASMbeq(char* operands[]);
 uint32_t ASMbne(char* operands[]);
 uint32_t ASMbge(char* operands[]);

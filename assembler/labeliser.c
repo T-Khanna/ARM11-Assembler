@@ -21,7 +21,7 @@ void store_labels(char assem_instrs[MAX_LINES][CHAR_LIMIT], int num_of_lines);
 
 //-- LABELISER ----------------------------------------------------------------
 
-// Check if the first token is a label or not.
+//check if the first token is a label or not.
 int is_label(char* token) {
   return token != NULL && *(token + strcspn(token, ":")) == ':' 
             && isalpha(*token);
@@ -30,23 +30,23 @@ int is_label(char* token) {
 void labeliser(char *line, int line_n) {
   char delim[] = " ", *save_ptr;
   char* token = strtok_r(line, delim, &save_ptr);
-  // Check for label
+  //check for label
   if (is_label(token)) {
-    // Update symbol table
+    //update symbol table
     strcpy(symb_table[label_count].label, token);
     symb_table[label_count].position = line_n;
     
-    // Remove colon from label
+    //remove colon from label
     int colon_pos = strcspn(symb_table[label_count].label, ":");
     *(symb_table[label_count].label + colon_pos) = '\0';
     
-    // Increment the label count
+    //increment the label count
     label_count++; 
   }
 }
 
 void store_labels(char assem_instrs[MAX_LINES][CHAR_LIMIT], int num_of_lines) {
-  // Need to use a local variable in order to avoid changing assem_instrs
+  //need to use a local variable in order to avoid changing assem_instrs
   char* token = malloc(CHAR_LIMIT * sizeof(char));
   for (int line_n = 1; line_n <= num_of_lines; line_n++) {
     strcpy(token, assem_instrs[line_n - 1]);

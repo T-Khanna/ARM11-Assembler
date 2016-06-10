@@ -35,7 +35,6 @@ int line_num;
 int valid_line_num;
 int extra_data;
 
-//TODO: ADD FUNC POINTER DATABASE
 uint32_t (*func_table[32]) (char* operands[]) = {
   &ASMand, &ASMeor, &ASMsub, &ASMrsb, &ASMadd, &ASMldr, &ASMstr, NULL,
   &ASMtst, &ASMteq, &ASMcmp, NULL, &ASMorr, &ASMmov, &ASMmul, &ASMmla,
@@ -44,7 +43,7 @@ uint32_t (*func_table[32]) (char* operands[]) = {
 };
 
 mnemonic_code_mapping table[23] = {
-  // Data Processing
+  //data Processing
   {"add", ADD},
   {"sub", SUB},
   {"rsb", RSB},
@@ -56,15 +55,15 @@ mnemonic_code_mapping table[23] = {
   {"teq", TEQ},
   {"cmp", CMP},
 
-  // Multiply
+  //multiply
   {"mul", MUL},
   {"mla", MLA},
 
-  // Single Data Transfer
+  //single Data Transfer
   {"ldr", LDR},
   {"str", STR},
 
-  // Branch
+  //branch
   {"beq", BEQ},
   {"bne", BNE},
   {"bge", BGE},
@@ -73,7 +72,7 @@ mnemonic_code_mapping table[23] = {
   {"ble", BLE},
   {"b", B},
 
-  // Special
+  //special
   {"lsl", LSL},
   {"andeq", ANDEQ}
 
@@ -90,15 +89,15 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  // Initialise symbol table
+  //initialise symbol table
   symbol_table_init();
 
-  //getting the instruction from source file into an array of 32-bit
-  //instructions that will be translated.
+  /*getting the instruction from source file into an array of 32-bit
+    instructions that will be translated.*/
   char instrs[MAX_LINES][CHAR_LIMIT];
   num_of_lines = get_instrs(argv[1], instrs);
 
-  // Storing the label locations in the symbol table
+  //storing the label locations in the symbol table
   store_labels(instrs, num_of_lines);
 
   //performing the pass over the file to decode into binary that will be written
@@ -107,7 +106,7 @@ int main(int argc, char **argv) {
   //creating output binary file
   write_bin(argv[2], bin_instr, num_of_lines);
 
-  // Free memory used in symbol_table
+  //free memory used in symbol_table
   free_symbol_table();
 
   return EXIT_SUCCESS;
@@ -117,21 +116,21 @@ int main(int argc, char **argv) {
 
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
 
-// Initialised symbol table
+//initialised symbol table
 void symbol_table_init() {
   for (int i = 0; i < MAX_LABELS; i++) {
     symb_table[i].label = malloc(CHAR_LIMIT * sizeof(char));
   }
 }
 
-//gets instructions from source file into an array of 32-bit instructions
-// Also returns the number of lines to preven segmentation fault
+/*gets instructions from source file into an array of 32-bit instructions
+  also returns the number of lines to provide a limit for the array */
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
-  // Open source assembly file
+  //open source assembly file
   FILE *fptr = fopen(path, "r");
 
-  // Check to ensure that file exists
+  //check to ensure that file exists
   if (fptr == NULL) {
     printf("Unable to open input file\n");
     return 0;
@@ -139,26 +138,26 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
   int lines_in_file = 0;
 
-  //Loads each line into the array of instructions specified
-  // enters loop if current line exists and reading it is succesful.
-  // breaks loop when we reach the end of the file.
+  /*loads each line into the array of instructions specified
+    enters loop if current line exists and reading it is succesful.
+    breaks loop when we reach the end of the file.*/
   while (fgets(instrs[lines_in_file], CHAR_LIMIT, fptr)) {
 
-    // Check if line is empty or is a comment
+    //check if line is empty or is a comment
     if (*instrs[lines_in_file] == '\n' || *instrs[lines_in_file] == ';') {
       continue;
     }
 
-    //having loaded current line into the array of instructions specified, we
-    //need to replace the '\n' at the end of each line to '\0'
+    /*having loaded current line into the array of instructions specified, we
+      need to replace the '\n' at the end of each line to '\0' */
 
-    // find the position of the '\n' new line character that we want to replace
+    //Find the position of the '\n' new line character that we want to replace
     int newline_pos = strcspn(instrs[lines_in_file], "\n");
 
-    // Set the value to '\0' to terminate the string
+    //set the value to '\0' to terminate the string
     instrs[lines_in_file][newline_pos] = '\0';
 
-    // proceed to the next line in the file
+    //proceed to the next line in the file
     lines_in_file++;
 
   }
@@ -169,31 +168,37 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
 
 //return an array of 32 bit words to be written into binary file
-uint32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
+int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
                          int length_in_lines) {
 
   char* current_instruction;
   tokenised token_line;
-  extra_data = 0;
+  //used to ensure that the array does not have an empty
   int bin_instr_num = 0;
+  /*the line number that the extra data from Single Data Transfer 
+    will be written to in the output.*/
   valid_line_num = 1;
+  
   for (line_num = 1; line_num <= length_in_lines; line_num++) {
+    //read a line from the array
     current_instruction = assem_instr[line_num - 1];
+    //tokenise the line
     token_line = tokeniser(current_instruction, line_num);
-
-    // We check if the line is only a label.
+    //we check if the line is only a label.
     if (is_label(token_line.operands[0])) {
       continue;
     }
+    //store the binary instruction in the array.
     bin_instr_curr[bin_instr_num] = command_processor(token_line);
+    //move to the next instruction
     bin_instr_num++;
     valid_line_num++;
   }
 
-  // subract number of labels lines from total lines to store only the number
-  // of valid output lines as num_of_lines variable
+  /*subract number of labels lines from total lines to store only the number
+    of valid output lines as num_of_lines variable*/
 
-  num_of_lines = num_of_lines - label_count;
+  num_of_lines -= label_count;
 
   return bin_instr_curr;
 }
@@ -203,11 +208,10 @@ uint32_t command_processor(tokenised input) {
 }
 
 
-//writes the array of 32 bit words (instructions) into the binary file
-//specified
+//writes an array of 32 bit words (instructions) into the binary file specified
 void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
 
-  // Creating output binary file
+  //creating output binary file
   FILE *fptr = fopen(path, "wb");
 
   fwrite(bin_instr, INSTRUCTION_BYTE_SIZE, lines_in_file, fptr);
@@ -216,6 +220,7 @@ void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
   fclose(fptr);
 }
 
+//frees memory initially allocated for labels
 void free_symbol_table() {
   for (int i = 0; i < MAX_LABELS; i++) {
     free(symb_table[i].label);
