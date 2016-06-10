@@ -6,12 +6,19 @@
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ///////////////////////////////////////////////////////////////////////////////
 
+
+//-------------------------------- ASSEMBLE ------------------------------------
+// Holds the program that converts assembly code into ARM binary code for the
+// raspberry pi to understand
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include "ARMasm.h"
 #include "../bitOpers/bitOper.h"
+
+
 
 //-- FUNCTION DECLARATIONS ----------------------------------------------------
 
@@ -23,6 +30,7 @@ void write_bin(char* path, uint32_t* bin_instr, int lines_in_file);
 tokenised tokeniser(char *line, int line_n);
 uint32_t command_processor(tokenised input);
 void free_symbol_table();
+
 
 //-- GLOBAL VARIABLES ---------------------------------------------------------
 
@@ -92,8 +100,8 @@ int main(int argc, char **argv) {
   //initialise symbol table
   symbol_table_init();
 
-  /*getting the instruction from source file into an array of 32-bit
-    instructions that will be translated.*/
+  //getting the instruction from source file into an array of 32-bit
+  //instructions that will be translated.
   char instrs[MAX_LINES][CHAR_LIMIT];
   num_of_lines = get_instrs(argv[1], instrs);
 
@@ -116,16 +124,17 @@ int main(int argc, char **argv) {
 
 //-- FUNCTION DEFINTIONS -------------------------------------------------------
 
-//initialised symbol table
 void symbol_table_init() {
+//initialised symbol table
   for (int i = 0; i < MAX_LABELS; i++) {
     symb_table[i].label = malloc(CHAR_LIMIT * sizeof(char));
   }
 }
 
-/*gets instructions from source file into an array of 32-bit instructions
-  also returns the number of lines to provide a limit for the array */
+
 int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
+//gets instructions from source file into an array of 32-bit instructions
+//also returns the number of lines to provide a limit for the array
 
   //open source assembly file
   FILE *fptr = fopen(path, "r");
@@ -138,9 +147,9 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
   int lines_in_file = 0;
 
-  /*loads each line into the array of instructions specified
-    enters loop if current line exists and reading it is succesful.
-    breaks loop when we reach the end of the file.*/
+  //loads each line into the array of instructions specified
+  //enters loop if current line exists and reading it is succesful.
+  //breaks loop when we reach the end of the file.
   while (fgets(instrs[lines_in_file], CHAR_LIMIT, fptr)) {
 
     //check if line is empty or is a comment
@@ -148,8 +157,8 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
       continue;
     }
 
-    /*having loaded current line into the array of instructions specified, we
-      need to replace the '\n' at the end of each line to '\0' */
+    //having loaded current line into the array of instructions specified, we
+    //need to replace the '\n' at the end of each line to '\0'
 
     //Find the position of the '\n' new line character that we want to replace
     int newline_pos = strcspn(instrs[lines_in_file], "\n");
@@ -164,52 +173,64 @@ int get_instrs(char* path, char instrs[MAX_LINES][CHAR_LIMIT]) {
 
   fclose(fptr);
   return lines_in_file;
+
 }
 
 
-//return an array of 32 bit words to be written into binary file
 int32_t* translate_instr(char assem_instr[MAX_LINES][CHAR_LIMIT],
                          int length_in_lines) {
+//return an array of 32 bit words to be written into binary file
 
   char* current_instruction;
   tokenised token_line;
+
   //used to ensure that the array does not have an empty
   int bin_instr_num = 0;
-  /*the line number that the extra data from Single Data Transfer 
-    will be written to in the output.*/
+
+  //the line number that the extra data from Single Data Transfer
+  //will be written to in the output.*/
   valid_line_num = 1;
-  
+
   for (line_num = 1; line_num <= length_in_lines; line_num++) {
+
     //read a line from the array
     current_instruction = assem_instr[line_num - 1];
+
     //tokenise the line
     token_line = tokeniser(current_instruction, line_num);
+
     //we check if the line is only a label.
     if (is_label(token_line.operands[0])) {
       continue;
     }
+
     //store the binary instruction in the array.
     bin_instr_curr[bin_instr_num] = command_processor(token_line);
+
     //move to the next instruction
     bin_instr_num++;
     valid_line_num++;
+
   }
 
-  /*subract number of labels lines from total lines to store only the number
-    of valid output lines as num_of_lines variable*/
-
+  //subract number of labels amd empty lines from total lines to store only the
+  //number of valid output lines as num_of_lines variable
   num_of_lines -= label_count;
 
   return bin_instr_curr;
+
 }
 
 uint32_t command_processor(tokenised input) {
+//processes each instruction
+
   return (*input.func_pointer)(input.operands);
+
 }
 
 
-//writes an array of 32 bit words (instructions) into the binary file specified
 void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
+//writes an array of 32 bit words (instructions) into the binary file specified
 
   //creating output binary file
   FILE *fptr = fopen(path, "wb");
@@ -218,11 +239,14 @@ void write_bin(char *path, uint32_t* bin_instr, int lines_in_file) {
 
   //closing file
   fclose(fptr);
+
 }
 
-//frees memory initially allocated for labels
 void free_symbol_table() {
+//frees memory initially allocated for labels
+
   for (int i = 0; i < MAX_LABELS; i++) {
     free(symb_table[i].label);
   }
+
 }

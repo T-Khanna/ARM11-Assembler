@@ -6,10 +6,16 @@
 // Members: Tarun Sabbineni, Vinamra Agrawal, Tanmay Khanna, Balint Babik
 ////////////////////////////////////////////////////////////////////////////////
 
+
+//-------------------------- ASSEMBLE HEADER -----------------------------------
+// Contains the function definitions for assembe.c amongst others to hold
+// basic system values.
+
 #ifndef _ARM_ASM
 #define _ARM_ASM
 
 #include <stdint.h>
+
 
 //-- CONSTANTS -----------------------------------------------------------------
 
@@ -24,6 +30,12 @@
 #define OPERAND_SIZE 4
 #define PIPELINE_OFFSET 8
 
+
+//-- GLOBAL VARIABLES ----------------------------------------------------------
+
+struct symbol_table symb_table[MAX_LABELS];
+
+
 //-- ENUM CODE MAPPING ---------------------------------------------------------
 
 enum mnemonic_code {
@@ -33,6 +45,7 @@ enum mnemonic_code {
   MUL,MLA,BEQ,BNE,LSL,ANDEQ,
   BGE = 26,BLT,BGT,BLE,B,
 };
+
 
 //-- SYMBOL TABLE --------------------------------------------------------------
 
@@ -50,13 +63,10 @@ typedef struct tokenised {
 } tokenised;
 
 typedef struct mnemonic_code_mapping {
-  char *mnemonic; 
+  char *mnemonic;
   enum mnemonic_code opcode;
 } mnemonic_code_mapping;
 
-//-- GLOBAL VARIABLES ----------------------------------------------------------
-
-struct symbol_table symb_table[MAX_LABELS];
 
 //-- OPFUNCTION DECLARATIONS ---------------------------------------------------
 
@@ -92,5 +102,6 @@ uint32_t ASMb(char* operands[]);
 //SPECIAL
 uint32_t ASMlsl(char* operands[]);
 uint32_t ASMandeq(char* operands[]);
+
 
 #endif

@@ -8,7 +8,7 @@
 
 
 //---------------------- BITWISE OPERATIONS HEADER------------------------------
-// Contains the function definitions for bitOper.c to perform bitwise 
+// Contains the function definitions for bitOper.c to perform bitwise
 // operations on the instruction.
 
 #ifndef _BIT_OPER
@@ -21,11 +21,9 @@
 int getBit(int* num, int index);
 void setBit(int* num, int givenBit, int index);
 int getBits(int* num, int index, int size);
-void setBits(int* target, int index_target, int* source, int index_source, 
+void setBits(int* target, int index_target, int* source, int index_source,
              int size);
 int rotateRight(int num, unsigned int rot_num);
 int decToBin(unsigned int num);
 
-
 #endif
-
