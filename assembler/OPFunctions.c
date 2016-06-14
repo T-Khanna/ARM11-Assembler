@@ -63,6 +63,29 @@ void resPrePostAddressing(int *result, char** operands);
    These functions are implemented below
 */
 
+uint32_t ASMadd(char* operands[]);
+uint32_t ASMsub(char* operands[]);
+uint32_t ASMrsb(char* operands[]);
+uint32_t ASMand(char* operands[]);
+uint32_t ASMeor(char* operands[]);
+uint32_t ASMorr(char* operands[]);
+uint32_t ASMmov(char* operands[]);
+uint32_t ASMtst(char* operands[]);
+uint32_t ASMcmp(char* operands[]);
+uint32_t ASMmul(char* operands[]);
+uint32_t ASMmla(char* operands[]);
+uint32_t ASMldr(char* operands[]);
+uint32_t ASMstr(char* operands[]);
+uint32_t ASMbeq(char* operands[]);
+uint32_t ASMbne(char* operands[]);
+uint32_t ASMblt(char* operands[]);
+uint32_t ASMbgt(char* operands[]);
+uint32_t ASMblt(char* operands[]);
+uint32_t ASMb(char* operands[]);
+uint32_t ASMlsl(char* operands[]);
+uint32_t ASMandeq(char* operands[]);
+
+
 
 uint32_t ASMadd(char* operands[]) {
   int32_t result = 0;

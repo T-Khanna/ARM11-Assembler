@@ -17,7 +17,8 @@
 
 //-- CONSTANTS -----------------------------------------------------------------
 
-#define MEMORY_CAPACITY (65536/4) //memory = 65536 bytes/ 4 words 
+#define MEMORY_CAPACITY (65536/4) 
+//memory = 65536 bytes/ 4 words 
 #define TOTAL_REGISTERS 17
 #define GEN_PURPOSE_REG 13
 #define INSTRUCTION_BYTE_SIZE 4
